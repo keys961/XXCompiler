@@ -109,6 +109,7 @@ int saveTraceInfo()
 	globalInfo.currentToken = yytext;
 	fprintf(yyout, "%d: %s\n", globalInfo.currentLineCount,
 			yytext);
+	return currentTokenType;
 }
 
 int yywrap()
