@@ -3,4 +3,4 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(Compiler main.cpp)
+add_executable(Compiler main.cpp symbol.h symbol.cpp)
