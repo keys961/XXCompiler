@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include "lexer.h"
+#include "parser.hpp"
 extern GlobalInfo globalInfo; /*Global trace info*/
 extern FILE* in;
 extern FILE* out;
@@ -51,6 +52,7 @@ id ({letter}|_)+({letter}|{digit}|_)*
 "until" { return UNTIL; }
 "var" { return VAR; }
 "while" { return WHILE; }
+"write" { return WRITE; }
 "xor" { return XOR; }
 "integer" { return TYPE_INTEGER; }
 "real" { return TYPE_REAL; }
@@ -72,6 +74,7 @@ id ({letter}|_)+({letter}|{digit}|_)*
 "." { return DOT; } /*Other signs*/
 ".." { return DOTDOT; }
 "," { return COMMA; }
+";" { return SEMICOLON; }
 ":" { return COLON; }
 ":=" { return ASSIGN; }
 "[" { return LB; } /*Brackets*/ 
