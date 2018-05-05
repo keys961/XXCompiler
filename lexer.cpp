@@ -596,11 +596,11 @@ char *yytext;
 #include <cstdio>
 #include <cstring>
 #include <string>
-#include "lexer.h"
+//#include "lexer.h"
 #include "parser.hpp"
-extern GlobalInfo globalInfo; /*Global trace info*/
-extern FILE* in;
-extern FILE* out;
+//extern GlobalInfo globalInfo; /*Global trace info*/
+//extern FILE* in;
+//extern FILE* out;
 /* Lex Definitions */
 #line 606 "lexer.cpp"
 
@@ -893,7 +893,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 30 "lexer.l"
-{ return BEGIN; }
+{ return BEGIN_; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1180,7 +1180,7 @@ case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
 #line 91 "lexer.l"
-{ globalInfo.currentLineCount++; }
+{ return NEWLINE; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
@@ -2197,27 +2197,27 @@ void yyfree (void * ptr )
 
 
 
-int getCurrentToken() 
-{
-	static int flag = 1;
-	if(flag)
-	{
-		yyin = in;
-		yyout = out;
-		flag = 0;
-	}
+// int getCurrentToken() 
+// {
+// 	static int flag = 1;
+// 	if(flag)
+// 	{
+// 		yyin = in;
+// 		yyout = out;
+// 		flag = 0;
+// 	}
 
-	return saveTraceInfo();
-}
+// 	return saveTraceInfo();
+// }
 
-int saveTraceInfo()
-{
-	int currentTokenType = yylex();
-	globalInfo.currentToken = yytext;
-	fprintf(yyout, "%d: %s\n", globalInfo.currentLineCount,
-			yytext);
-	return currentTokenType;
-}
+// int saveTraceInfo()
+// {
+// 	int currentTokenType = yylex();
+// 	globalInfo.currentToken = yytext;
+// 	fprintf(yyout, "%d: %s\n", globalInfo.currentLineCount,
+// 			yytext);
+// 	return currentTokenType;
+// }
 
 int yywrap()
 {
