@@ -47,115 +47,127 @@ extern int yydebug;
   {
     AND = 258,
     ARRAY = 259,
-    ASSIGN = 260,
-    BEGIN = 261,
-    CASE = 262,
-    CHAR = 263,
-    COLON = 264,
-    COMMA = 265,
-    CONST = 266,
-    DIV = 267,
-    DO = 268,
-    PROCEDURE = 269,
-    DOT = 270,
-    DOTDOT = 271,
-    DOWNTO = 272,
-    OR = 273,
-    ELSE = 274,
-    END = 275,
-    EQUAL = 276,
-    FOR = 277,
-    FUNCTION = 278,
-    GE = 279,
-    GOTO = 280,
-    GT = 281,
-    ID = 282,
-    IF = 283,
-    INTEGER = 284,
-    LB = 285,
-    LE = 286,
-    LP = 287,
-    LT = 288,
-    MINUS = 289,
-    MOD = 290,
-    MUL = 291,
-    NOT = 292,
-    OF = 293,
-    PLUS = 294,
-    PROGRAM = 295,
-    RB = 296,
-    READ = 297,
-    REAL = 298,
-    RECORD = 299,
-    REPEAT = 300,
-    RP = 301,
-    SEMI = 302,
-    STRING = 303,
-    THEN = 304,
-    TO = 305,
-    TYPE = 306,
-    UNEQUAL = 307,
-    UNTIL = 308,
-    VAR = 309,
-    WHILE = 310,
-    WRITE = 311
+    BEGIN_ = 260,
+    CASE = 261,
+    CONST = 262,
+    DO = 263,
+    DOWNTO = 264,
+    OR = 265,
+    ELSE = 266,
+    END = 267,
+    FOR = 268,
+    FUNCTION = 269,
+    GOTO = 270,
+    IF = 271,
+    NOT = 272,
+    OF = 273,
+    PROGRAM = 274,
+    PROCEDURE = 275,
+    READ = 276,
+    RECORD = 277,
+    REPEAT = 278,
+    THEN = 279,
+    TO = 280,
+    TYPE = 281,
+    UNTIL = 282,
+    VAR = 283,
+    WHILE = 284,
+    WRITE = 285,
+    XOR = 286,
+    TYPE_INTEGER = 287,
+    TYPE_REAL = 288,
+    TYPE_STRING = 289,
+    TYPE_CHAR = 290,
+    NEWLINE = 291,
+    PLUS = 292,
+    MINUS = 293,
+    MULTIPLY = 294,
+    DIVIDE = 295,
+    MOD = 296,
+    LT = 297,
+    LE = 298,
+    EQUAL = 299,
+    UNEQUAL = 300,
+    GE = 301,
+    GT = 302,
+    DOT = 303,
+    DOTDOT = 304,
+    COMMA = 305,
+    SEMICOLON = 306,
+    COLON = 307,
+    ASSIGN = 308,
+    LB = 309,
+    RB = 310,
+    LP = 311,
+    RP = 312,
+    INTEGER = 313,
+    REAL = 314,
+    CHAR = 315,
+    STRING = 316,
+    ID = 317
   };
 #endif
 /* Tokens.  */
 #define AND 258
 #define ARRAY 259
-#define ASSIGN 260
-#define BEGIN 261
-#define CASE 262
-#define CHAR 263
-#define COLON 264
-#define COMMA 265
-#define CONST 266
-#define DIV 267
-#define DO 268
-#define PROCEDURE 269
-#define DOT 270
-#define DOTDOT 271
-#define DOWNTO 272
-#define OR 273
-#define ELSE 274
-#define END 275
-#define EQUAL 276
-#define FOR 277
-#define FUNCTION 278
-#define GE 279
-#define GOTO 280
-#define GT 281
-#define ID 282
-#define IF 283
-#define INTEGER 284
-#define LB 285
-#define LE 286
-#define LP 287
-#define LT 288
-#define MINUS 289
-#define MOD 290
-#define MUL 291
-#define NOT 292
-#define OF 293
-#define PLUS 294
-#define PROGRAM 295
-#define RB 296
-#define READ 297
-#define REAL 298
-#define RECORD 299
-#define REPEAT 300
-#define RP 301
-#define SEMI 302
-#define STRING 303
-#define THEN 304
-#define TO 305
-#define TYPE 306
-#define UNEQUAL 307
-#define UNTIL 308
-#define VAR 309
-#define WHILE 310
-#define WRITE 311
+#define BEGIN_ 260
+#define CASE 261
+#define CONST 262
+#define DO 263
+#define DOWNTO 264
+#define OR 265
+#define ELSE 266
+#define END 267
+#define FOR 268
+#define FUNCTION 269
+#define GOTO 270
+#define IF 271
+#define NOT 272
+#define OF 273
+#define PROGRAM 274
+#define PROCEDURE 275
+#define READ 276
+#define RECORD 277
+#define REPEAT 278
+#define THEN 279
+#define TO 280
+#define TYPE 281
+#define UNTIL 282
+#define VAR 283
+#define WHILE 284
+#define WRITE 285
+#define XOR 286
+#define TYPE_INTEGER 287
+#define TYPE_REAL 288
+#define TYPE_STRING 289
+#define TYPE_CHAR 290
+#define NEWLINE 291
+#define PLUS 292
+#define MINUS 293
+#define MULTIPLY 294
+#define DIVIDE 295
+#define MOD 296
+#define LT 297
+#define LE 298
+#define EQUAL 299
+#define UNEQUAL 300
+#define GE 301
+#define GT 302
+#define DOT 303
+#define DOTDOT 304
+#define COMMA 305
+#define SEMICOLON 306
+#define COLON 307
+#define ASSIGN 308
+#define LB 309
+#define RB 310
+#define LP 311
+#define RP 312
+#define INTEGER 313
+#define REAL 314
+#define CHAR 315
+#define STRING 316
+#define ID 317
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
