@@ -2,8 +2,13 @@
 #define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
+#include <queue>
+#include <string>
 #include "tree.h"
 extern char* yytext;
+std::queue<int> intQueue; //store int values
+std::queue<double> doubleQueue; //store double values
+std::queue<std::string> stringQueue; //store string values
 int yylex(void);
 int yyerror(const char *);
 %}
@@ -22,16 +27,14 @@ program: program_head SEMICOLON block DOT
     ;
 program_head: PROGRAM ID
     ;
-block: block_head block_body
+block: constant_definition_part 
+    type_definition_part 
+    variable_declaration_part 
+    procedure_function_declaration_part 
+    block_body_part
     ;
 id_list: id_list COMMA ID 
     | ID
-    ;
-
-block_head: constant_definition_part
-    type_definition_part
-    variable_declaration_part
-    procedure_function_declaration_part
     ;
 
 constant_definition_part: CONST constant_list
@@ -69,8 +72,6 @@ simple_type: TYPE_INTEGER
     | LP id_list RP
     ;
 range_type: constant_value DOTDOT constant_value
-    | MINUS constant_value DOTDOT constant_value
-    | MINUS constant_value DOTDOT MINUS constant_value
     | ID DOTDOT ID
     ;
 array_type: ARRAY LB range_type RB OF type_denoter
@@ -112,15 +113,15 @@ parameter_list: parameter_list SEMICOLON parameter
 parameter: id_list COLON simple_type
     ;
 
-block_body: compound_statement
+block_body_part: compound_statement
     ;
 compound_statement: BEGIN_ statememt_list END
     ;
 statememt_list: statememt_list SEMICOLON statememt
-    | statememt
+    | statememt SEMICOLON
     | 
     ;
-label: INTEGER
+label: STRING
     ;
 statememt: label COLON stmt
     | stmt
