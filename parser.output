@@ -4,7 +4,6 @@ Terminals unused in grammar
 
 
 状态 50 conflicts: 2 shift/reduce
-状态 169 conflicts: 1 shift/reduce
 
 
 语法
@@ -3356,12 +3355,13 @@ State 168
 State 169
 
    82 if_statememt: IF expression THEN statememt . ELSE statememt
-   83             | IF expression THEN statememt .  [ELSE, END, UNTIL, SEMICOLON]
+   83             | IF expression THEN statememt .  [END, UNTIL, SEMICOLON]
 
     ELSE  shift, and go to state 200
 
-    ELSE      [reduce using rule 83 (if_statememt)]
     $default  reduce using rule 83 (if_statememt)
+
+    Conflict between rule 83 and token ELSE resolved as shift (%right ELSE).
 
 
 State 170

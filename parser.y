@@ -1,7 +1,8 @@
 %{
-//#define YYSTYPE int
+#define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
+#include "tree.h"
 extern char* yytext;
 int yylex(void);
 int yyerror(const char *);
@@ -14,6 +15,7 @@ int yyerror(const char *);
 %token DOT DOTDOT COMMA SEMICOLON COLON ASSIGN LB RB LP RP
 %token INTEGER REAL CHAR STRING
 %token ID
+%right THEN ELSE
 %%
 
 program: program_head SEMICOLON block DOT

@@ -64,14 +64,15 @@
 /* Copy the first part of user declarations.  */
 #line 1 "parser.y" /* yacc.c:339  */
 
-//#define YYSTYPE int
+#define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
+#include "tree.h"
 extern char* yytext;
 int yylex(void);
 int yyerror(const char *);
 
-#line 75 "parser.cpp" /* yacc.c:339  */
+#line 76 "parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -246,7 +247,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 250 "parser.cpp" /* yacc.c:358  */
+#line 251 "parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -549,19 +550,19 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    19,    19,    21,    23,    25,    26,    29,    35,    36,
-      38,    39,    41,    43,    44,    45,    46,    49,    50,    52,
-      53,    55,    57,    58,    59,    60,    62,    63,    64,    65,
-      66,    67,    69,    70,    71,    72,    74,    76,    78,    79,
-      81,    84,    85,    87,    88,    90,    93,    94,    95,    97,
-      98,   100,   102,   104,   105,   107,   108,   110,   113,   115,
-     117,   118,   119,   121,   123,   124,   126,   127,   128,   129,
-     130,   131,   132,   133,   134,   137,   139,   140,   141,   144,
-     145,   146,   147,   150,   151,   154,   157,   159,   160,   163,
-     166,   168,   169,   171,   174,   177,   178,   179,   180,   181,
-     182,   183,   185,   186,   187,   188,   189,   191,   192,   193,
-     194,   195,   197,   198,   199,   200,   201,   202,   203,   204,
-     206,   207
+       0,    21,    21,    23,    25,    27,    28,    31,    37,    38,
+      40,    41,    43,    45,    46,    47,    48,    51,    52,    54,
+      55,    57,    59,    60,    61,    62,    64,    65,    66,    67,
+      68,    69,    71,    72,    73,    74,    76,    78,    80,    81,
+      83,    86,    87,    89,    90,    92,    95,    96,    97,    99,
+     100,   102,   104,   106,   107,   109,   110,   112,   115,   117,
+     119,   120,   121,   123,   125,   126,   128,   129,   130,   131,
+     132,   133,   134,   135,   136,   139,   141,   142,   143,   146,
+     147,   148,   149,   152,   153,   156,   159,   161,   162,   165,
+     168,   170,   171,   173,   176,   179,   180,   181,   182,   183,
+     184,   185,   187,   188,   189,   190,   191,   193,   194,   195,
+     196,   197,   199,   200,   201,   202,   203,   204,   205,   206,
+     208,   209
 };
 #endif
 
@@ -1518,7 +1519,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1522 "parser.cpp" /* yacc.c:1646  */
+#line 1523 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1746,7 +1747,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 211 "parser.y" /* yacc.c:1906  */
+#line 213 "parser.y" /* yacc.c:1906  */
 
 
 int yyerror(const char* str)
