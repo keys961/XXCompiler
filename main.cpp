@@ -1,5 +1,8 @@
 #include <cstdio>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include "comment.h"
 
 /**
  * Global info of a file to be parsed
@@ -21,7 +24,16 @@ GlobalInfo globalInfo;
 
 int main()
 {
-    printf("%d\n", 123);
+    CommemtProcessor processor;
+    std::fstream fin("1.txt", std::ios::in);
+    std::fstream fout("2.txt", std::ios::out);
+
+    if(!fin.bad() && !fout.bad())
+    {
+        processor.processComment(fin, fout);
+        fin.close();
+        fout.close();
+    }
 
     return 0;
 }

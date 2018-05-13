@@ -1758,8 +1758,8 @@ int yywrap()
     return 1;
 }
 
-int main()
-{
-    yyparse();
-    return 0;
-}
+//int main()
+//{
+//    yyparse();
+//    return 0;
+//}
