@@ -19,52 +19,52 @@ std::string CommemtProcessor::deleteComment(const std::string& in)
         {
             case CODE:
                 if(c == '/')
-                    state = SLASH;
+                    state = SLASH;  // -> /
                 else
                 {
                     result += c;
                     if(c == '\'')
-                        state = CODE_CHAR;
+                        state = CODE_CHAR; // -> '
                     else if(c == '\"')
-                        state = CODE_STRING;
+                        state = CODE_STRING; // -> "
                 }
                 break;
             case SLASH:
                 if(c == '*')
-                    state = COMMENT_MULTILINE;
+                    state = COMMENT_MULTILINE; // / -> /*
                 else if (c == '/')
-                    state = COMMENT_SINGLE_LINE;
+                    state = COMMENT_SINGLE_LINE; // / -> //
                 else
                 {
                     result += '/';
                     result += c;
-                    state = CODE;
+                    state = CODE; // /[content] -> return to code
                 }
                 break;
             case COMMENT_MULTILINE:
                 if(c == '*')
-                    state = COMMENT_MULTILINE_STAR;
+                    state = COMMENT_MULTILINE_STAR; // /*[content]*
                 else
                 {
                     if(c == '\n')
-                        result += "\r\n";
+                        result += "\r\n"; // add a new line
                 }
                 break;
-            case COMMENT_MULTILINE_STAR:
+            case COMMENT_MULTILINE_STAR: // /*/ -> as code
                 if(c == '/')
                     state = CODE;
-                else if(c == '*')
+                else if(c == '*') // /** -> may end of comment but stay unchanged
                     state = COMMENT_MULTILINE_STAR;
-                else
+                else // Still in comment_multiline
                     state = COMMENT_MULTILINE;
                 break;
             case COMMENT_SINGLE_LINE:
                 if (c == '\\')
-                    state = BACKSLASH;
+                    state = BACKSLASH; // backslash comment
                 else if (c == '\n')
                 {
                     result += "\r\n";
-                    state = CODE;
+                    state = CODE; // new line, restore state
                 }
                 break;
             case BACKSLASH:
@@ -74,37 +74,34 @@ std::string CommemtProcessor::deleteComment(const std::string& in)
                         result += "\r\n";
                 }
                 else
-                    state = COMMENT_SINGLE_LINE;
+                    state = COMMENT_SINGLE_LINE; // in new line return to state single_line
                 break;
             case CODE_CHAR:
                 result += c;
                 if(c == '\\')
-                    state = CHAR_ESCAPE_SEQUENCE;
+                    state = CHAR_ESCAPE_SEQUENCE; // escaped char
                 else if (c == '\'')
-                    state = CODE;
+                    state = CODE; // end of char, return to code
                 break;
             case CHAR_ESCAPE_SEQUENCE:
-                result += c;
+                result += c; // only to get the next char
                 state = CODE_CHAR;
                 break;
             case CODE_STRING:
                 result += c;
                 if(c == '\\')
-                    state = STRING_ESCAPE_SEQUENCE;
+                    state = STRING_ESCAPE_SEQUENCE; // escaped char in str
                 else if(c == '\"')
-                    state = CODE;
+                    state = CODE; // end of str, return to code
                 break;
             case STRING_ESCAPE_SEQUENCE:
                 result += c;
-                state = CODE_STRING;
+                state = CODE_STRING; // same as char_escape
                 break;
-            default:
-                break;
-
         }
     }
 
-    return result;
+    return result; // processed string, keep the original line number
 }
 
 std::string CommemtProcessor::readContent(std::istream &in)
@@ -116,8 +113,8 @@ std::string CommemtProcessor::readContent(std::istream &in)
     return content;
 }
 
-void CommemtProcessor::writeContent(std::ostream &out, const std::string &content)
+void CommemtProcessor::writeContent(const std::ostream &out, const std::string &content)
 {
-    out << content << std::endl;
+    out << content << std::endl; // write it to output stream
 }
 
