@@ -113,7 +113,7 @@ std::string CommemtProcessor::readContent(std::istream &in)
     return content;
 }
 
-void CommemtProcessor::writeContent(const std::ostream &out, const std::string &content)
+void CommemtProcessor::writeContent(std::ostream &out, const std::string &content)
 {
     out << content << std::endl; // write it to output stream
 }

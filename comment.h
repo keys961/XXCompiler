@@ -27,7 +27,7 @@ class CommemtProcessor
 private:
     std::string deleteComment(const std::string& in);
     std::string readContent(std::istream& in);
-    void writeContent(const std::ostream& out, const std::string& content);
+    void writeContent(std::ostream& out, const std::string& content);
 public:
     void processComment(std::istream& in, std::ostream& out);
 };
