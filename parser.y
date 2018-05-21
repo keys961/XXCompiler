@@ -70,9 +70,9 @@ simple_type: TYPE_INTEGER
     | TYPE_STRING 
     | ID 
     | LP id_list RP
+    | ID DOTDOT ID
     ;
 range_type: constant_value DOTDOT constant_value
-    | ID DOTDOT ID
     ;
 array_type: ARRAY LB range_type RB OF type_denoter
     ;
