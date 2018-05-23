@@ -24,7 +24,7 @@ GlobalInfo globalInfo;
 
 int main()
 {
-    //？？？？？？？？？？？？？？？
+    //changshi
     CommemtProcessor processor;
     std::fstream fin("1.txt", std::ios::in);
     std::fstream fout("2.txt", std::ios::out);
