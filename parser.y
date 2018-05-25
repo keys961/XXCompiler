@@ -2,6 +2,7 @@
 #define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <queue>
 #include <string>
 #include "tree.h"
@@ -11,6 +12,7 @@ class GlobalInfo;
 
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
+extern std::ofstream grammarOut;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values

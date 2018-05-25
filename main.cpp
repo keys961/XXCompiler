@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
     /* Format: compiler src_file_name output_file_name */
     if(argc != 3)
     {
-        std::cout << "Wrong input format!" << std::endl;
+        std::cerr << "Wrong input format!" << std::endl;
         std::cout << "\t compiler $src_file_name $output_file_name" << std::endl;
         return 1;
     }
@@ -63,14 +63,13 @@ int main(int argc, const char *argv[])
     codeIn = fopen(preProcessFileName.c_str(), "r");
     lexerOut = fopen(lexerFileName.c_str(), "w+");
     grammarOut = std::ofstream(grammarFileName, std::ios::out);
-    if(codeIn && lexerOut && !grammarOut.bad() && !astOut.bad())
+    if(codeIn && lexerOut && !grammarOut.bad() &&)
     {
         std::cout << "Parsing code with " << fileName << "..." << std::endl;
         yyparse();
         fclose(codeIn);
         fclose(lexerOut);
         grammarOut.close();
-        astOut.close();
         std::cout << "End of parsing codes." << std::endl;
     }
     else
@@ -86,11 +85,13 @@ int main(int argc, const char *argv[])
         return 1;
     }
     // Optimize & print the AST
-    TreeOptimizer optimizer(nullptr);
+    TreeOptimizer optimizer(root);
     astOut = std::ofstream(astFileName, std::ios::out);
     if(!astOut.bad())
     {
         std::cout << "Optimizing & printing AST with " << fileName << "..." << std::endl;
+        root = optimizer.getOptimizedTree();
+        astOut << root;
         astOut.close();
         std::cout << "End of optimizing & printing AST." << std::endl;
     }
@@ -105,6 +106,11 @@ int main(int argc, const char *argv[])
     // Type check
 
     // Generate code
+
+
+    // finally dispose resources
+    if(root != nullptr)
+        delete root;
 
     return 0;
 }
