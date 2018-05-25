@@ -3,38 +3,35 @@
 #include <iostream>
 #include <fstream>
 #include "comment.h"
-
-/**
- * Global info of a file to be parsed
- * when the program is parsing this file
- * for tracing.
- */
-typedef struct GlobalInfo
-{
-    long currentLineCount;
-    std::string currentToken;
-}GlobalInfo;
+#include "lexer.h"
+#include "parser.hpp"
 
 /**
  * Global variables
  */
-FILE* in = NULL;
-FILE* out = NULL;
+FILE* codeIn; // Code input
+std::ofstream preProcessOut; // Code output after pre-processing
+FILE* lexerOut; // Lexer analysis output
+std::ofstream grammarOut; // Grammar output
+std::ofstream astOut; // AST output
+std::ofstream codeOut; // Target code output
+
 GlobalInfo globalInfo;
 
-int main()
+int main(int argc, const char *argv[])
 {
-    //changshi
-    CommemtProcessor processor;
-    std::fstream fin("1.txt", std::ios::in);
-    std::fstream fout("2.txt", std::ios::out);
 
-    if(!fin.bad() && !fout.bad())
-    {
-        processor.processComment(fin, fout);
-        fin.close();
-        fout.close();
-    }
+//    CommemtProcessor processor;
+//    std::fstream fin("1.txt", std::ios::in);
+//    std::fstream fout("2.txt", std::ios::out);
+//
+//    if(!fin.bad() && !fout.bad())
+//    {
+//        processor.processComment(fin, fout);
+//        fin.close();
+//        fout.close();
+//    }
+    yyparse();
 
     return 0;
 }

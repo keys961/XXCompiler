@@ -5,11 +5,17 @@
 #include <queue>
 #include <string>
 #include "tree.h"
-extern char* yytext;
+#include "lexer.h"
+
+class GlobalInfo;
+
+extern char* yytext; // yytext
+extern GlobalInfo globalInfo; // global info
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
-int yylex(void);
+static int yylex(void);
+static int hashCodeForString(char* str);
 int yyerror(const char *);
 %}
 %token AND ARRAY BEGIN_ CASE CONST DO DOWNTO OR ELSE END
@@ -213,19 +219,28 @@ args: args COMMA expression
 
 %%
 
+static int yylex(void)
+{
+    return getCurrentToken();
+}
+
+static int hashCodeForString(char* str)
+{
+    int h = 0;
+    char* ptr = str;
+    for(; *ptr; ptr++)
+        h = 31 * h + (*ptr & 0xff);
+    
+    return h;
+}
+
 int yyerror(const char* str)
 {
-    printf("%s\n", str);
+    printf("Error message: %s\n", str);
     return 1;
 }
 
 int yywrap()
 {
     return 1;
-}
-
-int main()
-{
-    yyparse();
-    return 0;
 }
