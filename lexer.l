@@ -3,11 +3,14 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-//#include "lexer.h"
+#include "lexer.h"
 #include "parser.hpp"
-//extern GlobalInfo globalInfo; /*Global trace info*/
-//extern FILE* in;
-//extern FILE* out;
+
+class GlobalInfo;
+
+extern GlobalInfo globalInfo; /*Global trace info*/
+extern FILE* codeIn;
+extern FILE* lexerOut; /* Lexer out */
 %}
 /* Lex Definitions */
 digit[0-9]
@@ -88,32 +91,40 @@ id ({letter}|_)+({letter}|{digit}|_)*
 {string} { return STRING; }
 
 {whitespace} {}
-{newline} { return NEWLINE; }
+{newline} {}
 {id} { return ID; }
 
 %%
 
-// int getCurrentToken() 
-// {
-// 	static int flag = 1;
-// 	if(flag)
-// 	{
-// 		yyin = in;
-// 		yyout = out;
-// 		flag = 0;
-// 	}
+int getCurrentToken() 
+{
+	static int flag = 1;
+	if(flag)
+	{
+		yyin = codeIn;
+		flag = 0;
+	}
 
-// 	return saveTraceInfo();
-// }
+	return saveTraceInfo();
+}
 
-// int saveTraceInfo()
-// {
-// 	int currentTokenType = yylex();
-// 	globalInfo.currentToken = yytext;
-// 	fprintf(yyout, "%d: %s\n", globalInfo.currentLineCount,
-// 			yytext);
-// 	return currentTokenType;
-// }
+int saveTraceInfo()
+{
+	int currentTokenType = yylex();
+	globalInfo.currentToken = yytext;
+	if(globalInfo.currentToken == "\n")
+	{
+		globalInfo.currentLineIndex++;
+		globalInfo.currentTokenIndex = 0;
+	}
+	else 
+	{
+		globalInfo.currentTokenIndex++;
+		fprintf(lexerOut, "Token: %s with type %d at line %ld and position %ld.\n", 
+			yytext, currentTokenType, globalInfo.currentLineIndex, globalInfo.currentTokenIndex);
+	}
+	return currentTokenType;
+}
 
 int yywrap()
 {

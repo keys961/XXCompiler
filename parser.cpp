@@ -70,14 +70,20 @@
 #include <queue>
 #include <string>
 #include "tree.h"
-extern char* yytext;
+#include "lexer.h"
+
+class GlobalInfo;
+
+extern char* yytext; // yytext
+extern GlobalInfo globalInfo; // global info
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
-int yylex(void);
+static int yylex(void);
+static int hashCodeForString(char* str);
 int yyerror(const char *);
 
-#line 81 "parser.cpp" /* yacc.c:339  */
+#line 87 "parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -252,7 +258,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 256 "parser.cpp" /* yacc.c:358  */
+#line 262 "parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -555,18 +561,18 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    26,    26,    28,    30,    36,    37,    40,    41,    43,
-      44,    46,    48,    49,    50,    51,    54,    55,    57,    58,
-      60,    62,    63,    64,    65,    67,    68,    69,    70,    71,
-      72,    73,    75,    77,    79,    81,    82,    84,    87,    88,
-      90,    91,    93,    96,    97,    98,   100,   101,   103,   105,
-     107,   108,   110,   111,   113,   116,   118,   120,   121,   122,
-     124,   126,   127,   129,   130,   131,   132,   133,   134,   135,
-     136,   137,   140,   142,   143,   144,   147,   148,   149,   150,
-     153,   154,   157,   160,   162,   163,   166,   169,   171,   172,
-     174,   177,   180,   181,   182,   183,   184,   185,   186,   188,
-     189,   190,   191,   192,   194,   195,   196,   197,   198,   200,
-     201,   202,   203,   204,   205,   206,   207,   209,   210
+       0,    32,    32,    34,    36,    42,    43,    46,    47,    49,
+      50,    52,    54,    55,    56,    57,    60,    61,    63,    64,
+      66,    68,    69,    70,    71,    73,    74,    75,    76,    77,
+      78,    79,    81,    83,    85,    87,    88,    90,    93,    94,
+      96,    97,    99,   102,   103,   104,   106,   107,   109,   111,
+     113,   114,   116,   117,   119,   122,   124,   126,   127,   128,
+     130,   132,   133,   135,   136,   137,   138,   139,   140,   141,
+     142,   143,   146,   148,   149,   150,   153,   154,   155,   156,
+     159,   160,   163,   166,   168,   169,   172,   175,   177,   178,
+     180,   183,   186,   187,   188,   189,   190,   191,   192,   194,
+     195,   196,   197,   198,   200,   201,   202,   203,   204,   206,
+     207,   208,   209,   210,   211,   212,   213,   215,   216
 };
 #endif
 
@@ -1514,7 +1520,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1518 "parser.cpp" /* yacc.c:1646  */
+#line 1524 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1742,22 +1748,31 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 214 "parser.y" /* yacc.c:1906  */
+#line 220 "parser.y" /* yacc.c:1906  */
 
+
+static int yylex(void)
+{
+    return getCurrentToken();
+}
+
+static int hashCodeForString(char* str)
+{
+    int h = 0;
+    char* ptr = str;
+    for(; *ptr; ptr++)
+        h = 31 * h + (*ptr & 0xff);
+    
+    return h;
+}
 
 int yyerror(const char* str)
 {
-    printf("%s\n", str);
+    printf("Error message: %s\n", str);
     return 1;
 }
 
 int yywrap()
 {
     return 1;
-}
-
-int main()
-{
-    yyparse();
-    return 0;
 }
