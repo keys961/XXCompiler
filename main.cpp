@@ -5,6 +5,8 @@
 #include "comment.h"
 #include "lexer.h"
 #include "parser.hpp"
+#include "tree.h"
+#include "optimizer.h"
 
 /**
  * Global variables
@@ -17,21 +19,92 @@ std::ofstream astOut; // AST output
 std::ofstream codeOut; // Target code output
 
 GlobalInfo globalInfo;
+TreeNode* root;
 
 int main(int argc, const char *argv[])
 {
+    /* Format: compiler src_file_name output_file_name */
+    if(argc != 3)
+    {
+        std::cout << "Wrong input format!" << std::endl;
+        std::cout << "\t compiler $src_file_name $output_file_name" << std::endl;
+        return 1;
+    }
+    // Prepare
+    std::string fileName = argv[1];
+    std::string preProcessFileName = "pre_" + fileName;
+    std::string lexerFileName = fileName + ".lexer";
+    std::string grammarFileName = fileName + ".grammar";
+    std::string astFileName = fileName + ".ast";
+    std::string codeFileName = fileName + ".s";
+    // Pre-processing
+    CommemtProcessor processor;
+    std::fstream fin(argv[1], std::ios::in);
+    preProcessOut = std::ofstream(preProcessFileName, std::ios::out);
+    if(!fin.bad() && !preProcessOut.bad())
+    {
+        std::cout << "Pre-processing code with " << fileName << "..." << std::endl;
+        processor.processComment(fin, preProcessOut);
+        fin.close();
+        preProcessOut.close();
+        std::cout << "End pre-processing." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when pre-processing code with "
+                  << fileName << "!" << std::endl;
+        if(!fin.bad())
+            fin.close();
+        if(!preProcessOut.bad())
+            preProcessOut.close();
+        return 1;
+    }
+    // Lexical & Grammar analysis
+    codeIn = fopen(preProcessFileName.c_str(), "r");
+    lexerOut = fopen(lexerFileName.c_str(), "w+");
+    grammarOut = std::ofstream(grammarFileName, std::ios::out);
+    if(codeIn && lexerOut && !grammarOut.bad() && !astOut.bad())
+    {
+        std::cout << "Parsing code with " << fileName << "..." << std::endl;
+        yyparse();
+        fclose(codeIn);
+        fclose(lexerOut);
+        grammarOut.close();
+        astOut.close();
+        std::cout << "End of parsing codes." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when parsing the code with " << fileName << "!"
+                  << std::endl;
+        if(codeIn)
+            fclose(codeIn);
+        if(lexerOut)
+            fclose(lexerOut);
+        if(!grammarOut.bad())
+            grammarOut.close();
+        return 1;
+    }
+    // Optimize & print the AST
+    TreeOptimizer optimizer(nullptr);
+    astOut = std::ofstream(astFileName, std::ios::out);
+    if(!astOut.bad())
+    {
+        std::cout << "Optimizing & printing AST with " << fileName << "..." << std::endl;
+        astOut.close();
+        std::cout << "End of optimizing & printing AST." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when optimizing & printing AST with " << fileName << "!"
+                  << std::endl;
+        return 1;
+    }
+    // Update symbol table
 
-//    CommemtProcessor processor;
-//    std::fstream fin("1.txt", std::ios::in);
-//    std::fstream fout("2.txt", std::ios::out);
-//
-//    if(!fin.bad() && !fout.bad())
-//    {
-//        processor.processComment(fin, fout);
-//        fin.close();
-//        fout.close();
-//    }
-    yyparse();
+    // Type check
+
+    // Generate code
 
     return 0;
 }
