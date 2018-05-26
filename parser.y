@@ -18,6 +18,7 @@ std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
 static int yylex(void);
 static int hashCodeForString(char* str);
+static void showNodeInfo(const std::string& info);
 int yyerror(const char *);
 %}
 %token AND ARRAY BEGIN_ CASE CONST DO DOWNTO OR ELSE END
@@ -234,6 +235,12 @@ static int hashCodeForString(char* str)
         h = 31 * h + (*ptr & 0xff);
     
     return h;
+}
+
+static void showNodeInfo(const std::string& info)
+{
+    grammarOut << "At line " << globalInfo.currentLineIndex
+        << ": Node " << info << std::endl; 
 }
 
 int yyerror(const char* str)
