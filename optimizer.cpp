@@ -6,12 +6,12 @@
 
 TreeNode *TreeOptimizer::optimizeExpression()
 {
-    return nullptr;
+    return root;
 }
 
 TreeNode *TreeOptimizer::optimizeStatement()
 {
-    return nullptr;
+    return root;
 }
 
 TreeNode *TreeOptimizer::getOptimizedTree()

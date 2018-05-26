@@ -67,6 +67,7 @@
 #define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <queue>
 #include <string>
 #include "tree.h"
@@ -76,14 +77,16 @@ class GlobalInfo;
 
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
+extern std::ofstream grammarOut;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
 static int yylex(void);
 static int hashCodeForString(char* str);
+static void showNodeInfo(const std::string& info);
 int yyerror(const char *);
 
-#line 87 "parser.cpp" /* yacc.c:339  */
+#line 90 "parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -258,7 +261,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 262 "parser.cpp" /* yacc.c:358  */
+#line 265 "parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -561,18 +564,18 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    32,    32,    34,    36,    42,    43,    46,    47,    49,
-      50,    52,    54,    55,    56,    57,    60,    61,    63,    64,
-      66,    68,    69,    70,    71,    73,    74,    75,    76,    77,
-      78,    79,    81,    83,    85,    87,    88,    90,    93,    94,
-      96,    97,    99,   102,   103,   104,   106,   107,   109,   111,
-     113,   114,   116,   117,   119,   122,   124,   126,   127,   128,
-     130,   132,   133,   135,   136,   137,   138,   139,   140,   141,
-     142,   143,   146,   148,   149,   150,   153,   154,   155,   156,
-     159,   160,   163,   166,   168,   169,   172,   175,   177,   178,
-     180,   183,   186,   187,   188,   189,   190,   191,   192,   194,
-     195,   196,   197,   198,   200,   201,   202,   203,   204,   206,
-     207,   208,   209,   210,   211,   212,   213,   215,   216
+       0,    35,    35,    37,    39,    45,    46,    49,    50,    52,
+      53,    55,    57,    58,    59,    60,    63,    64,    66,    67,
+      69,    71,    72,    73,    74,    76,    77,    78,    79,    80,
+      81,    82,    84,    86,    88,    90,    91,    93,    96,    97,
+      99,   100,   102,   105,   106,   107,   109,   110,   112,   114,
+     116,   117,   119,   120,   122,   125,   127,   129,   130,   131,
+     133,   135,   136,   138,   139,   140,   141,   142,   143,   144,
+     145,   146,   149,   151,   152,   153,   156,   157,   158,   159,
+     162,   163,   166,   169,   171,   172,   175,   178,   180,   181,
+     183,   186,   189,   190,   191,   192,   193,   194,   195,   197,
+     198,   199,   200,   201,   203,   204,   205,   206,   207,   209,
+     210,   211,   212,   213,   214,   215,   216,   218,   219
 };
 #endif
 
@@ -1520,7 +1523,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1524 "parser.cpp" /* yacc.c:1646  */
+#line 1527 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1748,7 +1751,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 220 "parser.y" /* yacc.c:1906  */
+#line 223 "parser.y" /* yacc.c:1906  */
 
 
 static int yylex(void)
@@ -1764,6 +1767,12 @@ static int hashCodeForString(char* str)
         h = 31 * h + (*ptr & 0xff);
     
     return h;
+}
+
+static void showNodeInfo(const std::string& info)
+{
+    grammarOut << "At line " << globalInfo.currentLineIndex
+        << ": Node " << info << std::endl; 
 }
 
 int yyerror(const char* str)

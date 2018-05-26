@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
     codeIn = fopen(preProcessFileName.c_str(), "r");
     lexerOut = fopen(lexerFileName.c_str(), "w+");
     grammarOut = std::ofstream(grammarFileName, std::ios::out);
-    if(codeIn && lexerOut && !grammarOut.bad() &&)
+    if(codeIn && lexerOut && !grammarOut.bad())
     {
         std::cout << "Parsing code with " << fileName << "..." << std::endl;
         yyparse();
