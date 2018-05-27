@@ -5,6 +5,8 @@
 #include <vector>
 #include "symbol.h"
 
+class CommonTypeTreeNode;
+
 class TreeNode {
 private:
     std::string name;
