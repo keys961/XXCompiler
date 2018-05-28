@@ -19,7 +19,7 @@ std::ofstream astOut; // AST output
 std::ofstream codeOut; // Target code output
 
 GlobalInfo globalInfo;
-TreeNode* root;
+TreeNode* root; // ProgramBodyTreeNode
 
 int main(int argc, const char *argv[])
 {
