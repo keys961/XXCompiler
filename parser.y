@@ -17,7 +17,7 @@ std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
 static int yylex(void);
-static int hashCodeForString(char* str);
+static int hashCodeForString(const std::string& str);
 static void showNodeInfo(const std::string& info);
 int yyerror(const char *);
 
@@ -57,11 +57,7 @@ block: constant_definition_part
     procedure_function_declaration_part 
     block_body_part
     {
-        showNodeInfo("block -> constant_definition_part 
-            type_definition_part 
-            variable_declaration_part 
-            procedure_function_declaration_part 
-            block_body_part");
+        showNodeInfo("block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part");
         $$ = new ProgramBodyTreeNode($1, $2, $3, $4, $5);
     }
     ;
@@ -233,7 +229,7 @@ simple_type: TYPE_INTEGER
 range_type: constant_value DOTDOT constant_value
             {
                 showNodeInfo("range_type -> constant_value DOTDOT constant_value");
-                $$ = new RangeTypeTreeNode($1, $3);
+                $$ = new RangeTypeTreeNode((IDTreeNode*)$1, (IDTreeNode*)$3);
             }
     ;
 array_type: ARRAY LB range_type RB OF type_denoter
@@ -397,7 +393,7 @@ block_body_part: compound_statement
 compound_statement: BEGIN_ statememt_list END
                     {
                         showNodeInfo("compound_statement -> BEGIN_ statememt_list END");
-                        $$ = new CompoundStmtTreeNode($2);
+                        $$ = new CompoundStmtTreeNode((ListTreeNode*)$2);
                     }
     ;
 statememt_list: statememt_list SEMICOLON statememt
@@ -422,7 +418,7 @@ statememt_list: statememt_list SEMICOLON statememt
     ;
 label: STRING
        {
-           showNodeInfo("label -> STRING")
+           showNodeInfo("label -> STRING");
            std::string labelName = yytext;
            TreeNode* node = new TreeNode();
            node->setName(labelName);
@@ -433,7 +429,8 @@ statememt: label COLON stmt
            {
                showNodeInfo("statement -> label COLON stmt");
                $$ = $3;
-               ((StatementTreeNode*)$$)->setLabel(hashCodeForString($1->getName()));
+               const std::string labelName = $1->getName();
+               ((StatementTreeNode*)$$)->setLabel(hashCodeForString(labelName));
                delete $1;
            }
     | stmt
@@ -553,19 +550,19 @@ procedure_statement: READ LP factor RP
 if_statememt: IF expression THEN statememt ELSE statememt
               {
                   showNodeInfo("if_statememt -> IF expression THEN statememt ELSE statememt");
-                  $$ = new IfStmtTreeNode($2, $4, $6);
+                  $$ = new IfStmtTreeNode((ExprTreeNode*)$2, (StatementTreeNode*)$4, (StatementTreeNode*)$6);
               }
     | IF expression THEN statememt
       {
           showNodeInfo("if_statememt -> IF expression THEN statememt");
-          $$ = new IfStmtTreeNode($2, $4, nullptr);
+          $$ = new IfStmtTreeNode((ExprTreeNode*)$2, (StatementTreeNode*)$4, nullptr);
       }
     ;
 
 repeat_statememt: REPEAT statememt_list UNTIL expression
                   {
                       showNodeInfo("repeat_statememt -> REPEAT statememt_list UNTIL expression");
-                      $$ = new RepeatStmtTreeNode($4, $2);
+                      $$ = new RepeatStmtTreeNode((ExprTreeNode *)$4, (StatementTreeNode *)$2);
                   }
     ;
 
@@ -574,36 +571,38 @@ for_statememt: FOR ID { stringQueue.push(yytext); } ASSIGN expression direction 
                    showNodeInfo("for_statement -> FOR ID ASSIGN expression direction expression DO statememt");
                    std::string variableId = stringQueue.front();
                    stringQueue.pop();
-                   VariableTreeNode* varNode = new VariableTreeNode(variable);
+                   VariableTreeNode* varNode = new VariableTreeNode(variableId);
                    BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $5);
                    std::string direction = $6->getName();
-                   $$ = new ForStmtTreeNode(exprNode, direction, $7, $9);
+                   $$ = new ForStmtTreeNode(exprNode, direction, (ExprTreeNode *)$7, (StatementTreeNode *)$9);
                    delete $6;
                }
     ;
 direction: TO 
            {
                showNodeInfo("direction -> TO");
-               $$ = new TreeNode("to");
+               $$ = new TreeNode();
+               $$->setName("to");
            }
     | DOWNTO
       {
           showNodeInfo("direction -> DOWNTO");
-          $$ = new TreeNode("downto");
+          $$ = new TreeNode();
+          $$->setName("downto");
       }
     ;
 
 while_statememt: WHILE expression DO statememt
                  {
                      showNodeInfo("while_statement -> WHILE expression DO statement");
-                     $$ = WhileStmtTreeNode($2, $4);
+                     $$ = new WhileStmtTreeNode((ExprTreeNode *)$2, (StatementTreeNode *)$4);
                  }
     ;
 
 case_statememt: CASE expression OF case_list END
                 {
                     showNodeInfo("case_statement -> CASE expresion OF case_list END");
-                    $$ = new SwitchStmtTreeNode($2, $4);
+                    $$ = new SwitchStmtTreeNode((ExprTreeNode *)$2, (ListTreeNode *)$4);
                 }
     ;
 case_list: case_list SEMICOLON case_item
@@ -623,7 +622,7 @@ case_list: case_list SEMICOLON case_item
 case_item: constant_value COLON statememt
            {
                showNodeInfo("case_item -> constant_value COLON statement");
-               $$ = new CaseExprTreeNode($1, $3);
+               $$ = new CaseExprTreeNode((IDTreeNode *)$1, (StatementTreeNode *)$3);
            }
     ;
 
@@ -803,12 +802,11 @@ static int yylex(void)
     return getCurrentToken();
 }
 
-static int hashCodeForString(char* str)
+static int hashCodeForString(const std::string& str)
 {
     int h = 0;
-    char* ptr = str;
-    for(; *ptr; ptr++)
-        h = 31 * h + (*ptr & 0xff);
+    for(int i = 0; i < str.length(); i++)
+        h = 31 * h + (str[i] & 0xff);
     
     return h;
 }
