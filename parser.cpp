@@ -67,28 +67,17 @@
 #define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
 #include <queue>
 #include <string>
 #include "tree.h"
-#include "lexer.h"
-
-class GlobalInfo;
-
-extern char* yytext; // yytext
-extern GlobalInfo globalInfo; // global info
-extern std::ofstream grammarOut;
+extern char* yytext;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
-static int yylex(void);
-static int hashCodeForString(const std::string& str);
-static void showNodeInfo(const std::string& info);
+int yylex(void);
 int yyerror(const char *);
 
-extern TreeNode* root;
-
-#line 92 "parser.cpp" /* yacc.c:339  */
+#line 81 "parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -263,7 +252,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 267 "parser.cpp" /* yacc.c:358  */
+#line 256 "parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -505,16 +494,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   279
+#define YYLAST   283
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  63
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  68
+#define YYNNTS  52
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  133
+#define YYNRULES  118
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  249
+#define YYNSTATES  237
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -564,22 +553,20 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    47,    54,    64,    74,    87,    92,    98,
-     104,   112,   112,   122,   127,   132,   137,   144,   149,   155,
-     161,   169,   169,   177,   182,   187,   192,   198,   203,   208,
-     213,   218,   223,   229,   235,   240,   247,   253,   261,   261,
-     270,   275,   281,   287,   295,   295,   304,   310,   317,   323,
-     328,   334,   334,   342,   342,   350,   355,   362,   368,   376,
-     376,   385,   393,   399,   405,   413,   419,   428,   436,   442,
-     447,   452,   457,   462,   467,   472,   477,   482,   489,   495,
-     500,   500,   507,   507,   507,   518,   527,   534,   534,   542,
-     550,   555,   562,   569,   569,   581,   587,   595,   602,   608,
-     614,   622,   629,   640,   645,   650,   655,   660,   665,   670,
-     676,   681,   686,   691,   696,   702,   707,   712,   717,   722,
-     728,   734,   734,   743,   743,   751,   751,   751,   761,   766,
-     771,   777,   784,   790
+       0,    26,    26,    28,    30,    36,    37,    40,    41,    43,
+      44,    46,    48,    49,    50,    51,    54,    55,    57,    58,
+      60,    62,    63,    64,    65,    67,    68,    69,    70,    71,
+      72,    74,    75,    77,    79,    81,    82,    84,    87,    88,
+      90,    91,    93,    96,    97,    98,   100,   101,   103,   105,
+     107,   108,   110,   111,   113,   116,   118,   120,   121,   122,
+     124,   126,   127,   129,   130,   131,   132,   133,   134,   135,
+     136,   137,   140,   142,   143,   144,   147,   148,   149,   150,
+     153,   154,   157,   160,   162,   163,   166,   169,   171,   172,
+     174,   177,   180,   181,   182,   183,   184,   185,   186,   188,
+     189,   190,   191,   192,   194,   195,   196,   197,   198,   200,
+     201,   202,   203,   204,   205,   206,   207,   209,   210
 };
 #endif
 
@@ -598,20 +585,19 @@ static const char *const yytname[] =
   "ASSIGN", "LB", "RB", "LP", "RP", "INTEGER", "REAL", "CHAR", "STRING",
   "ID", "$accept", "program", "program_head", "block", "id_list",
   "constant_definition_part", "constant_list", "constant_definition",
-  "$@1", "constant_value", "type_definition_part", "type_definition_list",
-  "type_definition", "$@2", "type_denoter", "simple_type", "range_type",
+  "constant_value", "type_definition_part", "type_definition_list",
+  "type_definition", "type_denoter", "simple_type", "range_type",
   "array_type", "record_type", "field_definition_list", "field_definition",
-  "$@3", "variable_declaration_part", "variable_declaration_list",
-  "variable_declaration", "$@4", "procedure_function_declaration_part",
-  "procedure_function_declaration", "procedure_declaration", "$@5",
-  "function_declaration", "$@6", "parameters", "parameter_list",
-  "parameter", "$@7", "block_body_part", "compound_statement",
-  "statememt_list", "label", "statememt", "stmt", "assign_statememt",
-  "variable_access", "$@8", "$@9", "$@10", "procedure_statement", "$@11",
-  "if_statememt", "repeat_statememt", "for_statememt", "$@12", "direction",
-  "while_statememt", "case_statememt", "case_list", "case_item",
-  "goto_statememt", "expression", "expr", "term", "factor", "$@13", "$@14",
-  "$@15", "$@16", "args", YY_NULLPTR
+  "variable_declaration_part", "variable_declaration_list",
+  "variable_declaration", "procedure_function_declaration_part",
+  "procedure_function_declaration", "procedure_declaration",
+  "function_declaration", "parameters", "parameter_list", "parameter",
+  "block_body_part", "compound_statement", "statememt_list", "label",
+  "statememt", "stmt", "assign_statememt", "variable_access",
+  "procedure_statement", "if_statememt", "repeat_statememt",
+  "for_statememt", "direction", "while_statememt", "case_statememt",
+  "case_list", "case_item", "goto_statememt", "expression", "expr", "term",
+  "factor", "args", YY_NULLPTR
 };
 #endif
 
@@ -630,12 +616,12 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -139
+#define YYPACT_NINF -134
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-139)))
+  (!!((Yystate) == (-134)))
 
-#define YYTABLE_NINF -126
+#define YYTABLE_NINF -74
 
 #define yytable_value_is_error(Yytable_value) \
   0
@@ -644,31 +630,30 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-       8,   -16,    43,    -2,  -139,  -139,    52,    17,    33,    56,
-    -139,    17,  -139,  -139,    32,    67,    65,  -139,  -139,    32,
-    -139,    37,    64,   186,    68,  -139,  -139,    66,  -139,    57,
-      63,   137,  -139,  -139,  -139,  -139,  -139,  -139,  -139,    75,
-      29,   103,    37,  -139,  -139,     5,  -139,  -139,  -139,  -139,
-      73,    79,  -139,  -139,  -139,  -139,    92,  -139,   107,   109,
-    -139,  -139,  -139,  -139,    29,  -139,   105,   105,    12,    96,
-     113,    12,   132,     5,    12,   133,  -139,   142,  -139,    -3,
-     141,   143,  -139,  -139,   139,  -139,  -139,  -139,  -139,  -139,
-    -139,  -139,   186,  -139,    25,  -139,  -139,   -27,   186,  -139,
-    -139,   -17,   147,   149,    12,    12,    12,   -32,  -139,   102,
-      55,    99,  -139,  -139,  -139,   126,    12,   -19,    11,    12,
-     162,   153,   159,  -139,     5,   100,  -139,    12,   164,   165,
-    -139,    79,   158,  -139,  -139,  -139,  -139,   -26,  -139,   -20,
-      52,  -139,  -139,   140,   179,   183,   173,   186,    12,    12,
-      12,    12,    12,    12,    12,    12,    12,    12,    12,    12,
-      12,    12,   199,     5,   196,    12,     5,   161,    12,   192,
-      12,  -139,  -139,   187,   237,    29,  -139,  -139,   204,   195,
-    -139,   207,   208,  -139,    12,    12,   198,   209,    26,  -139,
-      55,    55,    55,    55,    55,    55,    99,    99,    99,    99,
-    -139,  -139,  -139,  -139,    12,   251,  -139,   187,  -139,  -139,
-     167,  -139,   187,    46,    29,  -139,   -20,  -139,    52,  -139,
-      50,   181,  -139,     5,  -139,   186,   134,     5,  -139,  -139,
-      12,  -139,  -139,  -139,   212,  -139,  -139,  -139,  -139,  -139,
-    -139,  -139,    12,  -139,   187,  -139,    89,     5,  -139
+      32,     3,    64,    40,  -134,  -134,    74,    34,    57,    83,
+      68,    34,  -134,  -134,    71,   119,   121,  -134,   105,    71,
+    -134,    96,    15,  -134,  -134,  -134,  -134,   101,    11,  -134,
+    -134,   -18,   108,  -134,   127,   128,    42,  -134,  -134,  -134,
+    -134,   139,    96,  -134,  -134,  -134,  -134,    96,   145,   148,
+     151,  -134,  -134,  -134,  -134,   134,    11,    96,   171,   171,
+      69,  -134,  -134,  -134,   189,    70,    -1,  -134,    26,   142,
+     121,  -134,  -134,  -134,  -134,     4,   155,   177,    76,   169,
+     172,    76,   176,    69,    76,   200,  -134,   147,  -134,     1,
+     205,   178,  -134,  -134,   206,  -134,  -134,  -134,  -134,  -134,
+    -134,  -134,   145,   203,    11,  -134,    96,  -134,  -134,  -134,
+    -134,    77,    66,  -134,   136,    74,    76,    76,    76,    65,
+    -134,   130,   168,    19,  -134,   207,  -134,   167,    76,   -21,
+      99,    76,   199,    76,    76,  -134,    69,    95,  -134,    76,
+     244,  -134,  -134,   136,    96,  -134,  -134,   212,   213,  -134,
+    -134,   -26,   204,    76,    76,   121,    76,    76,    76,    76,
+      76,    76,    76,    76,    76,    76,    76,    76,    76,    76,
+      76,    69,   208,    76,    69,   173,  -134,   -19,   193,    29,
+    -134,  -134,   193,    11,  -134,  -134,    74,  -134,  -134,  -134,
+     179,    30,   215,     2,  -134,   168,   168,   168,   168,   168,
+     168,    19,    19,    19,    19,  -134,  -134,  -134,  -134,   141,
+     257,  -134,   193,  -134,  -134,  -134,    76,  -134,  -134,   218,
+    -134,  -134,    69,  -134,   121,  -134,  -134,    76,    69,   193,
+    -134,  -134,  -134,   118,  -134,    69,  -134
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -676,55 +661,52 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     3,     1,     8,     0,     0,    18,
-      11,     7,    10,     2,     0,    41,     0,     9,    21,    17,
-      20,     0,    48,     0,     0,    19,    44,     0,    43,     0,
-       0,     0,    47,    49,    50,    13,    14,    15,    16,     0,
-       0,     0,    40,    53,    51,    65,    46,     4,    61,    12,
-       0,     0,    27,    29,    30,    28,     0,    31,     0,     0,
-      23,    24,    25,    26,     0,    42,     0,     0,     0,     0,
-       0,     0,     0,    65,     0,     0,    66,    89,    77,     0,
-       0,     0,    68,    69,     0,    70,    71,    72,    73,    74,
-      75,    76,     0,    38,     0,    37,     6,     0,     0,    22,
-      45,     0,     0,     0,     0,     0,     0,   120,   128,     0,
-     109,   114,   119,    93,   102,     0,     0,     0,     0,     0,
-       0,     0,     0,    62,     0,     0,    64,     0,     0,     0,
-      35,     0,     0,    32,    33,    56,    59,     0,    58,     0,
-       8,   131,   130,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     3,     1,     8,     0,     0,    17,
+       0,     7,    10,     2,     0,    39,     0,     9,     0,    16,
+      19,     0,    45,    12,    13,    14,    15,     0,     0,    18,
+       6,     0,     0,    41,     0,     0,     0,    44,    46,    47,
+      11,     0,     0,    25,    27,    28,    26,     0,    29,     0,
+       0,    21,    22,    23,    24,     0,     0,    38,     0,     0,
+      59,    43,     4,    55,     0,     0,     0,    36,     0,     0,
+       0,    20,     5,    42,    40,     0,     0,     0,     0,     0,
+       0,     0,     0,    59,     0,     0,    60,    79,    71,     0,
+       0,     0,    62,    63,     0,    64,    65,    66,    67,    68,
+      69,    70,     0,     0,     0,    34,     0,    30,    32,    31,
+      51,     0,     0,    53,     0,     8,     0,     0,     0,   109,
+     113,     0,    98,   103,   108,     0,    91,     0,     0,     0,
+       0,     0,     0,     0,     0,    56,     0,     0,    58,     0,
+       0,    37,    35,     0,     0,    50,    29,     0,     0,   116,
+     115,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    63,    67,    78,     0,     0,    36,     5,     0,     0,
-      55,     0,     0,   129,     0,     0,     0,     0,     0,   100,
-     103,   104,   105,   108,   106,   107,   112,   113,   110,   111,
-     118,   115,   116,   117,     0,    91,    85,    92,    97,    86,
-       0,    83,   133,     0,     0,    39,     0,    57,     8,    52,
-       0,     0,   126,     0,    98,     0,     0,     0,    81,    84,
-       0,    88,    34,    60,     0,   122,   124,   127,   101,    99,
-      96,    95,     0,    90,   132,    54,     0,     0,    94
+       0,     0,     0,     0,     0,     0,    75,     0,   118,     0,
+      57,    61,    72,     0,    54,    52,     8,    48,   114,   112,
+       0,     0,     0,     0,    89,    92,    93,    94,    97,    95,
+      96,   101,   102,    99,   100,   107,   104,   105,   106,     0,
+      81,    76,    82,    86,    77,    74,     0,    78,    33,     0,
+     111,   110,     0,    87,     0,    85,    84,     0,     0,   117,
+      49,    90,    88,     0,    80,     0,    83
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -139,  -139,  -139,  -138,  -139,  -139,  -139,   253,  -139,   -23,
-    -139,  -139,   246,  -139,   -61,  -133,   174,  -139,  -139,  -139,
-     136,  -139,  -139,  -139,   226,  -139,  -139,   238,  -139,  -139,
-    -139,  -139,   203,  -139,    93,  -139,  -139,   240,   200,   205,
-    -119,   151,  -139,  -139,  -139,  -139,  -139,  -139,  -139,  -139,
-    -139,  -139,  -139,  -139,  -139,  -139,  -139,    49,  -139,   -67,
-      90,    94,     6,  -139,  -139,  -139,  -139,    95
+    -134,  -134,  -134,  -108,   -38,  -134,  -134,   259,   -16,  -134,
+    -134,   252,   -55,  -104,   209,  -134,  -134,  -134,   166,  -134,
+    -134,   217,  -134,   239,  -134,  -134,   219,  -134,   132,  -134,
+     241,   196,   201,  -133,   143,  -134,  -134,  -134,  -134,  -134,
+    -134,  -134,  -134,  -134,  -134,    58,  -134,   -76,    85,    90,
+     -13,   129
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,     2,     3,     8,    97,     9,    11,    12,    16,   108,
-      15,    19,    20,    24,    59,    60,    61,    62,    63,    94,
-      95,   129,    22,    27,    28,    41,    31,    32,    33,    67,
-      34,    66,   102,   137,   138,   178,    47,    78,    79,    80,
-      81,    82,    83,    84,   120,   121,   229,    85,   122,    86,
-      87,    88,   162,   242,    89,    90,   188,   189,    91,   212,
-     110,   111,   112,   144,   145,   146,   237,   213
+      -1,     2,     3,     8,    31,     9,    11,    12,   120,    15,
+      19,    20,    50,    51,    52,    53,    54,    66,    67,    22,
+      32,    33,    36,    37,    38,    39,    76,   112,   113,    62,
+      88,    89,    90,    91,    92,    93,    94,    95,    96,    97,
+      98,   227,    99,   100,   193,   194,   101,   178,   122,   123,
+     124,   179
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -732,66 +714,68 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      39,   109,   182,   100,   115,   171,   181,   118,   165,   123,
-      45,    68,    52,    53,    54,    55,  -125,    58,    69,   166,
-      70,    71,  -123,   132,  -121,   179,    72,     1,    73,   104,
-     133,   180,   124,    50,    74,    75,    56,   130,   224,   143,
-     135,    58,    57,     5,   205,   136,     4,   208,   124,     6,
-     105,    51,   167,   148,   149,   150,   151,   152,   153,     7,
-     173,    52,    53,    54,    55,   154,    76,    77,   106,    58,
-      35,    36,    37,    38,   107,   134,   131,   225,    29,    10,
-     234,    13,    14,   233,    30,    56,   155,    35,    36,    37,
-      38,    57,   156,   157,    18,    21,   230,   247,   207,    26,
-     230,   210,   158,   231,   238,    45,    68,   235,   243,    23,
-     141,   142,    40,    69,   215,    70,    71,    42,   221,    43,
-     147,    72,   164,    73,   187,    44,    49,    92,   248,    74,
-      75,   148,   149,   150,   151,   152,   153,   226,   159,   160,
-     161,    93,    45,   240,   148,   149,   150,   151,   152,   153,
-     163,    29,    58,   232,    96,    64,    98,    30,   113,   241,
-      99,   101,    77,   244,   200,   201,   202,   203,   148,   149,
-     150,   151,   152,   153,    76,   246,   148,   149,   150,   151,
-     152,   153,   148,   149,   150,   151,   152,   153,   116,   119,
-     -82,    58,   127,   125,   126,   -79,   -80,   183,   -87,   139,
-     140,   169,   187,   148,   149,   150,   151,   152,   153,   148,
-     149,   150,   151,   152,   153,   170,   168,   175,   209,   174,
-     177,   186,   228,   148,   149,   150,   151,   152,   153,   148,
-     149,   150,   151,   152,   153,   184,   236,   185,   190,   191,
-     192,   193,   194,   195,    35,    36,    37,    38,   196,   197,
-     198,   199,   204,   206,   211,   214,   216,   136,   218,   219,
-     222,   223,   227,   245,    17,    25,   128,   176,    65,    46,
-     103,    48,   217,   117,   239,   114,   172,     0,     0,   220
+      27,    73,   121,   180,    65,   127,   173,   148,   130,    68,
+     147,   105,    49,   135,   223,    41,   156,   157,   158,   159,
+     160,   161,   166,   156,   157,   158,   159,   160,   161,    34,
+     136,   188,    55,    42,    56,    35,   215,   111,   210,   184,
+      49,   213,   151,    43,    44,    45,    46,    60,    49,   141,
+     106,     1,   136,   224,   109,   175,    34,   177,   167,   168,
+     169,   110,    35,   182,     5,     4,    30,    47,    65,    23,
+      24,    25,    26,    48,    60,    78,    55,   190,   219,   216,
+     216,     7,    79,   107,    80,    81,   217,   221,    49,   231,
+      82,     6,    83,   116,   209,   234,    10,   212,    84,    85,
+      60,    78,   236,   149,   150,    13,   111,   174,    79,    14,
+      80,    81,    16,   152,   117,   172,    82,   144,    83,   153,
+      55,   154,   104,   145,    84,    85,   235,    55,   218,   143,
+      86,    87,   118,    18,    23,    24,    25,    26,   119,   192,
+     229,   156,   157,   158,   159,   160,   161,    21,   155,    28,
+     225,   233,    40,   205,   206,   207,   208,    87,    30,    57,
+     156,   157,   158,   159,   160,   161,   226,    49,    43,    44,
+      45,    46,   156,   157,   158,   159,   160,   161,   162,    23,
+      24,    25,    26,   156,   157,   158,   159,   160,   161,    58,
+      59,   171,    47,    64,    69,   132,    72,    70,   146,   163,
+     -73,   133,    71,   134,   108,   164,   165,   114,   192,   156,
+     157,   158,   159,   160,   161,   156,   157,   158,   159,   160,
+     161,   156,   157,   158,   159,   160,   161,    75,   115,   138,
+     214,   125,   128,    86,   220,   156,   157,   158,   159,   160,
+     161,   195,   196,   197,   198,   199,   200,    23,    24,    25,
+      26,   102,   201,   202,   203,   204,   131,   137,   140,   139,
+     170,   176,   183,   186,   187,   211,   189,   222,   228,   230,
+      17,    29,   142,   103,    74,    61,   185,    63,    77,   129,
+     181,   126,   232,   191
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      23,    68,   140,    64,    71,   124,   139,    74,    27,    12,
-       5,     6,    32,    33,    34,    35,    48,    40,    13,     8,
-      15,    16,    54,    50,    56,    51,    21,    19,    23,    17,
-      57,    57,    51,     4,    29,    30,    56,    12,    12,   106,
-      57,    64,    62,     0,   163,    62,    62,   166,    51,    51,
-      38,    22,   119,    42,    43,    44,    45,    46,    47,     7,
-     127,    32,    33,    34,    35,    10,    61,    62,    56,    92,
-      58,    59,    60,    61,    62,    98,    51,    51,    14,    62,
-     218,    48,    26,   216,    20,    56,    31,    58,    59,    60,
-      61,    62,    37,    38,    62,    28,    50,     8,   165,    62,
-      50,   168,     3,    57,   223,     5,     6,    57,   227,    44,
-     104,   105,    44,    13,   175,    15,    16,    51,   185,    62,
-      18,    21,   116,    23,   147,    62,    51,    54,   247,    29,
-      30,    42,    43,    44,    45,    46,    47,   204,    39,    40,
-      41,    62,     5,     9,    42,    43,    44,    45,    46,    47,
-      24,    14,   175,   214,    62,    52,    49,    20,    62,    25,
-      51,    56,    62,   230,   158,   159,   160,   161,    42,    43,
-      44,    45,    46,    47,    61,   242,    42,    43,    44,    45,
-      46,    47,    42,    43,    44,    45,    46,    47,    56,    56,
-      48,   214,    53,    52,    51,    53,    54,    57,    56,    52,
-      51,    48,   225,    42,    43,    44,    45,    46,    47,    42,
-      43,    44,    45,    46,    47,    56,    54,    52,    57,    55,
-      62,    48,    55,    42,    43,    44,    45,    46,    47,    42,
-      43,    44,    45,    46,    47,    56,    55,    54,   148,   149,
-     150,   151,   152,   153,    58,    59,    60,    61,   154,   155,
-     156,   157,    53,    57,    62,    18,    52,    62,    51,    51,
-      62,    52,    11,    51,    11,    19,    92,   131,    42,    31,
-      67,    31,   179,    73,   225,    70,   125,    -1,    -1,   184
+      16,    56,    78,   136,    42,    81,    27,   115,    84,    47,
+     114,    12,    28,    12,    12,     4,    42,    43,    44,    45,
+      46,    47,     3,    42,    43,    44,    45,    46,    47,    14,
+      51,    57,    50,    22,    52,    20,    55,    75,   171,   143,
+      56,   174,   118,    32,    33,    34,    35,     5,    64,   104,
+      51,    19,    51,    51,    70,   131,    14,   133,    39,    40,
+      41,    57,    20,   139,     0,    62,    62,    56,   106,    58,
+      59,    60,    61,    62,     5,     6,    50,   153,   186,    50,
+      50,     7,    13,    57,    15,    16,    57,    57,   104,   222,
+      21,    51,    23,    17,   170,   228,    62,   173,    29,    30,
+       5,     6,   235,   116,   117,    48,   144,     8,    13,    26,
+      15,    16,    44,    48,    38,   128,    21,    51,    23,    54,
+      50,    56,    52,    57,    29,    30,     8,    50,   183,    52,
+      61,    62,    56,    62,    58,    59,    60,    61,    62,   155,
+     216,    42,    43,    44,    45,    46,    47,    28,    18,    44,
+       9,   227,    51,   166,   167,   168,   169,    62,    62,    51,
+      42,    43,    44,    45,    46,    47,    25,   183,    32,    33,
+      34,    35,    42,    43,    44,    45,    46,    47,    10,    58,
+      59,    60,    61,    42,    43,    44,    45,    46,    47,    62,
+      62,    24,    56,    54,    49,    48,    62,    49,    62,    31,
+      53,    54,    51,    56,    62,    37,    38,    52,   224,    42,
+      43,    44,    45,    46,    47,    42,    43,    44,    45,    46,
+      47,    42,    43,    44,    45,    46,    47,    56,    51,    51,
+      57,    62,    56,    61,    55,    42,    43,    44,    45,    46,
+      47,   156,   157,   158,   159,   160,   161,    58,    59,    60,
+      61,    62,   162,   163,   164,   165,    56,    52,    55,    53,
+      53,    62,    18,    51,    51,    57,    62,    52,    11,    51,
+      11,    19,   106,    64,    57,    36,   144,    36,    59,    83,
+     137,    80,   224,   154
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -799,68 +783,63 @@ static const yytype_int16 yycheck[] =
 static const yytype_uint8 yystos[] =
 {
        0,    19,    64,    65,    62,     0,    51,     7,    66,    68,
-      62,    69,    70,    48,    26,    73,    71,    70,    62,    74,
-      75,    28,    85,    44,    76,    75,    62,    86,    87,    14,
-      20,    89,    90,    91,    93,    58,    59,    60,    61,    72,
-      44,    88,    51,    62,    62,     5,    90,    99,   100,    51,
-       4,    22,    32,    33,    34,    35,    56,    62,    72,    77,
-      78,    79,    80,    81,    52,    87,    94,    92,     6,    13,
-      15,    16,    21,    23,    29,    30,    61,    62,   100,   101,
-     102,   103,   104,   105,   106,   110,   112,   113,   114,   117,
-     118,   121,    54,    62,    82,    83,    62,    67,    49,    51,
-      77,    56,    95,    95,    17,    38,    56,    62,    72,   122,
-     123,   124,   125,    62,   102,   122,    56,   101,   122,    56,
-     107,   108,   111,    12,    51,    52,    51,    53,    79,    84,
-      12,    51,    50,    57,    72,    57,    62,    96,    97,    52,
-      51,   125,   125,   122,   126,   127,   128,    18,    42,    43,
-      44,    45,    46,    47,    10,    31,    37,    38,     3,    39,
-      40,    41,   115,    24,   125,    27,     8,   122,    54,    48,
-      56,   103,   104,   122,    55,    52,    83,    62,    98,    51,
-      57,    78,    66,    57,    56,    54,    48,    72,   119,   120,
-     123,   123,   123,   123,   123,   123,   124,   124,   124,   124,
-     125,   125,   125,   125,    53,   103,    57,   122,   103,    57,
-     122,    62,   122,   130,    18,    77,    52,    97,    51,    51,
-     130,   122,    62,    52,    12,    51,   122,    11,    55,   109,
-      50,    57,    77,    78,    66,    57,    55,   129,   103,   120,
-       9,    25,   116,   103,   122,    51,   122,     8,   103
+      62,    69,    70,    48,    26,    72,    44,    70,    62,    73,
+      74,    28,    82,    58,    59,    60,    61,    71,    44,    74,
+      62,    67,    83,    84,    14,    20,    85,    86,    87,    88,
+      51,     4,    22,    32,    33,    34,    35,    56,    62,    71,
+      75,    76,    77,    78,    79,    50,    52,    51,    62,    62,
+       5,    86,    92,    93,    54,    67,    80,    81,    67,    49,
+      49,    51,    62,    75,    84,    56,    89,    89,     6,    13,
+      15,    16,    21,    23,    29,    30,    61,    62,    93,    94,
+      95,    96,    97,    98,    99,   100,   101,   102,   103,   105,
+     106,   109,    62,    77,    52,    12,    51,    57,    62,    71,
+      57,    67,    90,    91,    52,    51,    17,    38,    56,    62,
+      71,   110,   111,   112,   113,    62,    95,   110,    56,    94,
+     110,    56,    48,    54,    56,    12,    51,    52,    51,    53,
+      55,    75,    81,    52,    51,    57,    62,    76,    66,   113,
+     113,   110,    48,    54,    56,    18,    42,    43,    44,    45,
+      46,    47,    10,    31,    37,    38,     3,    39,    40,    41,
+      53,    24,   113,    27,     8,   110,    62,   110,   110,   114,
+      96,    97,   110,    18,    76,    91,    51,    51,    57,    62,
+     110,   114,    71,   107,   108,   111,   111,   111,   111,   111,
+     111,   112,   112,   112,   112,   113,   113,   113,   113,   110,
+      96,    57,   110,    96,    57,    55,    50,    57,    75,    66,
+      55,    57,    52,    12,    51,     9,    25,   104,    11,   110,
+      51,    96,   108,   110,    96,     8,    96
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
        0,    63,    64,    65,    66,    67,    67,    68,    68,    69,
-      69,    71,    70,    72,    72,    72,    72,    73,    73,    74,
-      74,    76,    75,    77,    77,    77,    77,    78,    78,    78,
-      78,    78,    78,    79,    80,    81,    82,    82,    84,    83,
-      85,    85,    86,    86,    88,    87,    89,    89,    89,    90,
-      90,    92,    91,    94,    93,    95,    95,    96,    96,    98,
-      97,    99,   100,   101,   101,   101,   102,   103,   103,   104,
-     104,   104,   104,   104,   104,   104,   104,   104,   105,   106,
-     107,   106,   108,   109,   106,   110,   110,   111,   110,   110,
-     112,   112,   113,   115,   114,   116,   116,   117,   118,   119,
-     119,   120,   121,   122,   122,   122,   122,   122,   122,   122,
-     123,   123,   123,   123,   123,   124,   124,   124,   124,   124,
-     125,   126,   125,   127,   125,   128,   129,   125,   125,   125,
-     125,   125,   130,   130
+      69,    70,    71,    71,    71,    71,    72,    72,    73,    73,
+      74,    75,    75,    75,    75,    76,    76,    76,    76,    76,
+      76,    77,    77,    78,    79,    80,    80,    81,    82,    82,
+      83,    83,    84,    85,    85,    85,    86,    86,    87,    88,
+      89,    89,    90,    90,    91,    92,    93,    94,    94,    94,
+      95,    96,    96,    97,    97,    97,    97,    97,    97,    97,
+      97,    97,    98,    99,    99,    99,   100,   100,   100,   100,
+     101,   101,   102,   103,   104,   104,   105,   106,   107,   107,
+     108,   109,   110,   110,   110,   110,   110,   110,   110,   111,
+     111,   111,   111,   111,   112,   112,   112,   112,   112,   113,
+     113,   113,   113,   113,   113,   113,   113,   114,   114
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     4,     2,     5,     3,     1,     2,     0,     2,
-       1,     0,     5,     1,     1,     1,     1,     2,     0,     2,
-       1,     0,     5,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     3,     3,     6,     3,     3,     1,     0,     4,
-       3,     0,     3,     1,     0,     4,     2,     1,     0,     1,
-       1,     0,     7,     0,     9,     3,     2,     3,     1,     0,
-       4,     1,     3,     3,     2,     0,     1,     3,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     3,     1,
-       0,     5,     0,     0,     5,     4,     4,     0,     5,     1,
-       6,     4,     4,     0,     9,     1,     1,     4,     5,     3,
-       1,     3,     2,     3,     3,     3,     3,     3,     3,     1,
-       3,     3,     3,     3,     1,     3,     3,     3,     3,     1,
-       1,     0,     5,     0,     5,     0,     0,     5,     1,     3,
-       2,     2,     3,     1
+       1,     4,     1,     1,     1,     1,     2,     0,     2,     1,
+       4,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       3,     3,     3,     6,     3,     3,     1,     3,     3,     0,
+       3,     1,     3,     2,     1,     0,     1,     1,     6,     8,
+       3,     2,     3,     1,     3,     1,     3,     3,     2,     0,
+       1,     3,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     3,     1,     4,     3,     4,     4,     4,     1,
+       6,     4,     4,     8,     1,     1,     4,     5,     3,     1,
+       3,     2,     3,     3,     3,     3,     3,     3,     1,     3,
+       3,     3,     3,     1,     3,     3,     3,     3,     1,     1,
+       4,     4,     3,     1,     3,     2,     2,     3,     1
 };
 
 
@@ -1536,1264 +1515,8 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 38 "parser.y" /* yacc.c:1646  */
-    {
-             showNodeInfo("program -> program_head SEMICOLON block DOT");
-             (yyval) = (yyvsp[-1]);
-             (yyvsp[-1])->setName((yyvsp[-3])->getName());
-             delete (yyvsp[-3]);
-
-             root = (yyval);
-         }
-#line 1550 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 3:
-#line 48 "parser.y" /* yacc.c:1646  */
-    {
-                  showNodeInfo("program_head -> PROGRAM ID");
-                  (yyval) = new TreeNode();
-                  (yyval)->setName(yytext);
-              }
-#line 1560 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 4:
-#line 59 "parser.y" /* yacc.c:1646  */
-    {
-        showNodeInfo("block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part");
-        (yyval) = new ProgramBodyTreeNode((yyvsp[-4]), (yyvsp[-3]), (yyvsp[-2]), (yyvsp[-1]), (yyvsp[0]));
-    }
-#line 1569 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 5:
-#line 65 "parser.y" /* yacc.c:1646  */
-    {
-             showNodeInfo("id_list -> id_list COMMA ID");
-             (yyval) = (yyvsp[-2]);
-             std::string name = yytext;
-             TreeNode* node = new TreeNode();
-             node->setName(name);
-
-             ((ListTreeNode*)(yyval))->insert(node);
-         }
-#line 1583 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 6:
-#line 75 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("id_list -> ID");
-          std::string name = yytext;
-          std::vector<TreeNode*> list;
-          TreeNode* node = new TreeNode();
-          node->setName(name);
-          list.push_back(node);
-
-          (yyval) = new ListTreeNode("id_list", list);
-      }
-#line 1598 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 7:
-#line 88 "parser.y" /* yacc.c:1646  */
-    {
-                              showNodeInfo("constant_definition_part -> CONST constant_list");
-                              (yyval) = (yyvsp[-1]);
-                          }
-#line 1607 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 92 "parser.y" /* yacc.c:1646  */
-    {
-         showNodeInfo("constant_definition_part ->");
-         std::vector<TreeNode*> list;
-         (yyval) = new ListTreeNode("constant_definition_part", list);
-      }
-#line 1617 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 9:
-#line 99 "parser.y" /* yacc.c:1646  */
-    {
-                   showNodeInfo("constant_list -> constant_list constant_definition");
-                   (yyval) = (yyvsp[-1]);
-                   ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-               }
-#line 1627 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 10:
-#line 105 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("constant_list -> constant_definition");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("constant_list", list);
-      }
-#line 1638 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 112 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 1644 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 12:
-#line 113 "parser.y" /* yacc.c:1646  */
-    {
-                         showNodeInfo("constant_definition -> ID EQUAL constant_value SEMICOLON");
-                         std::string name = stringQueue.front();
-                         stringQueue.pop();
-                         VariableTreeNode* varNode = new VariableTreeNode(name, nullptr, true);
-                         BinaryExprTreeNode* binNode = new BinaryExprTreeNode(":=", varNode, (yyvsp[-1]));
-                         (yyval) = binNode;
-                     }
-#line 1657 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 13:
-#line 123 "parser.y" /* yacc.c:1646  */
-    {
-                    showNodeInfo("constant_value -> INTEGER");
-                    (yyval) = new LiteralTreeNode(yytext, "integer");
-                }
-#line 1666 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 14:
-#line 128 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("constant_value -> REAL");
-          (yyval) = new LiteralTreeNode(yytext, "real");
-      }
-#line 1675 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 15:
-#line 133 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("constant_value -> CHAR");
-          (yyval) = new LiteralTreeNode(yytext, "char");
-      }
-#line 1684 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 16:
-#line 138 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("constant_value -> STRING");
-          (yyval) = new LiteralTreeNode(yytext, "string");
-      }
-#line 1693 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 17:
-#line 145 "parser.y" /* yacc.c:1646  */
-    {
-                          showNodeInfo("type_definition_part -> TYPE type_definition_list");
-                          (yyval) = (yyvsp[0]);
-                      }
-#line 1702 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 18:
-#line 149 "parser.y" /* yacc.c:1646  */
-    {
-         showNodeInfo("type_definition_part -> ");
-         std::vector<TreeNode*> list;
-         (yyval) = new ListTreeNode("type_definition_part", list);
-      }
-#line 1712 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 19:
-#line 156 "parser.y" /* yacc.c:1646  */
-    {
-                          showNodeInfo("type_definition_list -> type_definition_list type_definition");
-                          (yyval) = (yyvsp[-1]);
-                          ((ListTreeNode*)(yyval))->insert((yyvsp[-1]));
-                      }
-#line 1722 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 20:
-#line 162 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("type_definition_list -> type_definition");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("type_definition_list", list);
-      }
-#line 1733 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 21:
-#line 169 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 1739 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 22:
-#line 170 "parser.y" /* yacc.c:1646  */
-    {
-                     showNodeInfo("type_definition -> ID EQUAL type_denoter SEMICOLON");
-                     std::string name = stringQueue.front();
-                     stringQueue.pop();
-                     (yyval) = new CustomTypeTreeNode(name, (yyvsp[-1]));
-                 }
-#line 1750 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 23:
-#line 178 "parser.y" /* yacc.c:1646  */
-    {
-                  showNodeInfo("type_denoter -> simple_type");
-                  (yyval) = (yyvsp[0]);
-              }
-#line 1759 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 24:
-#line 183 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("type_denoter -> range_type");
-          (yyval) = (yyvsp[0]);
-      }
-#line 1768 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 25:
-#line 188 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("type_denoter -> array_type");
-          (yyval) = (yyvsp[0]);
-      }
-#line 1777 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 26:
-#line 193 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("type_denoter -> record_type");
-          (yyval) = (yyvsp[0]);
-      }
-#line 1786 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 27:
-#line 199 "parser.y" /* yacc.c:1646  */
-    {
-                 showNodeInfo("simple_type -> TYPE_INTEGER");
-                 (yyval) = new CommonTypeTreeNode("integer");
-             }
-#line 1795 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 28:
-#line 204 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("simple_type -> TYPE_CHAR");
-          (yyval) = new CommonTypeTreeNode("char");
-      }
-#line 1804 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 29:
-#line 209 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("simple_type -> TYPE_REAL");
-          (yyval) = new CommonTypeTreeNode("real");
-      }
-#line 1813 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 30:
-#line 214 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("simple_type -> TYPE_STRING");
-          (yyval) = new CommonTypeTreeNode("string");
-      }
-#line 1822 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 31:
-#line 219 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("simple_type -> ID");
-          (yyval) = new CustomTypeTreeNode(yytext, nullptr);
-      }
-#line 1831 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 32:
-#line 224 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("simple_type -> LP id_list RP");
-          (yyval) = new EnumTypeTreeNode((yyvsp[-1]), "enum_type");
-      }
-#line 1840 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 33:
-#line 230 "parser.y" /* yacc.c:1646  */
-    {
-                showNodeInfo("range_type -> constant_value DOTDOT constant_value");
-                (yyval) = new RangeTypeTreeNode((IDTreeNode*)(yyvsp[-2]), (IDTreeNode*)(yyvsp[0]));
-            }
-#line 1849 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 236 "parser.y" /* yacc.c:1646  */
-    {
-
-            }
-#line 1857 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 35:
-#line 241 "parser.y" /* yacc.c:1646  */
-    {
-                 showNodeInfo("record_type -> RECORD field_definition_list END");
-                 std::vector<TreeNode*> list = ((ListTreeNode*)(yyvsp[-1]))->getList();
-                 (yyval) = new RecordTypeTreeNode(list);
-             }
-#line 1867 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 36:
-#line 248 "parser.y" /* yacc.c:1646  */
-    {
-                           showNodeInfo("field_definition_list -> field_definition_list SEMICOLON field_definition");
-                           (yyval) = (yyvsp[-2]);
-                           ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-                       }
-#line 1877 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 37:
-#line 254 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("field_definition_list -> field_definition");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("field_definition_list", list);
-      }
-#line 1888 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 38:
-#line 261 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 1894 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 39:
-#line 262 "parser.y" /* yacc.c:1646  */
-    {
-                      showNodeInfo("field_definition -> ID COLON type_denoter");
-                      std::string name = stringQueue.front();
-                      stringQueue.pop();
-                      (yyval) = new VariableTreeNode(name, (yyvsp[0]));
-                  }
-#line 1905 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 271 "parser.y" /* yacc.c:1646  */
-    {
-                               showNodeInfo("variable_declaration_part -> VAR variable_declaration_list SEMICOLON");
-                               (yyval) = (yyvsp[-1]);
-                           }
-#line 1914 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 41:
-#line 275 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("variable_declaration_part ->");
-          std::vector<TreeNode*> list;
-          (yyval) = new ListTreeNode("variable_declaration_part", list);
-      }
-#line 1924 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 42:
-#line 282 "parser.y" /* yacc.c:1646  */
-    {
-                               showNodeInfo("variable_declaration_list -> variable_declaration_list SEMICOLON variable_declaration");
-                               (yyval) = (yyvsp[-2]);
-                               ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-                           }
-#line 1934 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 288 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("variable_declaration_list -> variable_declaration");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("variable_declaration_list", list);
-      }
-#line 1945 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 295 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 1951 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 45:
-#line 296 "parser.y" /* yacc.c:1646  */
-    {
-                          showNodeInfo("variable_declaration -> ID COLON type_denoter");
-                          std::string name = stringQueue.front();
-                          stringQueue.pop();
-                          (yyval) = new VariableTreeNode(name, (yyvsp[0]));
-                      }
-#line 1962 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 46:
-#line 305 "parser.y" /* yacc.c:1646  */
-    {
-                                         showNodeInfo("procedure_function_declaration_part -> procedure_function_declaration_part procedure_function_declaration");
-                                         (yyval) = (yyvsp[-1]);
-                                         ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-                                     }
-#line 1972 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 47:
-#line 311 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_function_declaration_part -> procedure_function_declaration");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("procedure_function_declaration_part", list);
-      }
-#line 1983 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 48:
-#line 317 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_function_declaration_part ->");
-          std::vector<TreeNode*> list;
-          (yyval) = new ListTreeNode("procedure_function_declaration_part", list);
-      }
-#line 1993 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 49:
-#line 324 "parser.y" /* yacc.c:1646  */
-    {
-                                    showNodeInfo("procedure_function_declaration -> procedure_declaration ");
-                                    (yyval) = (yyvsp[0]);
-                                }
-#line 2002 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 50:
-#line 329 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_function_declaration -> function_declaration");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2011 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 51:
-#line 334 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2017 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 52:
-#line 335 "parser.y" /* yacc.c:1646  */
-    {
-                           showNodeInfo("procedure_declaration -> PROCEDURE ID parameters SEMICOLON block SEMICOLON");
-                           std::string name = stringQueue.front();
-                           stringQueue.pop();
-                           (yyval) = new FuncOrProcTreeNode(name, (yyvsp[-3]), (yyvsp[-1]));
-                       }
-#line 2028 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 53:
-#line 342 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2034 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 54:
-#line 343 "parser.y" /* yacc.c:1646  */
-    {
-                          showNodeInfo("function_declaration -> FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON");
-                          std::string name = stringQueue.front();
-                          stringQueue.pop();
-                          (yyval) = new FuncOrProcTreeNode(name, (yyvsp[-5]), (yyvsp[-1]), (yyvsp[-3]), true);
-                      }
-#line 2045 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 55:
-#line 351 "parser.y" /* yacc.c:1646  */
-    {
-                showNodeInfo("parameters -> LP parameter_list RP");
-                (yyval) = (yyvsp[-1]);
-            }
-#line 2054 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 56:
-#line 356 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("parameters -> LP RP");
-          std::vector<TreeNode*> emptyList;
-          (yyval) = new ListTreeNode("parameters", emptyList);
-      }
-#line 2064 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 57:
-#line 363 "parser.y" /* yacc.c:1646  */
-    {
-                    showNodeInfo("parameter_list -> parameter_list SEMICOLON parameter");
-                    (yyval) = (yyvsp[-2]);
-                    ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-                }
-#line 2074 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 58:
-#line 369 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("parameter_list -> parameter");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("parameter_list", list);
-      }
-#line 2085 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 59:
-#line 376 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2091 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 60:
-#line 377 "parser.y" /* yacc.c:1646  */
-    {
-               showNodeInfo("parameter -> ID COLON simple_type");
-               std::string name = stringQueue.front();
-               stringQueue.pop();
-               (yyval) = new VariableTreeNode(name, (yyvsp[0]));
-           }
-#line 2102 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 61:
-#line 386 "parser.y" /* yacc.c:1646  */
-    {
-                     showNodeInfo("block_body_part -> compound_statement");
-                     std::vector<TreeNode*> body;
-                     body.push_back((yyvsp[0]));
-                     (yyval) = new ListTreeNode("block_body_part", body);
-                 }
-#line 2113 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 62:
-#line 394 "parser.y" /* yacc.c:1646  */
-    {
-                        showNodeInfo("compound_statement -> BEGIN_ statememt_list END");
-                        (yyval) = new CompoundStmtTreeNode((ListTreeNode*)(yyvsp[-1]));
-                    }
-#line 2122 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 63:
-#line 400 "parser.y" /* yacc.c:1646  */
-    {
-                    showNodeInfo("statememt_list -> statememt_list SEMICOLON statememt");
-                    (yyval) = (yyvsp[-2]);
-                    ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-                }
-#line 2132 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 64:
-#line 406 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("statememt_list -> statememt SEMICOLON");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[-1]));
-          (yyval) = new ListTreeNode("statement_list", list);
-      }
-#line 2143 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 65:
-#line 413 "parser.y" /* yacc.c:1646  */
-    {
-         showNodeInfo("statememt_list -> ");
-         std::vector<TreeNode*> list;
-         (yyval) = new ListTreeNode("statement_list", list);
-      }
-#line 2153 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 66:
-#line 420 "parser.y" /* yacc.c:1646  */
-    {
-           showNodeInfo("label -> STRING");
-           std::string labelName = yytext;
-           TreeNode* node = new TreeNode();
-           node->setName(labelName);
-           (yyval) = node;
-       }
-#line 2165 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 67:
-#line 429 "parser.y" /* yacc.c:1646  */
-    {
-               showNodeInfo("statement -> label COLON stmt");
-               (yyval) = (yyvsp[0]);
-               const std::string labelName = (yyvsp[-2])->getName();
-               ((StatementTreeNode*)(yyval))->setLabel(hashCodeForString(labelName));
-               delete (yyvsp[-2]);
-           }
-#line 2177 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 68:
-#line 437 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("statement -> stmt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2186 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 69:
-#line 443 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> assign_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2195 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 70:
-#line 448 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> procedure_statement");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2204 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 71:
-#line 453 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> if_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2213 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 72:
-#line 458 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> repeat_statement");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2222 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 73:
-#line 463 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> for_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2231 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 74:
-#line 468 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> while_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2240 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 75:
-#line 473 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> case_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2249 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 76:
-#line 478 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> goto_statememt");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2258 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 77:
-#line 483 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("stmt -> compound_statement");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2267 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 78:
-#line 490 "parser.y" /* yacc.c:1646  */
-    {
-                     showNodeInfo("assign_statememt -> variable_access ASSIGN expression");
-                     (yyval) = new BinaryExprTreeNode(":=", (yyvsp[-2]), (yyvsp[0]));
-                  }
-#line 2276 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 79:
-#line 496 "parser.y" /* yacc.c:1646  */
-    {
-                     showNodeInfo("variable_access -> ID");
-                     (yyval) = new VariableTreeNode(yytext);
-                 }
-#line 2285 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 80:
-#line 500 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2291 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 81:
-#line 501 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("variable_access -> ID LB expression RB");
-          std::string arrayName = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new ArrayElemTreeNode(arrayName, (yyvsp[-1]));
-      }
-#line 2302 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 82:
-#line 507 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2308 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 83:
-#line 507 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2314 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 84:
-#line 508 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("variable_access -> ID DOT ID");
-          std::string rname = stringQueue.front();
-          stringQueue.pop();
-          std::string ename = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new RecordElemTreeNode(rname, ename);
-      }
-#line 2327 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 85:
-#line 519 "parser.y" /* yacc.c:1646  */
-    {
-                         showNodeInfo("procedure_statement -> READ LP factor RP");
-                         // You need to release it and make it NULL
-                         std::vector<TreeNode*>* list = new std::vector<TreeNode*>;
-                         list->push_back((yyvsp[-1]));
-                         (yyval) = new CallExprTreeNode("read", list, false);
-                         
-                     }
-#line 2340 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 86:
-#line 528 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_statement -> WRITE LP expression RP");
-          std::vector<TreeNode*>* list = new std::vector<TreeNode*>;
-          list->push_back((yyvsp[-1]));
-          (yyval) = new CallExprTreeNode("write", list, false);
-      }
-#line 2351 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 87:
-#line 534 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2357 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 88:
-#line 535 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_statement -> ID LP args RP");
-          std::string procName = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new CallExprTreeNode(procName, &(((ListTreeNode*)(yyvsp[-1]))->getList()), 
-            false);
-      }
-#line 2369 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 89:
-#line 543 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("procedure_statement -> ID");
-          std::string procName = yytext;
-          (yyval) = new CallExprTreeNode(procName, nullptr, false);
-      }
-#line 2379 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 90:
-#line 551 "parser.y" /* yacc.c:1646  */
-    {
-                  showNodeInfo("if_statememt -> IF expression THEN statememt ELSE statememt");
-                  (yyval) = new IfStmtTreeNode((ExprTreeNode*)(yyvsp[-4]), (StatementTreeNode*)(yyvsp[-2]), (StatementTreeNode*)(yyvsp[0]));
-              }
-#line 2388 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 91:
-#line 556 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("if_statememt -> IF expression THEN statememt");
-          (yyval) = new IfStmtTreeNode((ExprTreeNode*)(yyvsp[-2]), (StatementTreeNode*)(yyvsp[0]), nullptr);
-      }
-#line 2397 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 92:
-#line 563 "parser.y" /* yacc.c:1646  */
-    {
-                      showNodeInfo("repeat_statememt -> REPEAT statememt_list UNTIL expression");
-                      (yyval) = new RepeatStmtTreeNode((ExprTreeNode *)(yyvsp[0]), (StatementTreeNode *)(yyvsp[-2]));
-                  }
-#line 2406 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 93:
-#line 569 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2412 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 94:
-#line 570 "parser.y" /* yacc.c:1646  */
-    {
-                   showNodeInfo("for_statement -> FOR ID ASSIGN expression direction expression DO statememt");
-                   std::string variableId = stringQueue.front();
-                   stringQueue.pop();
-                   VariableTreeNode* varNode = new VariableTreeNode(variableId);
-                   BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, (yyvsp[-4]));
-                   std::string direction = (yyvsp[-3])->getName();
-                   (yyval) = new ForStmtTreeNode(exprNode, direction, (ExprTreeNode *)(yyvsp[-2]), (StatementTreeNode *)(yyvsp[0]));
-                   delete (yyvsp[-3]);
-               }
-#line 2427 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 95:
-#line 582 "parser.y" /* yacc.c:1646  */
-    {
-               showNodeInfo("direction -> TO");
-               (yyval) = new TreeNode();
-               (yyval)->setName("to");
-           }
-#line 2437 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 96:
-#line 588 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("direction -> DOWNTO");
-          (yyval) = new TreeNode();
-          (yyval)->setName("downto");
-      }
-#line 2447 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 97:
-#line 596 "parser.y" /* yacc.c:1646  */
-    {
-                     showNodeInfo("while_statement -> WHILE expression DO statement");
-                     (yyval) = new WhileStmtTreeNode((ExprTreeNode *)(yyvsp[-2]), (StatementTreeNode *)(yyvsp[0]));
-                 }
-#line 2456 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 98:
-#line 603 "parser.y" /* yacc.c:1646  */
-    {
-                    showNodeInfo("case_statement -> CASE expresion OF case_list END");
-                    (yyval) = new SwitchStmtTreeNode((ExprTreeNode *)(yyvsp[-3]), (ListTreeNode *)(yyvsp[-1]));
-                }
-#line 2465 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 99:
-#line 609 "parser.y" /* yacc.c:1646  */
-    {
-               showNodeInfo("case_list -> case_list SEMICOLON case_item");
-               (yyval) = (yyvsp[-2]);
-               ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-           }
-#line 2475 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 100:
-#line 615 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("case_list -> case_item");
-          std::vector<TreeNode*> list;
-          list.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("case_list", list);
-      }
-#line 2486 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 101:
-#line 623 "parser.y" /* yacc.c:1646  */
-    {
-               showNodeInfo("case_item -> constant_value COLON statement");
-               (yyval) = new CaseExprTreeNode((IDTreeNode *)(yyvsp[-2]), (StatementTreeNode *)(yyvsp[0]));
-           }
-#line 2495 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 102:
-#line 630 "parser.y" /* yacc.c:1646  */
-    {
-                    showNodeInfo("goto_statememt -> GOTO label");
-                    std::string labelName = (yyvsp[0])->getName();
-                    // you need to hash the labelName 
-                    (yyval) = new GotoStmtTreeNode(labelName);
-                    // remove tree node created for label
-                    delete (yyvsp[0]);
-                }
-#line 2508 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 103:
-#line 641 "parser.y" /* yacc.c:1646  */
-    {
-                showNodeInfo("expression -> expression LT expr");
-                (yyval) = new BinaryExprTreeNode("<", (yyvsp[-2]), (yyvsp[0]));
-            }
-#line 2517 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 104:
-#line 646 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expression LE expr");
-          (yyval) = new BinaryExprTreeNode("<=", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2526 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 105:
-#line 651 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expression EQUAL expr");
-          (yyval) = new BinaryExprTreeNode("=", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2535 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 106:
-#line 656 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expression GE expr");
-          (yyval) = new BinaryExprTreeNode(">=", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2544 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 107:
-#line 661 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expression GT expr");
-          (yyval) = new BinaryExprTreeNode(">", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2553 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 108:
-#line 666 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expression UNEQUAL expr");
-          (yyval) = new BinaryExprTreeNode("!=", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2562 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 109:
-#line 671 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expression -> expr");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2571 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 110:
-#line 677 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expr -> expr PLUS term");
-          (yyval) = new BinaryExprTreeNode("+", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2580 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 111:
-#line 682 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expr -> expr MNUS term");
-          (yyval) = new BinaryExprTreeNode("-", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2589 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 112:
-#line 687 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expr -> expr OR term");
-          (yyval) = new BinaryExprTreeNode("or", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2598 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 113:
-#line 692 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expr -> expr XOR term");
-          (yyval) = new BinaryExprTreeNode("xor", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2607 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 114:
-#line 697 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("expr -> term");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2616 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 115:
-#line 703 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("term -> term MULTIPLY factor");
-          (yyval) = new BinaryExprTreeNode("*", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2625 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 116:
-#line 708 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("term -> term DIVIDE factor");
-          (yyval) = new BinaryExprTreeNode("/", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2634 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 117:
-#line 713 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("term -> term MOD factor");
-          (yyval) = new BinaryExprTreeNode("%", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2643 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 118:
-#line 718 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("term -> term AND factor");
-          (yyval) = new BinaryExprTreeNode("and", (yyvsp[-2]), (yyvsp[0]));
-      }
-#line 2652 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 119:
-#line 723 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("term -> factor");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2661 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 120:
-#line 729 "parser.y" /* yacc.c:1646  */
-    { 
-          // Simple variable
-          showNodeInfo("factor ->ID");
-          (yyval) = new VariableTreeNode(yytext);
-        }
-#line 2671 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 121:
-#line 734 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2677 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 122:
-#line 735 "parser.y" /* yacc.c:1646  */
-    { 
-          // Function value
-          showNodeInfo("factor -> ID LP args RP"); 
-          std::string functionName = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new CallExprTreeNode(functionName,
-            &(((ListTreeNode*)(yyvsp[-1]))->getList()));
-      }
-#line 2690 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 123:
-#line 743 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2696 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 124:
-#line 744 "parser.y" /* yacc.c:1646  */
-    {
-          // Array Element
-          showNodeInfo("factor -> ID LB expression RB");
-          std::string arrayName = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new ArrayElemTreeNode(arrayName, (yyvsp[-1]));
-      }
-#line 2708 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 125:
-#line 751 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2714 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 126:
-#line 751 "parser.y" /* yacc.c:1646  */
-    { stringQueue.push(yytext); }
-#line 2720 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 127:
-#line 752 "parser.y" /* yacc.c:1646  */
-    {
-          // Record element
-          showNodeInfo("factor -> ID DOT ID");
-          std::string recordName = stringQueue.front();
-          stringQueue.pop();
-          std::string recordElemName = stringQueue.front();
-          stringQueue.pop();
-          (yyval) = new RecordElemTreeNode(recordName, recordElemName);
-      }
-#line 2734 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 128:
-#line 762 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("factor -> constant_value");
-          (yyval) = (yyvsp[0]);
-      }
-#line 2743 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 129:
-#line 767 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("factor -> LP expression RP");
-          (yyval) = (yyvsp[-1]);
-      }
-#line 2752 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 130:
-#line 772 "parser.y" /* yacc.c:1646  */
-    {
-          // Negative value
-          showNodeInfo("factor -> MINUS factor");
-          (yyval) = new UnaryExprTreeNode("-", (yyvsp[0]));
-      }
-#line 2762 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 131:
-#line 778 "parser.y" /* yacc.c:1646  */
-    {
-          // Not value for bit..
-          showNodeInfo("factor -> NOT factor");
-          (yyval) = new UnaryExprTreeNode("not", (yyvsp[0]));
-      }
-#line 2772 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 132:
-#line 785 "parser.y" /* yacc.c:1646  */
-    {
-          showNodeInfo("args -> args COMMA expression)");
-          (yyval) = (yyvsp[-2]);
-          ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
-      }
-#line 2782 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-  case 133:
-#line 791 "parser.y" /* yacc.c:1646  */
-    { 
-          showNodeInfo("args -> expression");
-          std::vector<TreeNode*> expressionList;
-          expressionList.push_back((yyvsp[0]));
-          (yyval) = new ListTreeNode("args", expressionList);
-      }
-#line 2793 "parser.cpp" /* yacc.c:1646  */
-    break;
-
-
-#line 2797 "parser.cpp" /* yacc.c:1646  */
+      
+#line 1520 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3021,32 +1744,12 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 798 "parser.y" /* yacc.c:1906  */
+#line 214 "parser.y" /* yacc.c:1906  */
 
-
-static int yylex(void)
-{
-    return getCurrentToken();
-}
-
-static int hashCodeForString(const std::string& str)
-{
-    int h = 0;
-    for(int i = 0; i < str.length(); i++)
-        h = 31 * h + (str[i] & 0xff);
-    
-    return h;
-}
-
-static void showNodeInfo(const std::string& info)
-{
-    grammarOut << "At line " << globalInfo.currentLineIndex
-        << ": Node - " << info << std::endl; 
-}
 
 int yyerror(const char* str)
 {
-    printf("Error message: %s\n", str);
+    printf("%s\n", str);
     return 1;
 }
 
@@ -3054,3 +1757,9 @@ int yywrap()
 {
     return 1;
 }
+
+//int main()
+//{
+//    yyparse();
+//    return 0;
+//}

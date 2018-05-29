@@ -5,8 +5,6 @@
 #include <vector>
 #include "symbol.h"
 
-class CommonTypeTreeNode;
-
 class TreeNode {
 private:
     std::string name;
@@ -60,24 +58,20 @@ protected:
     int label;
 
 public:
-    virtual ~StatementTreeNode() {}
+    virtual ~StatementTreeNode();
 
-    void setLabel(int label) { this->label = label; }
+    void setLabel(int label);
 
-    virtual void printSelf() {
-
-    }
+    void printSelf();
 
 };
 
 class ExprTreeNode : public TreeNode {
 
 public:
-    virtual ~ExprTreeNode() { }
+    virtual ~ExprTreeNode();
 
-    virtual void printSelf() {
-
-    }
+    void printSelf();
 };
 
 class ListTreeNode : public TreeNode {
@@ -107,9 +101,7 @@ public:
         return list;
     }
 
-    virtual void printSelf() {
-
-    }
+    void printSelf();
 
     std::vector<TreeNode *> getChildren() {
         return list;
@@ -140,13 +132,9 @@ class IDTreeNode : public TreeNode {
 public:
     virtual ~IDTreeNode() {}
 
-    virtual void printSelf() {
+    void printSelf();
 
-    }
-
-    virtual const std::string getType() {
-        return "default";
-    }
+    virtual const std::string getType();
 };
 
 class ProgramHeadTreeNode : public TreeNode {
@@ -185,9 +173,7 @@ class TypeTreeNode : public TreeNode {
 public:
     virtual ~TypeTreeNode() {}
 
-    virtual void printSelf() {
-
-    }
+    void printSelf();
 };
 
 //-----------------------------------------------
@@ -295,9 +281,7 @@ public:
         return elems;
     }
 
-    virtual void printSelf() {
-
-    }
+    void printSelf();
 
     std::vector<TreeNode *> getChildren() {
         return elems;

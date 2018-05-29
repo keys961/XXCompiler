@@ -1,4 +1,2 @@
 language: cpp
-compiler: 
-  - gcc
 script: true

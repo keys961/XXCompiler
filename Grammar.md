@@ -1,188 +1,143 @@
-# Grammar 
+# Grammar (Reference)
 
-program: program_head SEMICOLON block DOT
-    ;
-program_head: PROGRAM ID
-    ;
-block: constant_definition_part 
-    type_definition_part 
-    variable_declaration_part 
-    procedure_function_declaration_part 
-    block_body_part
-    ;
-id_list: id_list COMMA ID 
-    | ID
-    ;
+program : program_head  routine  DOT
 
-constant_definition_part: CONST constant_list
-    |
-    ;
-constant_list: constant_list constant_definition
-    | constant_definition
-    ;
-constant_definition: ID EQUAL constant_value SEMICOLON
-    ;
-constant_value: INTEGER 
-    | REAL
-    | CHAR
-    | STRING
-    ;
+program_head : PROGRAM  ID  SEMI
 
-type_definition_part: TYPE type_definition_list
-    |
-    ;
-type_definition_list: type_definition_list type_definition
-    | type_definition
-    ;
-type_definition: ID EQUAL type_denoter SEMICOLON
-    ;
-type_denoter: simple_type
-    | range_type
-    | array_type
-    | record_type
-    ;
-simple_type: TYPE_INTEGER
-    | TYPE_CHAR
-    | TYPE_REAL
-    | TYPE_STRING 
-    | ID 
-    | LP id_list RP
-    | ID DOTDOT ID
-    ;
-range_type: constant_value DOTDOT constant_value
-    ;
-array_type: ARRAY LB range_type RB OF type_denoter
-    ;
-record_type: RECORD field_definition_list END
-    ;
-field_definition_list: field_definition_list SEMICOLON field_definition
-    | field_definition
-    ;
-field_definition: id_list COLON type_denoter
-    ;
+routine : routine_head  routine_body
 
-variable_declaration_part: VAR variable_declaration_list SEMICOLON
-    |
-    ;
-variable_declaration_list: variable_declaration_list SEMICOLON variable_declaration
-    | variable_declaration
-    ;
-variable_declaration: id_list COLON type_denoter
-    ;
+name_list : name_list  COMMA  ID  |  ID
 
-procedure_function_declaration_part: procedure_function_declaration_part procedure_function_declaration
-    | procedure_function_declaration
-    |
-    ;
-procedure_function_declaration: procedure_declaration 
-    | function_declaration
-    ;
-procedure_declaration: PROCEDURE ID parameters SEMICOLON block SEMICOLON
-    ;
-function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON
-    ;
-parameters: LP parameter_list RP
-    | LP RP
-    ;
-parameter_list: parameter_list SEMICOLON parameter
-    | parameter
-    ;
-parameter: id_list COLON simple_type
-    ;
+routine_head : label_part  const_part  type_part  var_part  routine_part
 
-block_body_part: compound_statement
-    ;
-compound_statement: BEGIN_ statememt_list END
-    ;
-statememt_list: statememt_list SEMICOLON statememt
-    | statememt SEMICOLON
-    | 
-    ;
-label: STRING
-    ;
-statememt: label COLON stmt
-    | stmt
-    ;
-stmt: assign_statememt
-    | procedure_statement
-    | if_statememt
-    | repeat_statememt
-    | for_statememt
-    | while_statememt
-    | case_statememt
-    | goto_statememt
-    | compound_statement
-    ;
+label_part : ε
 
-assign_statememt: variable_access ASSIGN expression
-    ;
-variable_access: ID
-    | ID LB expression RB
-    | ID DOT ID
-    ;
+const_part : CONST  const_expr_list  |  ε
 
-procedure_statement: READ LP factor RP
-    | WRITE LP expression RP
-    | ID LP args RP
-    | ID
-    ;
+const_expr_list : const_expr_list  ID  EQUAL  const_value  SEMI
+|  ID  EQUAL  const_value  SEMI
 
-if_statememt: IF expression THEN statememt ELSE statememt
-    | IF expression THEN statememt
-    ;
+const_value : INTEGER  |  REAL  |  CHAR  |  STRING  
 
-repeat_statememt: REPEAT statememt_list UNTIL expression
-    ;
+type_part : TYPE type_decl_list  |  ε
 
-for_statememt: FOR ID ASSIGN expression direction expression DO statememt
-    ;
-direction: TO 
-    | DOWNTO
-    ;
+type_decl_list : type_decl_list  type_definition  |  type_definition
 
-while_statememt: WHILE expression DO statememt
-    ;
+type_definition : ID  EQUAL  type_decl  SEMI
 
-case_statememt: CASE expression OF case_list END
-    ;
-case_list: case_list SEMICOLON case_item
-    | case_item
-    ;
-case_item: constant_value COLON statememt
-    ;
+type_decl : simple_type_decl  |  array_type_decl  |  record_type_decl
 
-goto_statememt: GOTO label
-    ;
+array_type_decl : ARRAY  LB  simple_type_decl  RB  COLON  type_decl
 
-expression: expression LT expr
-    | expression LE expr
-    | expression EQUAL expr
-    | expression GE expr
-    | expression GT expr
-    | expression UNEQUAL expr
-    | expr
-    ;
-expr: expr PLUS term
-    | expr MINUS term
-    | expr OR term
-    | expr XOR term
-    | term
-    ;
-term: term MULTIPLY factor
-    | term DIVIDE factor
-    | term MOD factor
-    | term AND factor
-    | factor
-    ;
-factor: ID
-    | ID LP args RP
-    | ID LB expression RB
-    | ID DOT ID
-    | constant_value
-    | LP expression RP
-    | MINUS factor
-    | NOT factor
-    ;
-args: args COMMA expression
-    | expression
-    ;
+record_type_decl : RECORD  field_decl_list  END
+
+field_decl_list : field_decl_list  field_decl  |  field_decl
+
+field_decl : name_list  COLON  type_decl  SEMI
+
+simple_type_decl :  ID  |  LP  name_list  RP  
+                |  const_value  DOTDOT  const_value  
+                |  MINUS  const_value  DOTDOT  const_value
+                |  MINUS  const_value  DOTDOT  MINUS  const_value
+                |  ID  DOTDOT  ID
+                
+var_part : VAR  var_decl_list  |  ε
+
+var_decl_list : var_decl_list  var_decl  |  var_decl
+
+var_decl : name_list  COLON  type_decl  SEMI
+
+routine_part : routine_part  function_decl  |  routine_part  procedure_decl
+           |  function_decl  |  procedure_decl
+           
+function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI
+              | FUNCTION  ID  COLON simple_type_decl SEMI routine SEMI
+              
+procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI 
+               | PROCEDURE ID SEMI  routine  SEMI 
+               
+parameters : LP  para_decl_list  RP  |  ε
+
+para_decl_list : para_decl_list  SEMI  para_type_list
+
+para_type_list : var_para_list COLON  simple_type_decl  
+        |  val_para_list  COLON  simple_type_decl
+
+var_para_list : VAR  name_list
+
+val_para_list : name_list
+
+routine_body : compound_stmt
+
+stmt_list : stmt_list  stmt  SEMI  |  ε
+
+stmt : INTEGER  COLON  non_label_stmt  |  non_label_stmt
+
+non_label_stmt : assign_stmt | proc_stmt | compound_stmt | if_stmt | repeat_stmt | while_stmt 
+| for_stmt | case_stmt | goto_stmt
+
+assign_stmt : ID  ASSIGN  expression
+           | ID LB expression RB ASSIGN expression
+           | ID  DOT  ID  ASSIGN  expression
+           
+proc_stmt : ID
+          |  ID  LP  args_list  RP
+          |  READ  LP  factor  RP
+          |  WRITE LP factor RP
+          
+compound_stmt : BEGINP  stmt_list  END
+
+if_stmt : IF  expression  THEN  stmt  else_clause
+
+else_clause : ELSE stmt |  ε
+
+repeat_stmt : REPEAT  stmt_list  UNTIL  expression
+
+while_stmt : WHILE  expression  DO stmt
+
+for_stmt : FOR  ID  ASSIGN  expression  direction  expression  DO stmt
+
+direction : TO | DOWNTO
+
+case_stmt : CASE expression OF case_expr_list  END
+
+case_expr_list : case_expr_list  case_expr  |  case_expr
+
+case_expr : const_value  COLON  stmt  SEMI
+          |  ID  COLON  stmt  SEMI
+          
+goto_stmt : GOTO  INTEGER
+
+expression_list : expression_list  COMMA  expression  |  expression
+
+expression : expression  GE  expr  |  expression  GT  expr  |  expression  LE  expr
+          |  expression  LT  expr  |  expression  EQUAL  expr  |  expression  UNEQUAL  expr  |  expr
+          
+expr : expr  PLUS  term  |  expr  MINUS  term  |  expr  OR  term  |  term
+
+term : term  MUL  factor  |  term  DIV  factor 
+|  term  MOD  factor  |  term  AND factor  |  factor
+
+factor : ID  |  ID  LP  args_list  RP  
+|  const_value  |  LP  expression  RP
+|  NOT  factor  |  MINUS  factor  |  ID  LB  expression  RB
+|  ID  DOT  ID
+
+args_list : args_list  COMMA  expression  |  expression
+
+说明:
+LP为“(”	PLUS为“+”
+RP为“)”	MINUS为“－”
+LB为“[”	ID为标识符
+RB为“]”	GE为“ >=”
+DOT为“•”	GT为“>”
+COMMA为“,”	LE为“<=”
+COLON为“:”	LT为“<”
+MUL为“*”	EQUAL为“=”
+DIV为“/”	ASSIGN为“:="
+SEMI ";"
+
+%token AND  ARRAY  ASSIGN  BEGIN  CASE CHAR COLON COMMA CONST DIV DO PROCEDURE
+%token DOT DOTDOT DOWNTO OR ELSE END EQUAL FOR FUNCTION GE GOTO GT ID
+%token IF INTEGER LB LE LP LT MINUS MOD MUL NOT OF PLUS PROGRAM RB 
+%token READ REAL RECORD REPEAT RP SEMI STRING THEN TO TYPE UNEQUAL UNTIL VAR WHILE WRITE
