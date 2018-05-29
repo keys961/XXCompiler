@@ -3,11 +3,78 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-//#include "lexer.h"
+#include "lexer.h"
 #include "parser.hpp"
-//extern GlobalInfo globalInfo; /*Global trace info*/
-//extern FILE* in;
-//extern FILE* out;
+
+class GlobalInfo;
+
+extern GlobalInfo globalInfo; /*Global trace info*/
+extern FILE* codeIn;
+extern FILE* lexerOut; /* Lexer out */
+
+std::string lexicalTypeStr[] = {
+        "AND = 258",
+        "ARRAY = 259",
+        "BEGIN_ = 260",
+        "CASE = 261",
+        "CONST = 262",
+        "DO = 263",
+        "DOWNTO = 264",
+        "OR = 265",
+        "ELSE = 266",
+        "END = 267",
+        "FOR = 268",
+        "FUNCTION = 269",
+        "GOTO = 270",
+        "IF = 271",
+        "NOT = 272",
+        "OF = 273",
+        "PROGRAM = 274",
+        "PROCEDURE = 275",
+        "READ = 276",
+        "RECORD = 277",
+        "REPEAT = 278",
+        "THEN = 279",
+        "TO = 280",
+        "TYPE = 281",
+        "UNTIL = 282",
+        "VAR = 283",
+        "WHILE = 284",
+        "WRITE = 285",
+        "XOR = 286",
+        "TYPE_INTEGER = 287",
+        "TYPE_REAL = 288",
+        "TYPE_STRING = 289",
+        "TYPE_CHAR = 290",
+        "NEWLINE = 291",
+        "PLUS = 292",
+        "MINUS = 293",
+        "MULTIPLY = 294",
+        "DIVIDE = 295",
+        "MOD = 296",
+        "LT = 297",
+        "LE = 298",
+        "EQUAL = 299",
+        "UNEQUAL = 300",
+        "GE = 301",
+        "GT = 302",
+        "DOT = 303",
+        "DOTDOT = 304",
+        "COMMA = 305",
+        "SEMICOLON = 306",
+        "COLON = 307",
+        "ASSIGN = 308",
+        "LB = 309",
+        "RB = 310",
+        "LP = 311",
+        "RP = 312",
+        "INTEGER = 313",
+        "REAL = 314",
+        "CHAR = 315",
+        "STRING = 316",
+        "ID = 317"
+};
+
 %}
 /* Lex Definitions */
 digit[0-9]
@@ -88,32 +155,41 @@ id ({letter}|_)+({letter}|{digit}|_)*
 {string} { return STRING; }
 
 {whitespace} {}
-{newline} { return NEWLINE; }
+{newline} { globalInfo.currentLineIndex++; globalInfo.currentTokenIndex = 0; }
 {id} { return ID; }
 
 %%
 
-// int getCurrentToken() 
-// {
-// 	static int flag = 1;
-// 	if(flag)
-// 	{
-// 		yyin = in;
-// 		yyout = out;
-// 		flag = 0;
-// 	}
+int getCurrentToken() 
+{
+	static int flag = 1;
+	if(flag)
+	{
+		yyin = codeIn;
+		flag = 0;
+	}
 
-// 	return saveTraceInfo();
-// }
+	return saveTraceInfo();
+}
 
-// int saveTraceInfo()
-// {
-// 	int currentTokenType = yylex();
-// 	globalInfo.currentToken = yytext;
-// 	fprintf(yyout, "%d: %s\n", globalInfo.currentLineCount,
-// 			yytext);
-// 	return currentTokenType;
-// }
+int saveTraceInfo()
+{
+	int type = yylex();
+	globalInfo.currentToken = yytext;
+	if(globalInfo.currentToken == "\n")
+	{
+		globalInfo.currentLineIndex++;
+		globalInfo.currentTokenIndex = 0;
+	}
+	else 
+	{
+		globalInfo.currentTokenIndex++;
+		fprintf(lexerOut, "%ld:%ld - Token: `%s` with type %s\n",
+			globalInfo.currentLineIndex, globalInfo.currentTokenIndex, yytext,
+			lexicalTypeStr[type - 258].c_str());
+	}
+	return currentTokenType;
+}
 
 int yywrap()
 {

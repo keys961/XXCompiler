@@ -3,38 +3,115 @@
 #include <iostream>
 #include <fstream>
 #include "comment.h"
-
-/**
- * Global info of a file to be parsed
- * when the program is parsing this file
- * for tracing.
- */
-typedef struct GlobalInfo
-{
-    long currentLineCount;
-    std::string currentToken;
-}GlobalInfo;
+#include "lexer.h"
+#include "parser.hpp"
+#include "tree.h"
+#include "optimizer.h"
 
 /**
  * Global variables
  */
-FILE* in = NULL;
-FILE* out = NULL;
+FILE* codeIn; // Code input
+std::ofstream preProcessOut; // Code output after pre-processing
+FILE* lexerOut; // Lexer analysis output
+std::ofstream grammarOut; // Grammar output
+std::ofstream astOut; // AST output
+std::ofstream codeOut; // Target code output
+
 GlobalInfo globalInfo;
+TreeNode* root; // ProgramBodyTreeNode
 
-int main()
+int main(int argc, const char *argv[])
 {
-    //changshi
-    CommemtProcessor processor;
-    std::fstream fin("1.txt", std::ios::in);
-    std::fstream fout("2.txt", std::ios::out);
-
-    if(!fin.bad() && !fout.bad())
+    /* Format: compiler src_file_name output_file_name */
+    if(argc != 3)
     {
-        processor.processComment(fin, fout);
-        fin.close();
-        fout.close();
+        std::cerr << "Wrong input format!" << std::endl;
+        std::cout << "\t compiler $src_file_name $output_file_name" << std::endl;
+        return 1;
     }
+    // Prepare
+    std::string fileName = argv[1];
+    std::string preProcessFileName = fileName + ".pre";
+    std::string lexerFileName = fileName + ".lexer";
+    std::string grammarFileName = fileName + ".grammar";
+    std::string astFileName = fileName + ".ast";
+    std::string codeFileName = fileName + ".s";
+    // Pre-processing
+    CommemtProcessor processor;
+    std::fstream fin(argv[1], std::ios::in);
+    preProcessOut = std::ofstream(preProcessFileName, std::ios::out);
+    if(!fin.bad() && !preProcessOut.bad())
+    {
+        std::cout << "Pre-processing code with " << fileName << "..." << std::endl;
+        processor.processComment(fin, preProcessOut);
+        preProcessOut.flush();
+        fin.close();
+        preProcessOut.close();
+        std::cout << "End pre-processing." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when pre-processing code with "
+                  << fileName << "!" << std::endl;
+        if(!fin.bad())
+            fin.close();
+        if(!preProcessOut.bad())
+            preProcessOut.close();
+        return 1;
+    }
+    // Lexical & Grammar analysis
+    codeIn = fopen(preProcessFileName.c_str(), "r");
+    lexerOut = fopen(lexerFileName.c_str(), "w+");
+    grammarOut = std::ofstream(grammarFileName, std::ios::out);
+    if(codeIn && lexerOut && !grammarOut.bad())
+    {
+        std::cout << "Parsing code with " << fileName << "..." << std::endl;
+        yyparse();
+        fclose(codeIn);
+        fclose(lexerOut);
+        grammarOut.close();
+        std::cout << "End of parsing codes." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when parsing the code with " << fileName << "!"
+                  << std::endl;
+        if(codeIn)
+            fclose(codeIn);
+        if(lexerOut)
+            fclose(lexerOut);
+        if(!grammarOut.bad())
+            grammarOut.close();
+        return 1;
+    }
+    // Optimize & print the AST
+    TreeOptimizer optimizer(root);
+    astOut = std::ofstream(astFileName, std::ios::out);
+    if(!astOut.bad())
+    {
+        std::cout << "Optimizing & printing AST with " << fileName << "..." << std::endl;
+        root = optimizer.getOptimizedTree();
+        astOut << root;
+        astOut.close();
+        std::cout << "End of optimizing & printing AST." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error when optimizing & printing AST with " << fileName << "!"
+                  << std::endl;
+        return 1;
+    }
+    // Update symbol table
+
+    // Type check
+
+    // Generate code
+
+
+    // finally dispose resources
+    if(root != nullptr)
+        delete root;
 
     return 0;
 }
