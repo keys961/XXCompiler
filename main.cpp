@@ -32,7 +32,7 @@ int main(int argc, const char *argv[])
     }
     // Prepare
     std::string fileName = argv[1];
-    std::string preProcessFileName = "pre_" + fileName;
+    std::string preProcessFileName = fileName + ".pre";
     std::string lexerFileName = fileName + ".lexer";
     std::string grammarFileName = fileName + ".grammar";
     std::string astFileName = fileName + ".ast";
@@ -45,6 +45,7 @@ int main(int argc, const char *argv[])
     {
         std::cout << "Pre-processing code with " << fileName << "..." << std::endl;
         processor.processComment(fin, preProcessOut);
+        preProcessOut.flush();
         fin.close();
         preProcessOut.close();
         std::cout << "End pre-processing." << std::endl;
