@@ -237,7 +237,7 @@ range_type: constant_value DOTDOT constant_value
     ;
 array_type: ARRAY LB range_type RB OF type_denoter
             {
-                showNodeInfo("array_type -> ARRAY LB range_type RB OF type_denoter")
+                showNodeInfo("array_type -> ARRAY LB range_type RB OF type_denoter");
                 $$ = new ArrayTypeTreeNode((RangeTypeTreeNode*)$3, (CommonTypeTreeNode*)$6);
             }
     ;
@@ -300,7 +300,7 @@ variable_declaration: ID COLON type_denoter
                       {
                           showNodeInfo("variable_declaration -> ID COLON type_denoter");
                           std::string name = $1->getName();
-                          delete $1
+                          delete $1;
                           $$ = new VariableTreeNode(name, $3);
                       }
     ;

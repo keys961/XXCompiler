@@ -1,11 +1,13 @@
 /*yytext: current token text*/
 %{
+#define YYSTYPE TreeNode*
 #include <cstdio>
 #include <cstring>
 #include <string>
 #include "lexer.h"
-#include "tree"
+#include "tree.h"
 #include "parser.hpp"
+
 
 class GlobalInfo;
 
@@ -192,7 +194,7 @@ int saveTraceInfo()
 			globalInfo.currentLineIndex, globalInfo.currentTokenIndex, yytext,
 			lexicalTypeStr[type - 258].c_str());
 	}
-	return currentTokenType;
+	return type;
 }
 
 int yywrap()
