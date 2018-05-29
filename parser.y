@@ -229,7 +229,7 @@ simple_type: TYPE_INTEGER
 range_type: constant_value DOTDOT constant_value
             {
                 showNodeInfo("range_type -> constant_value DOTDOT constant_value");
-                $$ = new RangeTypeTreeNode((IDTreeNode*)$1, (IDTreeNode*)$3);
+                $$ = new RangeTypeTreeNode((IDTreeNode*)$3, (IDTreeNode*)$1);
             }
     ;
 array_type: ARRAY LB range_type RB OF type_denoter

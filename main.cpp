@@ -92,7 +92,7 @@ int main(int argc, const char *argv[])
     {
         std::cout << "Optimizing & printing AST with " << fileName << "..." << std::endl;
         root = optimizer.getOptimizedTree();
-        astOut << root;
+        root->printSelf();
         astOut.close();
         std::cout << "End of optimizing & printing AST." << std::endl;
     }

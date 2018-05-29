@@ -3,7 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 #include "symbol.h"
+
+extern std::ofstream astOut;
 
 class CommonTypeTreeNode;
 
@@ -11,9 +14,9 @@ class TreeNode {
 private:
     std::string name;
     int lineNum;
-    long addr;
 
 protected:
+    long addr;
     SymbolTable *environment;
     std::vector<TreeNode *> children;
 
@@ -51,6 +54,18 @@ public:
 
     virtual std::string typeCheck(SymbolTable *environment) { return "type check"; }
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " TreeNode" << std::endl;
+        if (!children.empty()) {
+            astOut << "\tChildren ID: ";
+            for (auto &it : children)
+                astOut << it << " ";
+            astOut << std::endl;
+        }
+        // Recursively print
+        for(auto& it : children)
+            it->printSelf();
+    }
 
 };
 
@@ -65,7 +80,8 @@ public:
     void setLabel(int label) { this->label = label; }
 
     virtual void printSelf() {
-
+        astOut << "Node ID " << std::hex << addr << ":" << " StatementTreeNode" << std::endl;
+        astOut << "\tlabel: " << label << std::endl;
     }
 
 };
@@ -76,7 +92,7 @@ public:
     virtual ~ExprTreeNode() { }
 
     virtual void printSelf() {
-
+        astOut << "Node ID " << std::hex << addr << ":" << " ExprTreeNode" << std::endl;
     }
 };
 
@@ -108,7 +124,17 @@ public:
     }
 
     virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ListTreeNode" << std::endl;
+        astOut << "\ttype: " << type << std::endl;
+        if(!list.empty()) {
+            astOut << "\t items: ";
+            for(auto &it : list)
+                astOut << it << " ";
+            astOut << std::endl;
+        }
 
+        for(auto& it : list)
+            it->printSelf();
     }
 
     std::vector<TreeNode *> getChildren() {
@@ -134,6 +160,8 @@ public:
         children.push_back(this->args);
         children.push_back(this->body);
     }
+
+    virtual void printSelf();
 };
 
 class IDTreeNode : public TreeNode {
@@ -141,7 +169,7 @@ public:
     virtual ~IDTreeNode() {}
 
     virtual void printSelf() {
-
+        astOut << "Node ID " << std::hex << addr << ":" << " IDTreeNode" << std::endl;
     }
 
     virtual const std::string getType() {
@@ -155,6 +183,10 @@ private:
 public:
     ProgramHeadTreeNode(const std::string name) : name(name) {}
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ProgramHeadTreeNode" << std::endl;
+        astOut << "\tname: " << name << std::endl;
+    }
 };
 
 class ProgramBodyTreeNode : public TreeNode {
@@ -179,6 +211,22 @@ public:
         children.push_back(routine_decl);
         children.push_back(body);
     }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ProgramTreeNode" << std::endl;
+        astOut << "\tname: " << this->getName() << std::endl;
+        astOut << "\tconst_part: " << const_decl << std::endl;
+        astOut << "\ttype_part: " << type_decl << std::endl;
+        astOut << "\tvar_part: " << var_decl << std:: endl;
+        astOut << "\tfunction_procedure_part: " << routine_decl << std::endl;
+        astOut << "\tbody_part: " << body << std::endl;
+
+        const_decl->printSelf();
+        type_decl->printSelf();
+        var_decl->printSelf();
+        routine_decl->printSelf();
+        body->printSelf();
+    }
 };
 
 class TypeTreeNode : public TreeNode {
@@ -186,7 +234,7 @@ public:
     virtual ~TypeTreeNode() {}
 
     virtual void printSelf() {
-
+        astOut << "Node ID " << std::hex << addr << ":" << " TypeTreeNode" << std::endl;
     }
 };
 
@@ -205,6 +253,15 @@ public:
         children.push_back(roprand);
         children.push_back(loprand);
     }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " BinaryExprTreeNode" << std::endl;
+        astOut << "\toperator: " << op << std::endl;
+        astOut << "\tleft operand: " << loprand << std::endl;
+        astOut << "\tright operand: " << roprand << std::endl;
+        loprand->printSelf();
+        roprand->printSelf();
+    }
 };
 
 class UnaryExprTreeNode : public ExprTreeNode {
@@ -215,6 +272,13 @@ private:
 public:
     UnaryExprTreeNode(const std::string op, TreeNode *oprand) : op(op), oprand(oprand) {
         children.push_back(oprand);
+    }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " UnaryExprTreeNode" << std::endl;
+        astOut << "\toperator: " << op << std::endl;
+        astOut << "\toperand: " << oprand << std::endl;
+        oprand->printSelf();
     }
 };
 
@@ -228,6 +292,20 @@ public:
     CallExprTreeNode(const std::string name, std::vector<TreeNode *> *args = nullptr, bool isFunc = true)
             : name(name), args(args), isFunc(isFunc) {}
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " CallExprTreeNode" << std::endl;
+        astOut << "\tname: " << name << "; isFunc: " << isFunc <<std::endl;
+        if(args && !args->empty()) {
+            astOut << "\targ nodes: ";
+            for (auto &it : *args)
+                astOut << it << " ";
+            astOut << std::endl;
+
+            for(auto& it : *args)
+                it->printSelf();
+        }
+
+    }
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -238,6 +316,12 @@ private:
 public:
     CaseExprTreeNode(IDTreeNode *label, StatementTreeNode *body)
             : label(label), body(body) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " CaseExprTreeNode" << std::endl;
+        astOut << "\tlabel node: " << label << std::endl;
+        astOut << "\tstatement node: " << body <<std::endl;
+    }
 };
 
 //--------------------------------------------
@@ -249,6 +333,11 @@ private:
     const std::string type;//string int char double
 public:
     CommonTypeTreeNode(const std::string type) : type(type) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " CommonTypeTreeNode" << std::endl;
+        astOut << "\ttype: " << type << std::endl;
+    }
 };
 
 class RangeTypeTreeNode : public TypeTreeNode {
@@ -259,6 +348,14 @@ private:
 public:
     RangeTypeTreeNode(IDTreeNode *upper, IDTreeNode *lower) : upper(upper), lower(lower) {}
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " RangeTypeTreeNode" << std::endl;
+        astOut << "\tupper node: " << upper << std::endl;
+        astOut << "\tlower node: " << lower << std::endl;
+
+        upper->printSelf();
+        lower->printSelf();
+    }
 };
 
 class ArrayTypeTreeNode : public TypeTreeNode {
@@ -269,6 +366,15 @@ private:
 public:
     ArrayTypeTreeNode(RangeTypeTreeNode *index, CommonTypeTreeNode *elem)
             : index(index), elem(elem) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ArrayTypeTreeNode" << std::endl;
+        astOut << "\trange node: " << index << std::endl;
+        astOut << "\ttype node: " << elem << std::endl;
+
+        index->printSelf();
+        elem->printSelf();
+    }
 };
 
 //结构体类型
@@ -296,7 +402,16 @@ public:
     }
 
     virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " RecordTypeTreeNode" << std::endl;
+        if(!elems.empty()) {
+            astOut << "\trecord element nodes: ";
+            for(auto& it : elems)
+                astOut << it << " ";
+            astOut << std::endl;
 
+            for(auto& it : elems)
+                it->printSelf();
+        }
     }
 
     std::vector<TreeNode *> getChildren() {
@@ -312,6 +427,13 @@ private:
 public:
     EnumTypeTreeNode(TreeNode *elems,const std::string name)
             : elems((ListTreeNode *) elems),name(name) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " EnumTypeTreeNode" << std::endl;
+        astOut << "\tname: " << name << "; enums node: " << elems << std::endl;
+
+        elems->printSelf();
+    }
 };
 
 //用户自定义类型
@@ -322,6 +444,13 @@ private:
 public:
     CustomTypeTreeNode(const std::string name, TreeNode *type)
             : name(name), type((TypeTreeNode *) type) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " CustomTypeTreeNode" << std::endl;
+        astOut << "\tname: " << name << "; type node: " << type << std::endl;
+        if(type)
+            type->printSelf();
+    }
 };
 
 //---------------------------------------
@@ -335,6 +464,13 @@ private:
 public:
     CompoundStmtTreeNode(ListTreeNode *list) : stmtlist(list) {
         children.push_back(stmtlist);
+    }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " CompoundStmtTreeNode" << std::endl;
+        astOut << "\tstatements node: " << stmtlist << std::endl;
+
+        stmtlist->printSelf();
     }
 };
 
@@ -353,6 +489,18 @@ public:
         if (e != nullptr)
             children.push_back(e);
     }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " IfStmtTreeNode" << std::endl;
+        astOut << "\tcondition node: " << condition << std::endl;
+        astOut << "\tthen node: " << then_stmt << std::endl;
+        astOut << "\telse node: " << else_stmt << std::endl;
+
+        condition->printSelf();
+        then_stmt->printSelf();
+        if(else_stmt)
+            else_stmt->printSelf();
+    }
 };
 
 class RepeatStmtTreeNode : public StatementTreeNode {
@@ -365,6 +513,15 @@ public:
             : condition(condition), body(body) {
         children.push_back(condition);
         children.push_back(body);
+    }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " RepeatStmtTreeNode" << std::endl;
+        astOut << "\tcondition node: " << condition << std::endl;
+        astOut << "\tstatement node: " << body << std::endl;
+
+        condition->printSelf();
+        body->printSelf();
     }
 };
 
@@ -379,6 +536,15 @@ public:
         children.push_back(condition);
         children.push_back(body);
     }
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " WhileStmtTreeNode" << std::endl;
+        astOut << "\tcondition node: " << condition << std::endl;
+        astOut << "\tstatement node: " << body << std::endl;
+
+        condition->printSelf();
+        body->printSelf();
+    }
 };
 
 class SwitchStmtTreeNode : public StatementTreeNode {
@@ -392,6 +558,14 @@ public:
         children.push_back(list);
     }
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " SwitchStmtTreeNode" << std::endl;
+        astOut << "\texpression node: " << expr << std::endl;
+        astOut << "\tcase list node: " << case_list << std::endl;
+
+        expr->printSelf();
+        case_list->printSelf();
+    }
 };
 
 class ForStmtTreeNode : public StatementTreeNode {
@@ -409,6 +583,15 @@ public:
         children.push_back(body);
     }
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ForStmtTreeNode" << std::endl;
+        astOut << "\tdirection: " << direction << std::endl;
+        astOut << "\tsrc node: " << src << "; dst node: " << dst << std::endl;
+        astOut << "\tbody node: " << body << std::endl;
+        src->printSelf();
+        dst->printSelf();
+        body->printSelf();
+    }
 };
 
 class GotoStmtTreeNode : public StatementTreeNode {
@@ -417,6 +600,11 @@ private:
 
 public:
     GotoStmtTreeNode(const std::string label) : label(label) {}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " GotoStmtTreeNode" << std::endl;
+        astOut << "\tlabel: " << label << std::endl;
+    }
 };
 
 //-----------------------------------------------
@@ -434,6 +622,13 @@ public:
     VariableTreeNode(const std::string name, TreeNode *type= nullptr, bool isConst = false)
             :name(name),type((TypeTreeNode *)type),isConst(isConst) {}
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " VariableTreeNode" << std::endl;
+        astOut << "\tname: " << name << "; isConst: " << isConst << std::endl;
+        astOut << "\ttype node: " << type << std::endl;
+        if(type)
+            type->printSelf();
+    }
 };
 
 //字面值常量，需要指明值和类型，类型如char,int,double
@@ -445,6 +640,11 @@ private:
 public:
     LiteralTreeNode(const std::string value,const std::string type)
             :value(value),type(type){}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " LiteralTreeNode" << std::endl;
+        astOut << "\tvalue: " << value << "; type: " << type << std::endl;
+    }
 };
 
 class ArrayElemTreeNode:public IDTreeNode{
@@ -455,6 +655,13 @@ private:
 public:
     ArrayElemTreeNode(const std::string name,TreeNode * expr)
             :name(name),index((ExprTreeNode *)expr){}
+
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " ArrayElemTreeNode" << std::endl;
+        astOut << "\tname: " << name << std::endl;
+        astOut << "\tindex node: " << index << std::endl;
+        index->printSelf();
+    }
 };
 
 class RecordElemTreeNode:public IDTreeNode{
@@ -465,7 +672,11 @@ private:
 public:
     RecordElemTreeNode(const std::string n1,const std::string n2)
             :rname(n1),ename(n2){}
-};
 
+    virtual void printSelf() {
+        astOut << "Node ID " << std::hex << addr << ":" << " RecordElemTreeNode" << std::endl;
+        astOut << "\trecord name: " << rname << "; element name: " << ename << std::endl;
+    }
+};
 
 #endif //COMPILER_TREE_H
