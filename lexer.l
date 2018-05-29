@@ -190,9 +190,9 @@ int saveTraceInfo()
 	else 
 	{
 		globalInfo.currentTokenIndex++;
-		fprintf(lexerOut, "%ld:%ld - Token: `%s` with type %s\n",
+		fprintf(lexerOut, "%ld:%ld - Token: `%s` with type %d\n",
 			globalInfo.currentLineIndex, globalInfo.currentTokenIndex, yytext,
-			lexicalTypeStr[type - 258].c_str());
+			type);
 	}
 	return type;
 }
