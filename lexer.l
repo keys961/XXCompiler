@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include "lexer.h"
+#include "tree"
 #include "parser.hpp"
 
 class GlobalInfo;
@@ -156,7 +157,10 @@ id ({letter}|_)+({letter}|{digit}|_)*
 
 {whitespace} {}
 {newline} { globalInfo.currentLineIndex++; globalInfo.currentTokenIndex = 0; }
-{id} { return ID; }
+{id} { TreeNode* t = new TreeNode();
+        t->setName(yytext);
+        yylval = t;
+        return ID; }
 
 %%
 

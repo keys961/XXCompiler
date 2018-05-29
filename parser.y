@@ -48,7 +48,8 @@ program_head: PROGRAM ID
               {
                   showNodeInfo("program_head -> PROGRAM ID");
                   $$ = new TreeNode();
-                  $$->setName(yytext);
+                  $$->setName($2->getName());
+                  delete $2;
               }
     ;
 block: constant_definition_part 
@@ -65,21 +66,22 @@ id_list: id_list COMMA ID
          {
              showNodeInfo("id_list -> id_list COMMA ID");
              $$ = $1;
-             std::string name = yytext;
+             std::string name = $3->getName();
              TreeNode* node = new TreeNode();
              node->setName(name);
 
              ((ListTreeNode*)$$)->insert(node);
+             delete $3;
          }
     | ID 
       {
           showNodeInfo("id_list -> ID");
-          std::string name = yytext;
+          std::string name = $1->getName();
           std::vector<TreeNode*> list;
           TreeNode* node = new TreeNode();
           node->setName(name);
           list.push_back(node);
-
+          delete $1;
           $$ = new ListTreeNode("id_list", list);
       }
     ;
@@ -109,14 +111,14 @@ constant_list: constant_list constant_definition
           $$ = new ListTreeNode("constant_list", list);
       }
     ;
-constant_definition: ID { stringQueue.push(yytext); } EQUAL constant_value SEMICOLON
+constant_definition: ID EQUAL constant_value SEMICOLON
                      {
                          showNodeInfo("constant_definition -> ID EQUAL constant_value SEMICOLON");
-                         std::string name = stringQueue.front();
-                         stringQueue.pop();
+                         std::string name = $1->getName();
                          VariableTreeNode* varNode = new VariableTreeNode(name, nullptr, true);
-                         BinaryExprTreeNode* binNode = new BinaryExprTreeNode(":=", varNode, $4);
+                         BinaryExprTreeNode* binNode = new BinaryExprTreeNode(":=", varNode, $3);
                          $$ = binNode;
+                         delete $1;
                      }
     ;
 constant_value: INTEGER 
@@ -166,12 +168,12 @@ type_definition_list: type_definition_list type_definition
           $$ = new ListTreeNode("type_definition_list", list);
       }
     ;
-type_definition: ID { stringQueue.push(yytext); } EQUAL type_denoter SEMICOLON
+type_definition: ID EQUAL type_denoter SEMICOLON
                  {
                      showNodeInfo("type_definition -> ID EQUAL type_denoter SEMICOLON");
-                     std::string name = stringQueue.front();
-                     stringQueue.pop();
-                     $$ = new CustomTypeTreeNode(name, $4);
+                     std::string name = $1->getName();
+                     $$ = new CustomTypeTreeNode(name, $3);
+                     delete $1;
                  }
     ;
 type_denoter: simple_type
@@ -218,7 +220,8 @@ simple_type: TYPE_INTEGER
     | ID 
       {
           showNodeInfo("simple_type -> ID");
-          $$ = new CustomTypeTreeNode(yytext, nullptr);
+          $$ = new CustomTypeTreeNode($1->getName(), nullptr);
+          delete $1;
       }
     | LP id_list RP
       {
@@ -234,7 +237,8 @@ range_type: constant_value DOTDOT constant_value
     ;
 array_type: ARRAY LB range_type RB OF type_denoter
             {
-
+                showNodeInfo("array_type -> ARRAY LB range_type RB OF type_denoter")
+                $$ = new ArrayTypeTreeNode((RangeTypeTreeNode*)$3, (CommonTypeTreeNode*)$6);
             }
     ;
 record_type: RECORD field_definition_list END
@@ -258,12 +262,12 @@ field_definition_list: field_definition_list SEMICOLON field_definition
           $$ = new ListTreeNode("field_definition_list", list);
       }
     ;
-field_definition: ID { stringQueue.push(yytext); } COLON type_denoter
+field_definition: ID COLON type_denoter
                   {
                       showNodeInfo("field_definition -> ID COLON type_denoter");
-                      std::string name = stringQueue.front();
-                      stringQueue.pop();
-                      $$ = new VariableTreeNode(name, $4);
+                      std::string name = $1->getName();
+                      delete $1;
+                      $$ = new VariableTreeNode(name, $3);
                   }
     ;
 
@@ -292,12 +296,12 @@ variable_declaration_list: variable_declaration_list SEMICOLON variable_declarat
           $$ = new ListTreeNode("variable_declaration_list", list);
       }
     ;
-variable_declaration: ID { stringQueue.push(yytext); } COLON type_denoter
+variable_declaration: ID COLON type_denoter
                       {
                           showNodeInfo("variable_declaration -> ID COLON type_denoter");
-                          std::string name = stringQueue.front();
-                          stringQueue.pop();
-                          $$ = new VariableTreeNode(name, $4);
+                          std::string name = $1->getName();
+                          delete $1
+                          $$ = new VariableTreeNode(name, $3);
                       }
     ;
 
@@ -331,20 +335,20 @@ procedure_function_declaration: procedure_declaration
           $$ = $1;
       }
     ;
-procedure_declaration: PROCEDURE ID { stringQueue.push(yytext); } parameters SEMICOLON block SEMICOLON
+procedure_declaration: PROCEDURE ID parameters SEMICOLON block SEMICOLON
                        {
                            showNodeInfo("procedure_declaration -> PROCEDURE ID parameters SEMICOLON block SEMICOLON");
-                           std::string name = stringQueue.front();
-                           stringQueue.pop();
-                           $$ = new FuncOrProcTreeNode(name, $4, $6);
+                           std::string name = $2->getName();
+                           delete $2;
+                           $$ = new FuncOrProcTreeNode(name, $3, $5);
                        }
     ;
-function_declaration: FUNCTION ID { stringQueue.push(yytext); } parameters COLON simple_type SEMICOLON block SEMICOLON
+function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON
                       {
                           showNodeInfo("function_declaration -> FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON");
-                          std::string name = stringQueue.front();
-                          stringQueue.pop();
-                          $$ = new FuncOrProcTreeNode(name, $4, $8, $6, true);
+                          std::string name = $2->getName();
+                           delete $2;
+                          $$ = new FuncOrProcTreeNode(name, $3, $7, $5, true);
                       }
     ;
 parameters: LP parameter_list RP
@@ -373,12 +377,12 @@ parameter_list: parameter_list SEMICOLON parameter
           $$ = new ListTreeNode("parameter_list", list);
       }
     ;
-parameter: ID { stringQueue.push(yytext); } COLON simple_type
+parameter: ID COLON simple_type
            {
                showNodeInfo("parameter -> ID COLON simple_type");
-               std::string name = stringQueue.front();
-               stringQueue.pop();
-               $$ = new VariableTreeNode(name, $4);
+               std::string name = $1->getName();
+               delete $1;
+               $$ = new VariableTreeNode(name, $3);
            }
     ;
 
@@ -495,23 +499,21 @@ assign_statememt: variable_access ASSIGN expression
 variable_access: ID
                  {
                      showNodeInfo("variable_access -> ID");
-                     $$ = new VariableTreeNode(yytext);
+                     $$ = new VariableTreeNode($1->getName());
+                     delete $1;
                  }
-    | ID { stringQueue.push(yytext); } LB expression RB
+    | ID LB expression RB
       {
           showNodeInfo("variable_access -> ID LB expression RB");
-          std::string arrayName = stringQueue.front();
-          stringQueue.pop();
-          $$ = new ArrayElemTreeNode(arrayName, $4);
+          std::string arrayName = $1->getName();
+          $$ = new ArrayElemTreeNode(arrayName, $3);
       }
-    | ID { stringQueue.push(yytext); } DOT ID { stringQueue.push(yytext); }
+    | ID DOT ID
       {
           showNodeInfo("variable_access -> ID DOT ID");
-          std::string rname = stringQueue.front();
-          stringQueue.pop();
-          std::string ename = stringQueue.front();
-          stringQueue.pop();
-          $$ = new RecordElemTreeNode(rname, ename);
+          $$ = new RecordElemTreeNode($1->getName(), $3->getName());
+          delete $1;
+          delete $3;
       }
     ;
 
@@ -531,18 +533,19 @@ procedure_statement: READ LP factor RP
           list->push_back($3);
           $$ = new CallExprTreeNode("write", list, false);
       }
-    | ID { stringQueue.push(yytext); } LP args RP
+    | ID LP args RP
       {
           showNodeInfo("procedure_statement -> ID LP args RP");
-          std::string procName = stringQueue.front();
-          stringQueue.pop();
-          $$ = new CallExprTreeNode(procName, &(((ListTreeNode*)$4)->getList()), 
+          std::string procName = $1->getName();
+          delete $1;
+          $$ = new CallExprTreeNode(procName, &(((ListTreeNode*)$3)->getList()), 
             false);
       }
     | ID
       {
           showNodeInfo("procedure_statement -> ID");
-          std::string procName = yytext;
+          std::string procName = $1->getName();
+          delete $1;
           $$ = new CallExprTreeNode(procName, nullptr, false);
       }
     ;
@@ -566,15 +569,15 @@ repeat_statememt: REPEAT statememt_list UNTIL expression
                   }
     ;
 
-for_statememt: FOR ID { stringQueue.push(yytext); } ASSIGN expression direction expression DO statememt
+for_statememt: FOR ID ASSIGN expression direction expression DO statememt
                {
                    showNodeInfo("for_statement -> FOR ID ASSIGN expression direction expression DO statememt");
-                   std::string variableId = stringQueue.front();
-                   stringQueue.pop();
+                   std::string variableId = $2->getName();
+                   delete $2;
                    VariableTreeNode* varNode = new VariableTreeNode(variableId);
-                   BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $5);
-                   std::string direction = $6->getName();
-                   $$ = new ForStmtTreeNode(exprNode, direction, (ExprTreeNode *)$7, (StatementTreeNode *)$9);
+                   BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $4);
+                   std::string direction = $5->getName();
+                   $$ = new ForStmtTreeNode(exprNode, direction, (ExprTreeNode *)$6, (StatementTreeNode *)$8);
                    delete $6;
                }
     ;
@@ -728,35 +731,34 @@ term: term MULTIPLY factor
 factor: ID 
         { 
           // Simple variable
-          showNodeInfo("factor ->ID");
-          $$ = new VariableTreeNode(yytext);
+          showNodeInfo("factor -> ID");
+          $$ = new VariableTreeNode($1->getName());
+          delete $1;
         }
-    | ID { stringQueue.push(yytext); } LP args RP 
+    | ID LP args RP 
       { 
           // Function value
           showNodeInfo("factor -> ID LP args RP"); 
-          std::string functionName = stringQueue.front();
-          stringQueue.pop();
+          std::string functionName = $1->getName();
+          delete $1;
           $$ = new CallExprTreeNode(functionName,
-            &(((ListTreeNode*)$4)->getList()));
+            &(((ListTreeNode*)$3)->getList()));
       }
-    | ID { stringQueue.push(yytext); } LB expression RB
+    | ID LB expression RB
       {
           // Array Element
           showNodeInfo("factor -> ID LB expression RB");
-          std::string arrayName = stringQueue.front();
-          stringQueue.pop();
-          $$ = new ArrayElemTreeNode(arrayName, $4);
+          std::string arrayName = $1->getName();
+          delete $1;
+          $$ = new ArrayElemTreeNode(arrayName, $3);
       }
-    | ID { stringQueue.push(yytext); } DOT ID { stringQueue.push(yytext); }
+    | ID DOT ID
       {
           // Record element
           showNodeInfo("factor -> ID DOT ID");
-          std::string recordName = stringQueue.front();
-          stringQueue.pop();
-          std::string recordElemName = stringQueue.front();
-          stringQueue.pop();
-          $$ = new RecordElemTreeNode(recordName, recordElemName);
+          $$ = new RecordElemTreeNode($1->getName(), $3->getName());
+          delete $1;
+          delete $3;
       }
     | constant_value
       {
