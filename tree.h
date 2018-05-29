@@ -60,20 +60,24 @@ protected:
     int label;
 
 public:
-    virtual ~StatementTreeNode();
+    virtual ~StatementTreeNode() {}
 
-    void setLabel(int label);
+    void setLabel(int label) { this->label = label; }
 
-    void printSelf();
+    virtual void printSelf() {
+
+    }
 
 };
 
 class ExprTreeNode : public TreeNode {
 
 public:
-    virtual ~ExprTreeNode();
+    virtual ~ExprTreeNode() { }
 
-    void printSelf();
+    virtual void printSelf() {
+
+    }
 };
 
 class ListTreeNode : public TreeNode {
@@ -103,7 +107,9 @@ public:
         return list;
     }
 
-    void printSelf();
+    virtual void printSelf() {
+
+    }
 
     std::vector<TreeNode *> getChildren() {
         return list;
@@ -134,9 +140,13 @@ class IDTreeNode : public TreeNode {
 public:
     virtual ~IDTreeNode() {}
 
-    void printSelf();
+    virtual void printSelf() {
 
-    virtual const std::string getType();
+    }
+
+    virtual const std::string getType() {
+        return "default";
+    }
 };
 
 class ProgramHeadTreeNode : public TreeNode {
@@ -175,7 +185,9 @@ class TypeTreeNode : public TreeNode {
 public:
     virtual ~TypeTreeNode() {}
 
-    void printSelf();
+    virtual void printSelf() {
+
+    }
 };
 
 //-----------------------------------------------
@@ -283,7 +295,9 @@ public:
         return elems;
     }
 
-    void printSelf();
+    virtual void printSelf() {
+
+    }
 
     std::vector<TreeNode *> getChildren() {
         return elems;
