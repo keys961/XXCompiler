@@ -1,0 +1,28 @@
+Node ID 0x1005698: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x8ebf68
+	type_part: 0x1004130
+	var_part: 0x10041b8
+	function_procedure_part: 0x1004c28
+	body_part: 0x1005168
+Node ID 0x8ebf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0x1004130: ListTreeNode
+	type: type_definition_list
+	 items: 0x10040d8 
+Node ID 0x10040d8: CustomTypeTreeNode
+	name: int; type node: 0x1004080
+Node ID 0x1004080: CommonTypeTreeNode
+	type: integer
+Node ID 0x10041b8: ListTreeNode
+	type: variable_declaration_part
+Node ID 0x1004c28: ListTreeNode
+	type: procedure_function_declaration_part
+	 items: 0x10055b8 
+Node ID 0x1005168: ListTreeNode
+	type: block_body_part
+	 items: 0x1005650 
+Node ID 0x1005650: CompoundStmtTreeNode
+	statements node: 0x1005108
+Node ID 0x1005108: ListTreeNode
+	type: statement_list

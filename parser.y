@@ -89,7 +89,7 @@ id_list: id_list COMMA ID
 constant_definition_part: CONST constant_list
                           {
                               showNodeInfo("constant_definition_part -> CONST constant_list");
-                              $$ = $1;
+                              $$ = $2;
                           }
     | {
          showNodeInfo("constant_definition_part ->");
@@ -400,19 +400,12 @@ compound_statement: BEGIN_ statememt_list END
                         $$ = new CompoundStmtTreeNode((ListTreeNode*)$2);
                     }
     ;
-statememt_list: statememt_list SEMICOLON statememt
+statememt_list: statememt_list statememt SEMICOLON
                 {
-                    showNodeInfo("statememt_list -> statememt_list SEMICOLON statememt");
+                    showNodeInfo("statememt_list -> statememt_list statememt SEMICOLON");
                     $$ = $1;
-                    ((ListTreeNode*)$$)->insert($3);
+                    ((ListTreeNode*)$$)->insert($2);
                 }
-    | statememt SEMICOLON
-      {
-          showNodeInfo("statememt_list -> statememt SEMICOLON");
-          std::vector<TreeNode*> list;
-          list.push_back($1);
-          $$ = new ListTreeNode("statement_list", list);
-      }
     | 
       {
          showNodeInfo("statememt_list -> ");
@@ -569,15 +562,15 @@ repeat_statememt: REPEAT statememt_list UNTIL expression
                   }
     ;
 
-for_statememt: FOR ID ASSIGN expression direction expression DO statememt
+for_statememt: FOR ID { stringQueue.push(yytext); } ASSIGN expression direction expression DO statememt
                {
                    showNodeInfo("for_statement -> FOR ID ASSIGN expression direction expression DO statememt");
                    std::string variableId = $2->getName();
                    delete $2;
                    VariableTreeNode* varNode = new VariableTreeNode(variableId);
-                   BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $4);
-                   std::string direction = $5->getName();
-                   $$ = new ForStmtTreeNode(exprNode, direction, (ExprTreeNode *)$6, (StatementTreeNode *)$8);
+                   BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $5);
+                   std::string direction = $6->getName();
+                   $$ = new ForStmtTreeNode(exprNode, direction, $7, (StatementTreeNode *)$9);
                    delete $6;
                }
     ;

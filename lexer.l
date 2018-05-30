@@ -85,7 +85,7 @@ digits [0-9]+
 letter [A-Za-z]
 
 integer {digits}
-real ({digits}"."[0-9]*)|([0-9]*"."{digits})
+real {digits}"."{digits}
 
 string \'[^']\' 
 char \'[.]\'

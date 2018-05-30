@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <set>
 #include "comment.h"
 #include "lexer.h"
 #include "parser.hpp"
@@ -20,6 +21,8 @@ std::ofstream codeOut; // Target code output
 
 GlobalInfo globalInfo;
 TreeNode* root; // ProgramBodyTreeNode
+
+std::set<TreeNode*> printedNodes;
 
 int main(int argc, const char *argv[])
 {
@@ -110,8 +113,8 @@ int main(int argc, const char *argv[])
 
 
     // finally dispose resources
-    if(root != nullptr)
-        delete root;
+    for(auto& it : printedNodes)
+        delete it;
 
     return 0;
 }

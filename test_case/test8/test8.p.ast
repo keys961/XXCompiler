@@ -1,0 +1,81 @@
+Node ID 0xf84fb8: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x91bf68
+	type_part: 0xf843e8
+	var_part: 0xf84540
+	function_procedure_part: 0xf84c88
+	body_part: 0xf84f58
+Node ID 0x91bf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0xf843e8: ListTreeNode
+	type: type_definition_list
+	 items: 0xf84390 
+Node ID 0xf84390: CustomTypeTreeNode
+	name: book; type node: 0xf84348
+Node ID 0xf84348: RecordTypeTreeNode
+	record element nodes: 0xf84288 
+Node ID 0xf84288: VariableTreeNode
+	name: id; isConst: 0
+	type node: 0xf84240
+Node ID 0xf84240: ArrayTypeTreeNode
+	range node: 0xf841a0
+	type node: 0xf841e8
+Node ID 0xf841a0: RangeTypeTreeNode
+	upper node: 0xf84130
+	lower node: 0xf840c0
+Node ID 0xf84130: LiteralTreeNode
+	value: 20; type: integer
+Node ID 0xf840c0: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0xf841e8: CommonTypeTreeNode
+	type: char
+Node ID 0xf84540: ListTreeNode
+	type: variable_declaration_list
+	 items: 0xf844e0 0xf84768 0xf84820 
+Node ID 0xf844e0: VariableTreeNode
+	name: b; isConst: 0
+	type node: 0xf84488
+Node ID 0xf84488: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0xf84768: VariableTreeNode
+	name: ar; isConst: 0
+	type node: 0xf84720
+Node ID 0xf84720: ArrayTypeTreeNode
+	range node: 0xf84680
+	type node: 0xf846c8
+Node ID 0xf84680: RangeTypeTreeNode
+	upper node: 0xf84610
+	lower node: 0xf845a0
+Node ID 0xf84610: LiteralTreeNode
+	value: 20; type: integer
+Node ID 0xf845a0: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0xf846c8: CommonTypeTreeNode
+	type: string
+Node ID 0xf84820: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0xf847c8
+Node ID 0xf847c8: CommonTypeTreeNode
+	type: string
+Node ID 0xf84c88: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0xf84f58: ListTreeNode
+	type: block_body_part
+	 items: 0xf84f10 
+Node ID 0xf84f10: CompoundStmtTreeNode
+	statements node: 0xf84ce8
+Node ID 0xf84ce8: ListTreeNode
+	type: statement_list
+	 items: 0xf84eb0 
+Node ID 0xf84eb0: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xf84db8
+	right operand: 0xf84e50
+Node ID 0xf84db8: ArrayElemTreeNode
+	name: ar
+	index node: 0xf84d48
+Node ID 0xf84d48: LiteralTreeNode
+	value: 0; type: integer
+Node ID 0xf84e50: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0

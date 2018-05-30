@@ -1,0 +1,126 @@
+Node ID 0xf85870: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x114bf68
+	type_part: 0xf84130
+	var_part: 0xf84290
+	function_procedure_part: 0xf85010
+	body_part: 0xf84a70
+Node ID 0x114bf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0xf84130: ListTreeNode
+	type: type_definition_list
+	 items: 0xf840d8 
+Node ID 0xf840d8: CustomTypeTreeNode
+	name: int; type node: 0xf84080
+Node ID 0xf84080: CommonTypeTreeNode
+	type: integer
+Node ID 0xf84290: ListTreeNode
+	type: variable_declaration_list
+	 items: 0xf84190 
+Node ID 0xf84190: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0xf84210
+Node ID 0xf84210: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0xf85010: ListTreeNode
+	type: procedure_function_declaration_part
+	 items: 0xf852d8 
+Node ID 0xf852d8: FuncOrProcTreeNode
+	name: min; isFunction: 0
+	args node: 0xf84450; body node: 0xf85288; return type node: 0
+Node ID 0xf84450: ListTreeNode
+	type: parameter_list
+	 items: 0xf843f0 0xf84508 0xf845c0 
+Node ID 0xf843f0: VariableTreeNode
+	name: num1; isConst: 0
+	type node: 0xf84398
+Node ID 0xf84398: CommonTypeTreeNode
+	type: integer
+Node ID 0xf84508: VariableTreeNode
+	name: num2; isConst: 0
+	type node: 0xf844b0
+Node ID 0xf844b0: CommonTypeTreeNode
+	type: integer
+Node ID 0xf845c0: VariableTreeNode
+	name: r; isConst: 0
+	type node: 0xf84568
+Node ID 0xf84568: CommonTypeTreeNode
+	type: integer
+Node ID 0xf85288: ProgramTreeNode
+	name: 
+	const_part: 0xf84620
+	type_part: 0xf84680
+	var_part: 0xf846e0
+	function_procedure_part: 0xf84798
+	body_part: 0xf84fb0
+Node ID 0xf84620: ListTreeNode
+	type: constant_definition_part
+Node ID 0xf84680: ListTreeNode
+	type: type_definition_part
+Node ID 0xf846e0: ListTreeNode
+	type: variable_declaration_part
+Node ID 0xf84798: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0xf84fb0: ListTreeNode
+	type: block_body_part
+	 items: 0xf85240 
+Node ID 0xf85240: CompoundStmtTreeNode
+	statements node: 0xf84828
+Node ID 0xf84828: ListTreeNode
+	type: statement_list
+	 items: 0xf851f0 
+Node ID 0xf851f0: IfStmtTreeNode
+	condition node: 0xf84988
+	then node: 0xf84e30
+	else node: 0xf84d70
+Node ID 0xf84988: BinaryExprTreeNode
+	operator: <
+	left operand: 0xf848c8
+	right operand: 0xf84928
+Node ID 0xf848c8: VariableTreeNode
+	name: num1; isConst: 0
+	type node: 0
+Node ID 0xf84928: VariableTreeNode
+	name: num2; isConst: 0
+	type node: 0
+Node ID 0xf84e30: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xf85130
+	right operand: 0xf84cb0
+Node ID 0xf85130: VariableTreeNode
+	name: r; isConst: 0
+	type node: 0
+Node ID 0xf84cb0: VariableTreeNode
+	name: num1; isConst: 0
+	type node: 0
+Node ID 0xf84d70: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xf84e90
+	right operand: 0xf850d0
+Node ID 0xf84e90: VariableTreeNode
+	name: r; isConst: 0
+	type node: 0
+Node ID 0xf850d0: VariableTreeNode
+	name: num2; isConst: 0
+	type node: 0
+Node ID 0xf84a70: ListTreeNode
+	type: block_body_part
+	 items: 0xf85420 
+Node ID 0xf85420: CompoundStmtTreeNode
+	statements node: 0xf84b30
+Node ID 0xf84b30: ListTreeNode
+	type: statement_list
+	 items: 0xf85070 0xf84a10 
+Node ID 0xf85070: CallExprTreeNode
+	name: min; isFunc: 0
+	arg nodes: 0xf85340 0xf853b0 
+Node ID 0xf85340: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0xf853b0: LiteralTreeNode
+	value: 2; type: integer
+Node ID 0xf84a10: CallExprTreeNode
+	name: write; isFunc: 0
+	arg nodes: 0xf84c50 
+Node ID 0xf84c50: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0

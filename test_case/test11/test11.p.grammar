@@ -1,0 +1,96 @@
+At line 2: Node - program_head -> PROGRAM ID
+At line 4: Node - constant_value -> INTEGER
+At line 4: Node - constant_definition -> ID EQUAL constant_value SEMICOLON
+At line 4: Node - constant_list -> constant_definition
+At line 5: Node - constant_definition_part -> CONST constant_list
+At line 5: Node - type_definition_part -> 
+At line 6: Node - simple_type -> TYPE_INTEGER
+At line 6: Node - type_denoter -> simple_type
+At line 6: Node - variable_declaration -> ID COLON type_denoter
+At line 6: Node - variable_declaration_list -> variable_declaration
+At line 7: Node - simple_type -> TYPE_CHAR
+At line 7: Node - type_denoter -> simple_type
+At line 7: Node - variable_declaration -> ID COLON type_denoter
+At line 7: Node - variable_declaration_list -> variable_declaration_list SEMICOLON variable_declaration
+At line 8: Node - constant_value -> INTEGER
+At line 8: Node - constant_value -> INTEGER
+At line 8: Node - range_type -> constant_value DOTDOT constant_value
+At line 8: Node - simple_type -> TYPE_CHAR
+At line 8: Node - type_denoter -> simple_type
+At line 8: Node - array_type -> ARRAY LB range_type RB OF type_denoter
+At line 8: Node - type_denoter -> array_type
+At line 8: Node - variable_declaration -> ID COLON type_denoter
+At line 8: Node - variable_declaration_list -> variable_declaration_list SEMICOLON variable_declaration
+At line 9: Node - variable_declaration_part -> VAR variable_declaration_list SEMICOLON
+At line 9: Node - simple_type -> TYPE_REAL
+At line 9: Node - parameter -> ID COLON simple_type
+At line 9: Node - parameter_list -> parameter
+At line 9: Node - parameters -> LP parameter_list RP
+At line 9: Node - simple_type -> TYPE_CHAR
+At line 10: Node - constant_definition_part ->
+At line 10: Node - type_definition_part -> 
+At line 10: Node - variable_declaration_part ->
+At line 10: Node - procedure_function_declaration_part ->
+At line 10: Node - statememt_list -> 
+At line 11: Node - compound_statement -> BEGIN_ statememt_list END
+At line 11: Node - block_body_part -> compound_statement
+At line 11: Node - block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part
+At line 11: Node - function_declaration -> FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON
+At line 11: Node - procedure_function_declaration -> function_declaration
+At line 11: Node - procedure_function_declaration_part -> procedure_function_declaration
+At line 12: Node - statememt_list -> 
+At line 13: Node - variable_access -> ID
+At line 13: Node - constant_value -> INTEGER
+At line 13: Node - factor -> constant_value
+At line 13: Node - term -> factor
+At line 13: Node - expr -> term
+At line 13: Node - expression -> expr
+At line 13: Node - assign_statememt -> variable_access ASSIGN expression
+At line 13: Node - stmt -> assign_statememt
+At line 13: Node - statement -> stmt
+At line 13: Node - statememt_list -> statememt_list statememt SEMICOLON
+At line 14: Node - variable_access -> ID
+At line 14: Node - factor -> ID
+At line 14: Node - term -> factor
+At line 14: Node - expr -> term
+At line 14: Node - expression -> expr
+At line 14: Node - args -> expression
+At line 14: Node - factor -> ID
+At line 14: Node - term -> factor
+At line 14: Node - expr -> term
+At line 14: Node - expression -> expr
+At line 14: Node - args -> args COMMA expression)
+At line 14: Node - factor -> ID LP args RP
+At line 14: Node - term -> factor
+At line 14: Node - expr -> term
+At line 14: Node - expression -> expr
+At line 14: Node - assign_statememt -> variable_access ASSIGN expression
+At line 14: Node - stmt -> assign_statememt
+At line 14: Node - statement -> stmt
+At line 14: Node - statememt_list -> statememt_list statememt SEMICOLON
+At line 15: Node - factor -> ID
+At line 15: Node - term -> factor
+At line 15: Node - expr -> term
+At line 15: Node - expression -> expr
+At line 15: Node - variable_access -> ID LB expression RB
+At line 15: Node - factor -> ID
+At line 15: Node - term -> factor
+At line 15: Node - expr -> term
+At line 15: Node - expression -> expr
+At line 15: Node - assign_statememt -> variable_access ASSIGN expression
+At line 15: Node - stmt -> assign_statememt
+At line 15: Node - statement -> stmt
+At line 15: Node - statememt_list -> statememt_list statememt SEMICOLON
+At line 16: Node - variable_access -> ID
+At line 16: Node - factor -> ID
+At line 16: Node - term -> factor
+At line 16: Node - expr -> term
+At line 16: Node - expression -> expr
+At line 16: Node - assign_statememt -> variable_access ASSIGN expression
+At line 16: Node - stmt -> assign_statememt
+At line 16: Node - statement -> stmt
+At line 16: Node - statememt_list -> statememt_list statememt SEMICOLON
+At line 17: Node - compound_statement -> BEGIN_ statememt_list END
+At line 17: Node - block_body_part -> compound_statement
+At line 17: Node - block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part
+At line 17: Node - program -> program_head SEMICOLON block DOT
