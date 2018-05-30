@@ -1,4 +1,15 @@
 language: cpp
 compiler: 
   - gcc
-script: true
+
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake-data
+      - cmake
+
+script:
+  - cmake .
+  - make
