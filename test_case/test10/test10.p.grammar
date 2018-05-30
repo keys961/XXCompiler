@@ -1,0 +1,57 @@
+At line 1: Node - program_head -> PROGRAM ID
+At line 3: Node - constant_value -> INTEGER
+At line 3: Node - constant_definition -> ID EQUAL constant_value SEMICOLON
+At line 3: Node - constant_list -> constant_definition
+At line 4: Node - constant_value -> STRING
+At line 4: Node - constant_definition -> ID EQUAL constant_value SEMICOLON
+At line 4: Node - constant_list -> constant_list constant_definition
+At line 5: Node - constant_definition_part -> CONST constant_list
+At line 6: Node - simple_type -> TYPE_INTEGER
+At line 6: Node - type_denoter -> simple_type
+At line 6: Node - type_definition -> ID EQUAL type_denoter SEMICOLON
+At line 6: Node - type_definition_list -> type_definition
+At line 8: Node - simple_type -> TYPE_INTEGER
+At line 8: Node - type_denoter -> simple_type
+At line 8: Node - field_definition -> ID COLON type_denoter
+At line 8: Node - field_definition_list -> field_definition
+At line 9: Node - simple_type -> TYPE_INTEGER
+At line 9: Node - type_denoter -> simple_type
+At line 9: Node - field_definition -> ID COLON type_denoter
+At line 9: Node - field_definition_list -> field_definition_list SEMICOLON field_definition
+At line 10: Node - simple_type -> TYPE_INTEGER
+At line 10: Node - type_denoter -> simple_type
+At line 10: Node - field_definition -> ID COLON type_denoter
+At line 10: Node - field_definition_list -> field_definition_list SEMICOLON field_definition
+At line 11: Node - simple_type -> TYPE_CHAR
+At line 11: Node - type_denoter -> simple_type
+At line 11: Node - field_definition -> ID COLON type_denoter
+At line 11: Node - field_definition_list -> field_definition_list SEMICOLON field_definition
+At line 12: Node - record_type -> RECORD field_definition_list END
+At line 12: Node - type_denoter -> record_type
+At line 12: Node - type_definition -> ID EQUAL type_denoter SEMICOLON
+At line 12: Node - type_definition_list -> type_definition_list type_definition
+At line 13: Node - type_definition_part -> TYPE type_definition_list
+At line 14: Node - simple_type -> ID
+At line 14: Node - type_denoter -> simple_type
+At line 14: Node - variable_declaration -> ID COLON type_denoter
+At line 14: Node - variable_declaration_list -> variable_declaration
+At line 15: Node - simple_type -> ID
+At line 15: Node - type_denoter -> simple_type
+At line 15: Node - variable_declaration -> ID COLON type_denoter
+At line 15: Node - variable_declaration_list -> variable_declaration_list SEMICOLON variable_declaration
+At line 16: Node - variable_declaration_part -> VAR variable_declaration_list SEMICOLON
+At line 16: Node - procedure_function_declaration_part ->
+At line 16: Node - statememt_list -> 
+At line 17: Node - variable_access -> ID
+At line 17: Node - factor -> ID
+At line 17: Node - term -> factor
+At line 17: Node - expr -> term
+At line 17: Node - expression -> expr
+At line 17: Node - assign_statememt -> variable_access ASSIGN expression
+At line 17: Node - stmt -> assign_statememt
+At line 17: Node - statement -> stmt
+At line 17: Node - statememt_list -> statememt_list statememt SEMICOLON
+At line 18: Node - compound_statement -> BEGIN_ statememt_list END
+At line 18: Node - block_body_part -> compound_statement
+At line 18: Node - block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part
+At line 18: Node - program -> program_head SEMICOLON block DOT

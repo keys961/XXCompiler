@@ -1,0 +1,148 @@
+Node ID 0x10d5e88: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x10d4118
+	type_part: 0x10d4760
+	var_part: 0x10d53b0
+	function_procedure_part: 0x8dc300
+	body_part: 0x8dced0
+Node ID 0x10d4118: ListTreeNode
+	type: constant_list
+	 items: 0x10d40b8 0x10d4248 
+Node ID 0x10d40b8: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x10d4058
+	right operand: 0x8dbf68
+Node ID 0x10d4058: VariableTreeNode
+	name: ccc; isConst: 1
+	type node: 0
+Node ID 0x8dbf68: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x10d4248: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x10d41e8
+	right operand: 0x10d4178
+Node ID 0x10d41e8: VariableTreeNode
+	name: sub; isConst: 1
+	type node: 0
+Node ID 0x10d4178: LiteralTreeNode
+	value: 'a'; type: string
+Node ID 0x10d4760: ListTreeNode
+	type: type_definition_list
+	 items: 0x10d4300 0x10d4760 
+Node ID 0x10d4300: CustomTypeTreeNode
+	name: int; type node: 0x10d42a8
+Node ID 0x10d42a8: CommonTypeTreeNode
+	type: integer
+Node ID 0x10d53b0: ListTreeNode
+	type: variable_declaration_list
+	 items: 0x10d5350 0x10d5468 0x10d5520 0x10d55d8 0x10d5800 
+Node ID 0x10d5350: VariableTreeNode
+	name: n1; isConst: 0
+	type node: 0x10d52f8
+Node ID 0x10d52f8: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0x10d5468: VariableTreeNode
+	name: n2; isConst: 0
+	type node: 0x10d5410
+Node ID 0x10d5410: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0x10d5520: VariableTreeNode
+	name: n3; isConst: 0
+	type node: 0x10d54c8
+Node ID 0x10d54c8: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0x10d55d8: VariableTreeNode
+	name: b; isConst: 0
+	type node: 0x10d5580
+Node ID 0x10d5580: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x10d5800: VariableTreeNode
+	name: ar; isConst: 0
+	type node: 0x10d57b8
+Node ID 0x10d57b8: ArrayTypeTreeNode
+	range node: 0x10d5718
+	type node: 0x10d5760
+Node ID 0x10d5718: RangeTypeTreeNode
+	upper node: 0x10d56a8
+	lower node: 0x10d5638
+Node ID 0x10d56a8: LiteralTreeNode
+	value: 20; type: integer
+Node ID 0x10d5638: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x10d5760: CommonTypeTreeNode
+	type: string
+Node ID 0x8dc300: ListTreeNode
+	type: procedure_function_declaration_part
+	 items: 0x10d5b40 
+Node ID 0x8dced0: ListTreeNode
+	type: block_body_part
+	 items: 0x10d5e40 
+Node ID 0x10d5e40: CompoundStmtTreeNode
+	statements node: 0x8dc4e0
+Node ID 0x8dc4e0: ListTreeNode
+	type: statement_list
+	 items: 0x8dc660 0x8dd110 0x8dd170 0x8dc990 0x8dcb10 
+Node ID 0x8dc660: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8dc420
+	right operand: 0x10d5c18
+Node ID 0x8dc420: VariableTreeNode
+	name: n1; isConst: 0
+	type node: 0
+Node ID 0x10d5c18: UnaryExprTreeNode
+	operator: -
+	operand: 0x10d5ba8
+Node ID 0x10d5ba8: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x8dd110: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8dc480
+	right operand: 0x8dc600
+Node ID 0x8dc480: VariableTreeNode
+	name: n2; isConst: 0
+	type node: 0
+Node ID 0x8dc600: BinaryExprTreeNode
+	operator: +
+	left operand: 0x10d5c70
+	right operand: 0x8dc5a0
+Node ID 0x10d5c70: UnaryExprTreeNode
+	operator: -
+	operand: 0x8dc540
+Node ID 0x8dc540: VariableTreeNode
+	name: n1; isConst: 0
+	type node: 0
+Node ID 0x8dc5a0: VariableTreeNode
+	name: n2; isConst: 0
+	type node: 0
+Node ID 0x8dd170: CallExprTreeNode
+	name: max; isFunc: 0
+	arg nodes: 0x8dc9f0 0x8dd0b0 0x8dcab0 
+Node ID 0x8dc9f0: VariableTreeNode
+	name: n1; isConst: 0
+	type node: 0
+Node ID 0x8dd0b0: VariableTreeNode
+	name: n2; isConst: 0
+	type node: 0
+Node ID 0x8dcab0: VariableTreeNode
+	name: n3; isConst: 0
+	type node: 0
+Node ID 0x8dc990: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x10d5cc8
+	right operand: 0x8dcd50
+Node ID 0x10d5cc8: RecordElemTreeNode
+	record name: b; element name: id
+Node ID 0x8dcd50: VariableTreeNode
+	name: n1; isConst: 0
+	type node: 0
+Node ID 0x8dcb10: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8dde98
+	right operand: 0x10d5da8
+Node ID 0x8dde98: ArrayElemTreeNode
+	name: ar
+	index node: 0x10d5d38
+Node ID 0x10d5d38: LiteralTreeNode
+	value: 0; type: integer
+Node ID 0x10d5da8: LiteralTreeNode
+	value: 'b'; type: string

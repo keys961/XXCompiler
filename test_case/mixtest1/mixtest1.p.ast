@@ -1,0 +1,120 @@
+Node ID 0x1015c08: ProgramTreeNode
+	name: MixedTest1
+	const_part: 0x100bf68
+	type_part: 0x1014538
+	var_part: 0x1014af0
+	function_procedure_part: 0x10157a8
+	body_part: 0x100c230
+Node ID 0x100bf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0x1014538: ListTreeNode
+	type: type_definition_list
+	 items: 0x10140d8 0x1014538 
+Node ID 0x10140d8: CustomTypeTreeNode
+	name: int; type node: 0x1014080
+Node ID 0x1014080: CommonTypeTreeNode
+	type: integer
+Node ID 0x1014af0: ListTreeNode
+	type: variable_declaration_list
+	 items: 0x1014a90 0x10153b0 0x1015468 0x1015690 0x1015748 
+Node ID 0x1014a90: VariableTreeNode
+	name: b1; isConst: 0
+	type node: 0x1014a38
+Node ID 0x1014a38: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x10153b0: VariableTreeNode
+	name: b2; isConst: 0
+	type node: 0x1015358
+Node ID 0x1015358: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x1015468: VariableTreeNode
+	name: re; isConst: 0
+	type node: 0x1015410
+Node ID 0x1015410: CommonTypeTreeNode
+	type: real
+Node ID 0x1015690: VariableTreeNode
+	name: ar; isConst: 0
+	type node: 0x1015648
+Node ID 0x1015648: ArrayTypeTreeNode
+	range node: 0x10155a8
+	type node: 0x10155f0
+Node ID 0x10155a8: RangeTypeTreeNode
+	upper node: 0x1015538
+	lower node: 0x10154c8
+Node ID 0x1015538: LiteralTreeNode
+	value: 10; type: integer
+Node ID 0x10154c8: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x10155f0: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x1015748: VariableTreeNode
+	name: i; isConst: 0
+	type node: 0x10156f0
+Node ID 0x10156f0: CommonTypeTreeNode
+	type: integer
+Node ID 0x10157a8: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0x100c230: ListTreeNode
+	type: block_body_part
+	 items: 0x1015bc0 
+Node ID 0x1015bc0: CompoundStmtTreeNode
+	statements node: 0x1015808
+Node ID 0x1015808: ListTreeNode
+	type: statement_list
+	 items: 0x1015948 0x100c410 0x100c170 0x100c0b0 0x100bff0 0x100c1d0 
+Node ID 0x1015948: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x1015868
+	right operand: 0x10158d8
+Node ID 0x1015868: RecordElemTreeNode
+	record name: b1; element name: id1
+Node ID 0x10158d8: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x100c410: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x1015a18
+	right operand: 0x100c110
+Node ID 0x1015a18: ArrayElemTreeNode
+	name: ar
+	index node: 0x10159a8
+Node ID 0x10159a8: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x100c110: VariableTreeNode
+	name: b1; isConst: 0
+	type node: 0
+Node ID 0x100c170: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x100c710
+	right operand: 0x1015a70
+Node ID 0x100c710: VariableTreeNode
+	name: re; isConst: 0
+	type node: 0
+Node ID 0x1015a70: LiteralTreeNode
+	value: 1.1; type: real
+Node ID 0x100c0b0: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x100c650
+	right operand: 0x100c770
+Node ID 0x100c650: VariableTreeNode
+	name: re; isConst: 0
+	type node: 0
+Node ID 0x100c770: BinaryExprTreeNode
+	operator: *
+	left operand: 0x1015ae0
+	right operand: 0x100c3b0
+Node ID 0x1015ae0: LiteralTreeNode
+	value: 2.2; type: real
+Node ID 0x100c3b0: VariableTreeNode
+	name: re; isConst: 0
+	type node: 0
+Node ID 0x100bff0: CallExprTreeNode
+	name: write; isFunc: 0
+	arg nodes: 0x1015b50 
+Node ID 0x1015b50: RecordElemTreeNode
+	record name: b1; element name: id1
+Node ID 0x100c1d0: CallExprTreeNode
+	name: write; isFunc: 0
+	arg nodes: 0x100c050 
+Node ID 0x100c050: VariableTreeNode
+	name: re; isConst: 0
+	type node: 0

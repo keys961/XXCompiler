@@ -1,0 +1,64 @@
+Node ID 0x10048c0: ProgramTreeNode
+	name: MixedTest3
+	const_part: 0xffbf68
+	type_part: 0x1004130
+	var_part: 0x10043f8
+	function_procedure_part: 0x1004538
+	body_part: 0x1004860
+Node ID 0xffbf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0x1004130: ListTreeNode
+	type: type_definition_list
+	 items: 0x10040d8 
+Node ID 0x10040d8: CustomTypeTreeNode
+	name: int; type node: 0x1004080
+Node ID 0x1004080: CommonTypeTreeNode
+	type: integer
+Node ID 0x10043f8: ListTreeNode
+	type: variable_declaration_list
+	 items: 0x1004398 0x10044d8 
+Node ID 0x1004398: VariableTreeNode
+	name: a; isConst: 0
+	type node: 0x1004350
+Node ID 0x1004350: ArrayTypeTreeNode
+	range node: 0x10042b0
+	type node: 0x10042f8
+Node ID 0x10042b0: RangeTypeTreeNode
+	upper node: 0x1004240
+	lower node: 0x10041d0
+Node ID 0x1004240: LiteralTreeNode
+	value: 20; type: integer
+Node ID 0x10041d0: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x10042f8: CommonTypeTreeNode
+	type: char
+Node ID 0x10044d8: VariableTreeNode
+	name: c; isConst: 0
+	type node: 0x1004480
+Node ID 0x1004480: CommonTypeTreeNode
+	type: char
+Node ID 0x1004538: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0x1004860: ListTreeNode
+	type: block_body_part
+	 items: 0x1004818 
+Node ID 0x1004818: CompoundStmtTreeNode
+	statements node: 0x10045c8
+Node ID 0x10045c8: ListTreeNode
+	type: statement_list
+	 items: 0x10046f8 0x10047b8 
+Node ID 0x10046f8: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x1004628
+	right operand: 0x1004688
+Node ID 0x1004628: VariableTreeNode
+	name: c; isConst: 0
+	type node: 0
+Node ID 0x1004688: LiteralTreeNode
+	value: 'a'; type: string
+Node ID 0x10047b8: CallExprTreeNode
+	name: write; isFunc: 0
+	arg nodes: 0x1004758 
+Node ID 0x1004758: VariableTreeNode
+	name: c; isConst: 0
+	type node: 0

@@ -1,0 +1,68 @@
+Node ID 0x8c5f48: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x8c4118
+	type_part: 0x8c4760
+	var_part: 0x8c5520
+	function_procedure_part: 0x8c5638
+	body_part: 0x8c5720
+Node ID 0x8c4118: ListTreeNode
+	type: constant_list
+	 items: 0x8c40b8 0x8c4248 
+Node ID 0x8c40b8: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8c4058
+	right operand: 0x86bf68
+Node ID 0x8c4058: VariableTreeNode
+	name: ccc; isConst: 1
+	type node: 0
+Node ID 0x86bf68: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0x8c4248: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8c41e8
+	right operand: 0x8c4178
+Node ID 0x8c41e8: VariableTreeNode
+	name: sub; isConst: 1
+	type node: 0
+Node ID 0x8c4178: LiteralTreeNode
+	value: 'a'; type: string
+Node ID 0x8c4760: ListTreeNode
+	type: type_definition_list
+	 items: 0x8c4300 0x8c4760 
+Node ID 0x8c4300: CustomTypeTreeNode
+	name: int; type node: 0x8c42a8
+Node ID 0x8c42a8: CommonTypeTreeNode
+	type: integer
+Node ID 0x8c5520: ListTreeNode
+	type: variable_declaration_list
+	 items: 0x8c54c0 0x8c55d8 
+Node ID 0x8c54c0: VariableTreeNode
+	name: b; isConst: 0
+	type node: 0x8c5468
+Node ID 0x8c5468: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x8c55d8: VariableTreeNode
+	name: a; isConst: 0
+	type node: 0x8c5580
+Node ID 0x8c5580: CustomTypeTreeNode
+	name: book; type node: 0
+Node ID 0x8c5638: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0x8c5720: ListTreeNode
+	type: block_body_part
+	 items: 0x8c5f00 
+Node ID 0x8c5f00: CompoundStmtTreeNode
+	statements node: 0x8c5698
+Node ID 0x8c5698: ListTreeNode
+	type: statement_list
+	 items: 0x8c5c00 
+Node ID 0x8c5c00: BinaryExprTreeNode
+	operator: :=
+	left operand: 0x8c5d20
+	right operand: 0x8c5960
+Node ID 0x8c5d20: VariableTreeNode
+	name: a; isConst: 0
+	type node: 0
+Node ID 0x8c5960: VariableTreeNode
+	name: b; isConst: 0
+	type node: 0

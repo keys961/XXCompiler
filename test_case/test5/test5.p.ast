@@ -1,0 +1,113 @@
+Node ID 0xfc5f00: ProgramTreeNode
+	name: HelloWorld
+	const_part: 0x88bf68
+	type_part: 0xfc4130
+	var_part: 0xfc4290
+	function_procedure_part: 0xfc47f8
+	body_part: 0xfc5130
+Node ID 0x88bf68: ListTreeNode
+	type: constant_definition_part
+Node ID 0xfc4130: ListTreeNode
+	type: type_definition_list
+	 items: 0xfc40d8 
+Node ID 0xfc40d8: CustomTypeTreeNode
+	name: int; type node: 0xfc4080
+Node ID 0xfc4080: CommonTypeTreeNode
+	type: integer
+Node ID 0xfc4290: ListTreeNode
+	type: variable_declaration_list
+	 items: 0xfc4190 0xfc4318 
+Node ID 0xfc4190: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0xfc4210
+Node ID 0xfc4210: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0xfc4318: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0xfc4398
+Node ID 0xfc4398: CustomTypeTreeNode
+	name: int; type node: 0
+Node ID 0xfc47f8: ListTreeNode
+	type: procedure_function_declaration_part
+Node ID 0xfc5130: ListTreeNode
+	type: block_body_part
+	 items: 0xfc5eb8 
+Node ID 0xfc5eb8: CompoundStmtTreeNode
+	statements node: 0xfc4858
+Node ID 0xfc4858: ListTreeNode
+	type: statement_list
+	 items: 0xfc49c8 0xfc4af8 0xfc5668 0xfc53d0 
+Node ID 0xfc49c8: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xfc48f8
+	right operand: 0xfc4958
+Node ID 0xfc48f8: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0
+Node ID 0xfc4958: LiteralTreeNode
+	value: 0; type: integer
+Node ID 0xfc4af8: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xfc4a28
+	right operand: 0xfc4a88
+Node ID 0xfc4a28: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0
+Node ID 0xfc4a88: LiteralTreeNode
+	value: 0; type: integer
+Node ID 0xfc5668: WhileStmtTreeNode
+	condition node: 0xfc4c28
+	statement node: 0xfc5620
+Node ID 0xfc4c28: BinaryExprTreeNode
+	operator: <
+	left operand: 0xfc4b58
+	right operand: 0xfc4bb8
+Node ID 0xfc4b58: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0
+Node ID 0xfc4bb8: LiteralTreeNode
+	value: 100; type: integer
+Node ID 0xfc5620: CompoundStmtTreeNode
+	statements node: 0xfc4c88
+Node ID 0xfc4c88: ListTreeNode
+	type: statement_list
+	 items: 0xfc5010 0xfc50d0 
+Node ID 0xfc5010: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xfc4ce8
+	right operand: 0xfc4fb0
+Node ID 0xfc4ce8: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0
+Node ID 0xfc4fb0: BinaryExprTreeNode
+	operator: +
+	left operand: 0xfc4d48
+	right operand: 0xfc54f0
+Node ID 0xfc4d48: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0
+Node ID 0xfc54f0: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0
+Node ID 0xfc50d0: BinaryExprTreeNode
+	operator: :=
+	left operand: 0xfc5370
+	right operand: 0xfc5310
+Node ID 0xfc5370: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0
+Node ID 0xfc5310: BinaryExprTreeNode
+	operator: +
+	left operand: 0xfc5490
+	right operand: 0xfc55b0
+Node ID 0xfc5490: VariableTreeNode
+	name: s; isConst: 0
+	type node: 0
+Node ID 0xfc55b0: LiteralTreeNode
+	value: 1; type: integer
+Node ID 0xfc53d0: CallExprTreeNode
+	name: write; isFunc: 0
+	arg nodes: 0xfc5550 
+Node ID 0xfc5550: VariableTreeNode
+	name: result; isConst: 0
+	type node: 0
