@@ -901,10 +901,10 @@ int yyerror(const char* str)
     printf("At line %ld:%ld: Token: %s.\n", globalInfo.currentLineIndex,
         globalInfo.currentTokenIndex, globalInfo.currentToken.c_str());
     printf("\tError message: %s\n", str);
-    printf("Starting to clean garbage...\n")
+    printf("Starting to clean garbage...\n");
     for(auto& it : createdNodes)
         delete it;
-    printf("Cleaning finished.\n")
+    printf("Cleaning finished.\n");
     root = nullptr;
     return 1;
 }

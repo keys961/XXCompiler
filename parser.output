@@ -121,7 +121,7 @@ Terminals unused in grammar
    73 procedure_statement: READ LP factor RP
    74                    | WRITE LP expression RP
    75                    | ID LP args RP
-   76                    | ID
+   76                    | ID LP RP
 
    77 if_statememt: IF expression THEN statememt ELSE statememt
    78             | IF expression THEN statememt
@@ -236,8 +236,8 @@ COLON (307) 35 40 47 52 58 88
 ASSIGN (308) 69 81
 LB (309) 31 71 109
 RB (310) 31 71 109
-LP (311) 29 48 49 73 74 75 108 112
-RP (312) 29 48 49 73 74 75 108 112
+LP (311) 29 48 49 73 74 75 76 108 112
+RP (312) 29 48 49 73 74 75 76 108 112
 INTEGER (313) 11
 REAL (314) 12
 CHAR (315) 13
@@ -1135,7 +1135,7 @@ State 75
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -1534,14 +1534,13 @@ State 99
    71                | ID . LB expression RB
    72                | ID . DOT ID
    75 procedure_statement: ID . LP args RP
-   76                    | ID .  [ELSE, END, SEMICOLON]
+   76                    | ID . LP RP
 
     DOT  shift, and go to state 138
     LB   shift, and go to state 139
     LP   shift, and go to state 140
 
-    ASSIGN    reduce using rule 70 (variable_access)
-    $default  reduce using rule 76 (procedure_statement)
+    $default  reduce using rule 70 (variable_access)
 
 
 State 100
@@ -1989,7 +1988,7 @@ State 135
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -2158,6 +2157,7 @@ State 140
    13               | . CHAR
    14               | . STRING
    75 procedure_statement: ID LP . args RP
+   76                    | ID LP . RP
    90 expression: . expression LT expr
    91           | . expression LE expr
    92           | . expression EQUAL expr
@@ -2189,6 +2189,7 @@ State 140
     NOT      shift, and go to state 122
     MINUS    shift, and go to state 123
     LP       shift, and go to state 124
+    RP       shift, and go to state 178
     INTEGER  shift, and go to state 23
     REAL     shift, and go to state 24
     CHAR     shift, and go to state 25
@@ -2196,11 +2197,11 @@ State 140
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 178
+    expression      转到状态 179
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
-    args            转到状态 179
+    args            转到状态 180
 
 
 State 141
@@ -2223,7 +2224,7 @@ State 141
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -2244,7 +2245,7 @@ State 141
     ID      shift, and go to state 99
 
     compound_statement   转到状态 100
-    stmt                 转到状态 180
+    stmt                 转到状态 181
     assign_statememt     转到状态 104
     variable_access      转到状态 105
     procedure_statement  转到状态 106
@@ -2306,7 +2307,7 @@ State 143
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 181
+    expression      转到状态 182
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
@@ -2347,7 +2348,7 @@ State 144
     ID            shift, and go to state 47
 
     constant_value  转到状态 48
-    type_denoter    转到状态 182
+    type_denoter    转到状态 183
     simple_type     转到状态 50
     range_type      转到状态 51
     array_type      转到状态 52
@@ -2379,7 +2380,7 @@ State 147
 
     $default  reduce using rule 7 (constant_definition_part)
 
-    block                     转到状态 183
+    block                     转到状态 184
     constant_definition_part  转到状态 9
 
 
@@ -2420,14 +2421,14 @@ State 151
     UNEQUAL  shift, and go to state 159
     GE       shift, and go to state 160
     GT       shift, and go to state 161
-    RP       shift, and go to state 184
+    RP       shift, and go to state 185
 
 
 State 152
 
   110 factor: ID DOT . ID
 
-    ID  shift, and go to state 185
+    ID  shift, and go to state 186
 
 
 State 153
@@ -2473,7 +2474,7 @@ State 153
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 186
+    expression      转到状态 187
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
@@ -2524,11 +2525,11 @@ State 154
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 178
+    expression      转到状态 179
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
-    args            转到状态 187
+    args            转到状态 188
 
 
 State 155
@@ -2547,9 +2548,9 @@ State 155
     CHAR     shift, and go to state 25
     STRING   shift, and go to state 26
 
-    constant_value  转到状态 188
-    case_list       转到状态 189
-    case_item       转到状态 190
+    constant_value  转到状态 189
+    case_list       转到状态 190
+    case_item       转到状态 191
 
 
 State 156
@@ -2588,7 +2589,7 @@ State 156
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 191
+    expr            转到状态 192
     term            转到状态 129
     factor          转到状态 130
 
@@ -2629,7 +2630,7 @@ State 157
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 192
+    expr            转到状态 193
     term            转到状态 129
     factor          转到状态 130
 
@@ -2670,7 +2671,7 @@ State 158
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 193
+    expr            转到状态 194
     term            转到状态 129
     factor          转到状态 130
 
@@ -2711,7 +2712,7 @@ State 159
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 194
+    expr            转到状态 195
     term            转到状态 129
     factor          转到状态 130
 
@@ -2752,7 +2753,7 @@ State 160
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 195
+    expr            转到状态 196
     term            转到状态 129
     factor          转到状态 130
 
@@ -2793,7 +2794,7 @@ State 161
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expr            转到状态 196
+    expr            转到状态 197
     term            转到状态 129
     factor          转到状态 130
 
@@ -2829,7 +2830,7 @@ State 162
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    term            转到状态 197
+    term            转到状态 198
     factor          转到状态 130
 
 
@@ -2864,7 +2865,7 @@ State 163
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    term            转到状态 198
+    term            转到状态 199
     factor          转到状态 130
 
 
@@ -2899,7 +2900,7 @@ State 164
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    term            转到状态 199
+    term            转到状态 200
     factor          转到状态 130
 
 
@@ -2934,7 +2935,7 @@ State 165
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    term            转到状态 200
+    term            转到状态 201
     factor          转到状态 130
 
 
@@ -2964,7 +2965,7 @@ State 166
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    factor          转到状态 201
+    factor          转到状态 202
 
 
 State 167
@@ -2993,7 +2994,7 @@ State 167
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    factor          转到状态 202
+    factor          转到状态 203
 
 
 State 168
@@ -3022,7 +3023,7 @@ State 168
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    factor          转到状态 203
+    factor          转到状态 204
 
 
 State 169
@@ -3051,14 +3052,14 @@ State 169
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    factor          转到状态 204
+    factor          转到状态 205
 
 
 State 170
 
    81 for_statememt: FOR ID $@1 . ASSIGN expression direction expression DO statememt
 
-    ASSIGN  shift, and go to state 205
+    ASSIGN  shift, and go to state 206
 
 
 State 171
@@ -3083,7 +3084,7 @@ State 171
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    77             | IF expression THEN . statememt ELSE statememt
    78             | . IF expression THEN statememt
@@ -3108,7 +3109,7 @@ State 171
 
     compound_statement   转到状态 100
     label                转到状态 101
-    statememt            转到状态 206
+    statememt            转到状态 207
     stmt                 转到状态 103
     assign_statememt     转到状态 104
     variable_access      转到状态 105
@@ -3125,7 +3126,7 @@ State 172
 
    73 procedure_statement: READ LP factor . RP
 
-    RP  shift, and go to state 207
+    RP  shift, and go to state 208
 
 
 State 173
@@ -3171,7 +3172,7 @@ State 173
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 208
+    expression      转到状态 209
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
@@ -3199,7 +3200,7 @@ State 174
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -3223,7 +3224,7 @@ State 174
 
     compound_statement   转到状态 100
     label                转到状态 101
-    statememt            转到状态 209
+    statememt            转到状态 210
     stmt                 转到状态 103
     assign_statememt     转到状态 104
     variable_access      转到状态 105
@@ -3252,7 +3253,7 @@ State 175
     UNEQUAL  shift, and go to state 159
     GE       shift, and go to state 160
     GT       shift, and go to state 161
-    RP       shift, and go to state 210
+    RP       shift, and go to state 211
 
 
 State 176
@@ -3278,10 +3279,17 @@ State 177
     UNEQUAL  shift, and go to state 159
     GE       shift, and go to state 160
     GT       shift, and go to state 161
-    RB       shift, and go to state 211
+    RB       shift, and go to state 212
 
 
 State 178
+
+   76 procedure_statement: ID LP RP .
+
+    $default  reduce using rule 76 (procedure_statement)
+
+
+State 179
 
    90 expression: expression . LT expr
    91           | expression . LE expr
@@ -3301,23 +3309,23 @@ State 178
     $default  reduce using rule 116 (args)
 
 
-State 179
+State 180
 
    75 procedure_statement: ID LP args . RP
   115 args: args . COMMA expression
 
-    COMMA  shift, and go to state 212
-    RP     shift, and go to state 213
+    COMMA  shift, and go to state 213
+    RP     shift, and go to state 214
 
 
-State 180
+State 181
 
    58 statememt: label COLON stmt .
 
     $default  reduce using rule 58 (statememt)
 
 
-State 181
+State 182
 
    69 assign_statememt: variable_access ASSIGN expression .  [ELSE, END, SEMICOLON]
    90 expression: expression . LT expr
@@ -3337,35 +3345,35 @@ State 181
     $default  reduce using rule 69 (assign_statememt)
 
 
-State 182
+State 183
 
    31 array_type: ARRAY LB range_type RB OF type_denoter .
 
     $default  reduce using rule 31 (array_type)
 
 
-State 183
+State 184
 
    47 function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block . SEMICOLON
 
-    SEMICOLON  shift, and go to state 214
+    SEMICOLON  shift, and go to state 215
 
 
-State 184
+State 185
 
   112 factor: LP expression RP .
 
     $default  reduce using rule 112 (factor)
 
 
-State 185
+State 186
 
   110 factor: ID DOT ID .
 
     $default  reduce using rule 110 (factor)
 
 
-State 186
+State 187
 
    90 expression: expression . LT expr
    91           | expression . LE expr
@@ -3381,42 +3389,42 @@ State 186
     UNEQUAL  shift, and go to state 159
     GE       shift, and go to state 160
     GT       shift, and go to state 161
-    RB       shift, and go to state 215
-
-
-State 187
-
-  108 factor: ID LP args . RP
-  115 args: args . COMMA expression
-
-    COMMA  shift, and go to state 212
-    RP     shift, and go to state 216
+    RB       shift, and go to state 216
 
 
 State 188
 
-   88 case_item: constant_value . COLON statememt
+  108 factor: ID LP args . RP
+  115 args: args . COMMA expression
 
-    COLON  shift, and go to state 217
+    COMMA  shift, and go to state 213
+    RP     shift, and go to state 217
 
 
 State 189
 
-   85 case_statememt: CASE expression OF case_list . END
-   86 case_list: case_list . SEMICOLON case_item
+   88 case_item: constant_value . COLON statememt
 
-    END        shift, and go to state 218
-    SEMICOLON  shift, and go to state 219
+    COLON  shift, and go to state 218
 
 
 State 190
+
+   85 case_statememt: CASE expression OF case_list . END
+   86 case_list: case_list . SEMICOLON case_item
+
+    END        shift, and go to state 219
+    SEMICOLON  shift, and go to state 220
+
+
+State 191
 
    87 case_list: case_item .
 
     $default  reduce using rule 87 (case_list)
 
 
-State 191
+State 192
 
    90 expression: expression LT expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3432,7 +3440,7 @@ State 191
     $default  reduce using rule 90 (expression)
 
 
-State 192
+State 193
 
    91 expression: expression LE expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3448,7 +3456,7 @@ State 192
     $default  reduce using rule 91 (expression)
 
 
-State 193
+State 194
 
    92 expression: expression EQUAL expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3464,7 +3472,7 @@ State 193
     $default  reduce using rule 92 (expression)
 
 
-State 194
+State 195
 
    95 expression: expression UNEQUAL expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3480,7 +3488,7 @@ State 194
     $default  reduce using rule 95 (expression)
 
 
-State 195
+State 196
 
    93 expression: expression GE expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3496,7 +3504,7 @@ State 195
     $default  reduce using rule 93 (expression)
 
 
-State 196
+State 197
 
    94 expression: expression GT expr .  [DO, DOWNTO, ELSE, END, OF, THEN, TO, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
    97 expr: expr . PLUS term
@@ -3512,7 +3520,7 @@ State 196
     $default  reduce using rule 94 (expression)
 
 
-State 197
+State 198
 
    99 expr: expr OR term .  [DO, DOWNTO, OR, ELSE, END, OF, THEN, TO, XOR, PLUS, MINUS, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
   102 term: term . MULTIPLY factor
@@ -3528,7 +3536,7 @@ State 197
     $default  reduce using rule 99 (expr)
 
 
-State 198
+State 199
 
   100 expr: expr XOR term .  [DO, DOWNTO, OR, ELSE, END, OF, THEN, TO, XOR, PLUS, MINUS, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
   102 term: term . MULTIPLY factor
@@ -3544,7 +3552,7 @@ State 198
     $default  reduce using rule 100 (expr)
 
 
-State 199
+State 200
 
    97 expr: expr PLUS term .  [DO, DOWNTO, OR, ELSE, END, OF, THEN, TO, XOR, PLUS, MINUS, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
   102 term: term . MULTIPLY factor
@@ -3560,7 +3568,7 @@ State 199
     $default  reduce using rule 97 (expr)
 
 
-State 200
+State 201
 
    98 expr: expr MINUS term .  [DO, DOWNTO, OR, ELSE, END, OF, THEN, TO, XOR, PLUS, MINUS, LT, LE, EQUAL, UNEQUAL, GE, GT, COMMA, SEMICOLON, RB, RP]
   102 term: term . MULTIPLY factor
@@ -3576,35 +3584,35 @@ State 200
     $default  reduce using rule 98 (expr)
 
 
-State 201
+State 202
 
   105 term: term AND factor .
 
     $default  reduce using rule 105 (term)
 
 
-State 202
+State 203
 
   102 term: term MULTIPLY factor .
 
     $default  reduce using rule 102 (term)
 
 
-State 203
+State 204
 
   103 term: term DIVIDE factor .
 
     $default  reduce using rule 103 (term)
 
 
-State 204
+State 205
 
   104 term: term MOD factor .
 
     $default  reduce using rule 104 (term)
 
 
-State 205
+State 206
 
    11 constant_value: . INTEGER
    12               | . REAL
@@ -3647,32 +3655,32 @@ State 205
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 220
+    expression      转到状态 221
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
 
 
-State 206
+State 207
 
    77 if_statememt: IF expression THEN statememt . ELSE statememt
    78             | IF expression THEN statememt .  [END, SEMICOLON]
 
-    ELSE  shift, and go to state 221
+    ELSE  shift, and go to state 222
 
     $default  reduce using rule 78 (if_statememt)
 
     Conflict between rule 78 and token ELSE resolved as shift (%right ELSE).
 
 
-State 207
+State 208
 
    73 procedure_statement: READ LP factor RP .
 
     $default  reduce using rule 73 (procedure_statement)
 
 
-State 208
+State 209
 
    79 repeat_statememt: REPEAT statememt_list UNTIL expression .  [ELSE, END, SEMICOLON]
    90 expression: expression . LT expr
@@ -3692,28 +3700,28 @@ State 208
     $default  reduce using rule 79 (repeat_statememt)
 
 
-State 209
+State 210
 
    84 while_statememt: WHILE expression DO statememt .
 
     $default  reduce using rule 84 (while_statememt)
 
 
-State 210
+State 211
 
    74 procedure_statement: WRITE LP expression RP .
 
     $default  reduce using rule 74 (procedure_statement)
 
 
-State 211
+State 212
 
    71 variable_access: ID LB expression RB .
 
     $default  reduce using rule 71 (variable_access)
 
 
-State 212
+State 213
 
    11 constant_value: . INTEGER
    12               | . REAL
@@ -3756,41 +3764,41 @@ State 212
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 222
+    expression      转到状态 223
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
 
 
-State 213
+State 214
 
    75 procedure_statement: ID LP args RP .
 
     $default  reduce using rule 75 (procedure_statement)
 
 
-State 214
+State 215
 
    47 function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON .
 
     $default  reduce using rule 47 (function_declaration)
 
 
-State 215
+State 216
 
   109 factor: ID LB expression RB .
 
     $default  reduce using rule 109 (factor)
 
 
-State 216
+State 217
 
   108 factor: ID LP args RP .
 
     $default  reduce using rule 108 (factor)
 
 
-State 217
+State 218
 
    54 compound_statement: . BEGIN_ statememt_list END
    57 label: . STRING
@@ -3812,7 +3820,7 @@ State 217
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -3836,7 +3844,7 @@ State 217
 
     compound_statement   转到状态 100
     label                转到状态 101
-    statememt            转到状态 223
+    statememt            转到状态 224
     stmt                 转到状态 103
     assign_statememt     转到状态 104
     variable_access      转到状态 105
@@ -3849,14 +3857,14 @@ State 217
     goto_statememt       转到状态 112
 
 
-State 218
+State 219
 
    85 case_statememt: CASE expression OF case_list END .
 
     $default  reduce using rule 85 (case_statememt)
 
 
-State 219
+State 220
 
    11 constant_value: . INTEGER
    12               | . REAL
@@ -3870,11 +3878,11 @@ State 219
     CHAR     shift, and go to state 25
     STRING   shift, and go to state 26
 
-    constant_value  转到状态 188
-    case_item       转到状态 224
+    constant_value  转到状态 189
+    case_item       转到状态 225
 
 
-State 220
+State 221
 
    81 for_statememt: FOR ID $@1 ASSIGN expression . direction expression DO statememt
    82 direction: . TO
@@ -3886,8 +3894,8 @@ State 220
    94           | expression . GT expr
    95           | expression . UNEQUAL expr
 
-    DOWNTO   shift, and go to state 225
-    TO       shift, and go to state 226
+    DOWNTO   shift, and go to state 226
+    TO       shift, and go to state 227
     LT       shift, and go to state 156
     LE       shift, and go to state 157
     EQUAL    shift, and go to state 158
@@ -3895,10 +3903,10 @@ State 220
     GE       shift, and go to state 160
     GT       shift, and go to state 161
 
-    direction  转到状态 227
+    direction  转到状态 228
 
 
-State 221
+State 222
 
    54 compound_statement: . BEGIN_ statememt_list END
    57 label: . STRING
@@ -3920,7 +3928,7 @@ State 221
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    77             | IF expression THEN statememt ELSE . statememt
    78             | . IF expression THEN statememt
@@ -3944,7 +3952,7 @@ State 221
 
     compound_statement   转到状态 100
     label                转到状态 101
-    statememt            转到状态 228
+    statememt            转到状态 229
     stmt                 转到状态 103
     assign_statememt     转到状态 104
     variable_access      转到状态 105
@@ -3957,7 +3965,7 @@ State 221
     goto_statememt       转到状态 112
 
 
-State 222
+State 223
 
    90 expression: expression . LT expr
    91           | expression . LE expr
@@ -3977,35 +3985,35 @@ State 222
     $default  reduce using rule 115 (args)
 
 
-State 223
+State 224
 
    88 case_item: constant_value COLON statememt .
 
     $default  reduce using rule 88 (case_item)
 
 
-State 224
+State 225
 
    86 case_list: case_list SEMICOLON case_item .
 
     $default  reduce using rule 86 (case_list)
 
 
-State 225
+State 226
 
    83 direction: DOWNTO .
 
     $default  reduce using rule 83 (direction)
 
 
-State 226
+State 227
 
    82 direction: TO .
 
     $default  reduce using rule 82 (direction)
 
 
-State 227
+State 228
 
    11 constant_value: . INTEGER
    12               | . REAL
@@ -4048,20 +4056,20 @@ State 227
     ID       shift, and go to state 125
 
     constant_value  转到状态 126
-    expression      转到状态 229
+    expression      转到状态 230
     expr            转到状态 128
     term            转到状态 129
     factor          转到状态 130
 
 
-State 228
+State 229
 
    77 if_statememt: IF expression THEN statememt ELSE statememt .
 
     $default  reduce using rule 77 (if_statememt)
 
 
-State 229
+State 230
 
    81 for_statememt: FOR ID $@1 ASSIGN expression direction expression . DO statememt
    90 expression: expression . LT expr
@@ -4071,7 +4079,7 @@ State 229
    94           | expression . GT expr
    95           | expression . UNEQUAL expr
 
-    DO       shift, and go to state 230
+    DO       shift, and go to state 231
     LT       shift, and go to state 156
     LE       shift, and go to state 157
     EQUAL    shift, and go to state 158
@@ -4080,7 +4088,7 @@ State 229
     GT       shift, and go to state 161
 
 
-State 230
+State 231
 
    54 compound_statement: . BEGIN_ statememt_list END
    57 label: . STRING
@@ -4102,7 +4110,7 @@ State 230
    73 procedure_statement: . READ LP factor RP
    74                    | . WRITE LP expression RP
    75                    | . ID LP args RP
-   76                    | . ID
+   76                    | . ID LP RP
    77 if_statememt: . IF expression THEN statememt ELSE statememt
    78             | . IF expression THEN statememt
    79 repeat_statememt: . REPEAT statememt_list UNTIL expression
@@ -4126,7 +4134,7 @@ State 230
 
     compound_statement   转到状态 100
     label                转到状态 101
-    statememt            转到状态 231
+    statememt            转到状态 232
     stmt                 转到状态 103
     assign_statememt     转到状态 104
     variable_access      转到状态 105
@@ -4139,7 +4147,7 @@ State 230
     goto_statememt       转到状态 112
 
 
-State 231
+State 232
 
    81 for_statememt: FOR ID $@1 ASSIGN expression direction expression DO statememt .
 
