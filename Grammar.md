@@ -22,7 +22,7 @@ constant_list: constant_list constant_definition
     ;
 constant_definition: ID EQUAL constant_value SEMICOLON
     ;
-constant_value: INTEGER 
+constant_value: INTEGER
     | REAL
     | CHAR
     | STRING
@@ -124,7 +124,7 @@ variable_access: ID
 procedure_statement: READ LP factor RP
     | WRITE LP expression RP
     | ID LP args RP
-    | ID
+    | ID LP RP
     ;
 
 if_statememt: IF expression THEN statememt ELSE statememt
