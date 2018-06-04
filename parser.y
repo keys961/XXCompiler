@@ -171,7 +171,7 @@ type_definition_list: type_definition_list type_definition
                       {
                           showNodeInfo("type_definition_list -> type_definition_list type_definition");
                           $$ = $1;
-                          ((ListTreeNode*)$$)->insert($1);
+                          ((ListTreeNode*)$$)->insert($2);
                       }
     | type_definition
       {
