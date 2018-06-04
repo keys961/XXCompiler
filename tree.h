@@ -7,11 +7,15 @@
 #include <set>
 #include "symbol.h"
 
+extern std::map<std::string, std::string> constStringMap;
+extern std::map<std::string, std::string> constRealMap;
+
 class TreeNode;
+
 class CommonTypeTreeNode;
 
 extern std::ofstream astOut;
-extern std::set<TreeNode*> printedNodes;
+extern std::set<TreeNode *> printedNodes;
 
 class TreeNode {
 private:
@@ -58,7 +62,7 @@ public:
     virtual std::string typeCheck(SymbolTable *environment) { return "type check"; }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " TreeNode" << std::endl;
             if (!children.empty()) {
                 astOut << "\tChildren ID: ";
@@ -71,6 +75,10 @@ public:
             for (auto &it : children)
                 it->printSelf();
         }
+    }
+
+    virtual SymbolBucket *genCode(SymbolTable *symtab, int *reg = NULL) {
+        astOut << "default genCode" << std::endl;
     }
 
 };
@@ -86,7 +94,7 @@ public:
     void setLabel(int label) { this->label = label; }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " StatementTreeNode" << std::endl;
             astOut << "\tlabel: " << label << std::endl;
             printedNodes.insert(this);
@@ -98,10 +106,10 @@ public:
 class ExprTreeNode : public TreeNode {
 
 public:
-    virtual ~ExprTreeNode() { }
+    virtual ~ExprTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ExprTreeNode" << std::endl;
         }
@@ -136,7 +144,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ListTreeNode" << std::endl;
             astOut << "\ttype: " << type << std::endl;
             if (!list.empty()) {
@@ -154,6 +162,8 @@ public:
     std::vector<TreeNode *> getChildren() {
         return list;
     }
+
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg = NULL);
 };
 
 class FuncOrProcTreeNode : public TreeNode {
@@ -167,10 +177,9 @@ private:
 
 public:
     FuncOrProcTreeNode(const std::string name, TreeNode *args, TreeNode *body,
-                       TreeNode *rtype=nullptr,bool isFunc=false)
+                       TreeNode *rtype = nullptr, bool isFunc = false)
             : name(name), args((ListTreeNode *) args), body((ListTreeNode *) body),
-              isFunc(isFunc),return_type((CommonTypeTreeNode*)rtype)
-    {
+              isFunc(isFunc), return_type((CommonTypeTreeNode *) rtype) {
         children.push_back(this->args);
         children.push_back(this->body);
     }
@@ -183,7 +192,7 @@ public:
     virtual ~IDTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " IDTreeNode" << std::endl;
         }
@@ -201,7 +210,7 @@ public:
     ProgramHeadTreeNode(const std::string name) : name(name) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ProgramHeadTreeNode" << std::endl;
             astOut << "\tname: " << name << std::endl;
@@ -233,7 +242,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ProgramTreeNode" << std::endl;
             astOut << "\tname: " << this->getName() << std::endl;
             astOut << "\tconst_part: " << const_decl << std::endl;
@@ -249,6 +258,12 @@ public:
             body->printSelf();
         }
     }
+
+    ListTreeNode *getConst_decl() const {
+        return const_decl;
+    }
+
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg = NULL);
 };
 
 class TypeTreeNode : public TreeNode {
@@ -256,7 +271,7 @@ public:
     virtual ~TypeTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " TypeTreeNode" << std::endl;
         }
@@ -280,7 +295,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " BinaryExprTreeNode" << std::endl;
             astOut << "\toperator: " << op << std::endl;
             astOut << "\tleft operand: " << loprand << std::endl;
@@ -290,6 +305,16 @@ public:
             roprand->printSelf();
         }
     }
+
+    TreeNode *getLoprand() const {
+        return loprand;
+    }
+
+    TreeNode *getRoprand() const {
+        return roprand;
+    }
+
+    SymbolBucket *genCode(SymbolTable *symboltab, int *reg = NULL);
 };
 
 class UnaryExprTreeNode : public ExprTreeNode {
@@ -303,7 +328,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " UnaryExprTreeNode" << std::endl;
             astOut << "\toperator: " << op << std::endl;
             astOut << "\toperand: " << oprand << std::endl;
@@ -311,6 +336,8 @@ public:
             oprand->printSelf();
         }
     }
+
+    SymbolBucket *UnaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class CallExprTreeNode : public ExprTreeNode {
@@ -324,7 +351,7 @@ public:
             : name(name), args(args), isFunc(isFunc) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CallExprTreeNode" << std::endl;
             astOut << "\tname: " << name << "; isFunc: " << isFunc << std::endl;
             printedNodes.insert(this);
@@ -339,6 +366,9 @@ public:
             }
         }
     }
+
+    void genSysFunc(SymbolTable *symbolTable, std::string name);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg = NULL);
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -351,7 +381,7 @@ public:
             : label(label), body(body) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CaseExprTreeNode" << std::endl;
             astOut << "\tlabel node: " << label << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -360,6 +390,7 @@ public:
             body->printSelf();
         }
     }
+    SymbolBucket *CaseExprTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 //--------------------------------------------
@@ -373,7 +404,7 @@ public:
     CommonTypeTreeNode(const std::string type) : type(type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CommonTypeTreeNode" << std::endl;
             astOut << "\ttype: " << type << std::endl;
             printedNodes.insert(this);
@@ -390,7 +421,7 @@ public:
     RangeTypeTreeNode(IDTreeNode *upper, IDTreeNode *lower) : upper(upper), lower(lower) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RangeTypeTreeNode" << std::endl;
             astOut << "\tupper node: " << upper << std::endl;
             astOut << "\tlower node: " << lower << std::endl;
@@ -411,7 +442,7 @@ public:
             : index(index), elem(elem) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ArrayTypeTreeNode" << std::endl;
             astOut << "\trange node: " << index << std::endl;
             astOut << "\ttype node: " << elem << std::endl;
@@ -447,7 +478,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RecordTypeTreeNode" << std::endl;
             printedNodes.insert(this);
             if (!elems.empty()) {
@@ -473,11 +504,11 @@ private:
     const std::string name;
 
 public:
-    EnumTypeTreeNode(TreeNode *elems,const std::string name)
-            : elems((ListTreeNode *) elems),name(name) {}
+    EnumTypeTreeNode(TreeNode *elems, const std::string name)
+            : elems((ListTreeNode *) elems), name(name) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " EnumTypeTreeNode" << std::endl;
             astOut << "\tname: " << name << "; enums node: " << elems << std::endl;
             printedNodes.insert(this);
@@ -496,7 +527,7 @@ public:
             : name(name), type((TypeTreeNode *) type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CustomTypeTreeNode" << std::endl;
             astOut << "\tname: " << name << "; type node: " << type << std::endl;
             if (type)
@@ -520,7 +551,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CompoundStmtTreeNode" << std::endl;
             astOut << "\tstatements node: " << stmtlist << std::endl;
             printedNodes.insert(this);
@@ -546,7 +577,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " IfStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tthen node: " << then_stmt << std::endl;
@@ -558,6 +589,7 @@ public:
                 else_stmt->printSelf();
         }
     }
+    SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class RepeatStmtTreeNode : public StatementTreeNode {
@@ -573,7 +605,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RepeatStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -582,6 +614,8 @@ public:
             body->printSelf();
         }
     }
+
+    SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class WhileStmtTreeNode : public StatementTreeNode {
@@ -597,7 +631,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " WhileStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -606,6 +640,8 @@ public:
             body->printSelf();
         }
     }
+
+    SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class SwitchStmtTreeNode : public StatementTreeNode {
@@ -620,7 +656,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " SwitchStmtTreeNode" << std::endl;
             astOut << "\texpression node: " << expr << std::endl;
             astOut << "\tcase list node: " << case_list << std::endl;
@@ -629,6 +665,7 @@ public:
             case_list->printSelf();
         }
     }
+    SymbolBucket *SwitchStmtTreeNode::genCode(SymbolTable *symtab, int *reg);
 };
 
 class ForStmtTreeNode : public StatementTreeNode {
@@ -647,7 +684,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ForStmtTreeNode" << std::endl;
             astOut << "\tdirection: " << direction << std::endl;
             astOut << "\tsrc node: " << src << "; dst node: " << dst << std::endl;
@@ -658,6 +695,8 @@ public:
             body->printSelf();
         }
     }
+
+    SymbolBucket *ForStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class GotoStmtTreeNode : public StatementTreeNode {
@@ -668,7 +707,7 @@ public:
     GotoStmtTreeNode(const std::string label) : label(label) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " GotoStmtTreeNode" << std::endl;
             astOut << "\tlabel: " << label << std::endl;
@@ -685,14 +724,15 @@ class VariableTreeNode : public IDTreeNode {
 private:
     const std::string name;
     TypeTreeNode *type;
+    IDTreeNode *constValue;     //存放常量的值
     bool isConst;
 
 public:
-    VariableTreeNode(const std::string name, TreeNode *type= nullptr, bool isConst = false)
-            :name(name),type((TypeTreeNode *)type),isConst(isConst) {}
+    VariableTreeNode(const std::string name, TreeNode *type = nullptr, bool isConst = false)
+            : name(name), type((TypeTreeNode *) type), isConst(isConst) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " VariableTreeNode" << std::endl;
             astOut << "\tname: " << name << "; isConst: " << isConst << std::endl;
@@ -701,38 +741,64 @@ public:
                 type->printSelf();
         }
     }
+
+    SymbolBucket *VariableTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 //字面值常量，需要指明值和类型，类型如char,int,double
-class LiteralTreeNode:public IDTreeNode{
+class LiteralTreeNode : public IDTreeNode {
 private:
     const std::string value;
     const std::string type;
 
 public:
-    LiteralTreeNode(const std::string value,const std::string type)
-            :value(value),type(type){}
+    LiteralTreeNode(const std::string value, const std::string type)
+            : value(value), type(type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " LiteralTreeNode" << std::endl;
             astOut << "\tvalue: " << value << "; type: " << type << std::endl;
         }
     }
+    int getInt() {
+        if (type  == "integer") {
+            return atoi(value.c_str());
+        }
+    }
+
+    char getChar() {
+        if (type == "char") {
+            return value[0];
+        }
+    }
+
+    double getFloat() {
+        if (type == "float") {
+            return atof(value.c_str());
+        }
+    }
+
+    std::string getString() {
+        if (type == "string") {
+            return value;
+        }
+    }
+    SymbolBucket *LiteralTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
-class ArrayElemTreeNode:public IDTreeNode{
+class ArrayElemTreeNode : public IDTreeNode {
 private:
     const std::string name;//数组名
     ExprTreeNode *index;
 
 public:
-    ArrayElemTreeNode(const std::string name,TreeNode * expr)
-            :name(name),index((ExprTreeNode *)expr){}
+    ArrayElemTreeNode(const std::string name, TreeNode *expr)
+            : name(name), index((ExprTreeNode *) expr) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ArrayElemTreeNode" << std::endl;
             astOut << "\tname: " << name << std::endl;
@@ -740,24 +806,28 @@ public:
             index->printSelf();
         }
     }
+
+    SymbolBucket *ArrayElemTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
-class RecordElemTreeNode:public IDTreeNode{
+class RecordElemTreeNode : public IDTreeNode {
 private:
     const std::string rname;//record的名字
     const std::string ename;//元素的名字
 
 public:
-    RecordElemTreeNode(const std::string n1,const std::string n2)
-            :rname(n1),ename(n2){}
+    RecordElemTreeNode(const std::string n1, const std::string n2)
+            : rname(n1), ename(n2) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RecordElemTreeNode" << std::endl;
             astOut << "\trecord name: " << rname << "; element name: " << ename << std::endl;
         }
     }
+
+    SymbolBucket *RecordElemTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 };
 
 #endif //COMPILER_TREE_H
