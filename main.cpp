@@ -9,6 +9,8 @@
 #include "tree.h"
 #include "optimizer.h"
 
+extern std::map<std::string, std::string> constStringMap;
+extern std::map<std::string, std::string> constRealMap;
 /**
  * Global variables
  */
