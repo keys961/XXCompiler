@@ -1717,7 +1717,7 @@ yyreduce:
     {
                           showNodeInfo("type_definition_list -> type_definition_list type_definition");
                           (yyval) = (yyvsp[-1]);
-                          ((ListTreeNode*)(yyval))->insert((yyvsp[-1]));
+                          ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                       }
 #line 1723 "parser.cpp" /* yacc.c:1646  */
     break;
