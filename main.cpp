@@ -103,6 +103,8 @@ int main(int argc, const char *argv[])
     {
         std::cerr << "Error when optimizing & printing AST with " << fileName << "!"
                   << std::endl;
+        if(!astOut.bad())
+            astOut.close();
         return 1;
     }
     // Update symbol table
