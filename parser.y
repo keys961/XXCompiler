@@ -52,6 +52,7 @@ program_head: PROGRAM ID
                   showNodeInfo("program_head -> PROGRAM ID");
                   $$ = new TreeNode();
                   $$->setName($2->getName());
+                  updateLineNoForTreeNode($$);
                   delete $2;
               }
     ;
@@ -84,6 +85,7 @@ id_list: id_list COMMA ID
           std::string name = $1->getName();
           std::vector<TreeNode*> list;
           TreeNode* node = new TreeNode();
+          updateLineNoForTreeNode(node);
           node->setName(name);
           list.push_back(node);
           delete $1;

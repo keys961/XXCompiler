@@ -8,10 +8,14 @@
 #include "symbol.h"
 
 class TreeNode;
+
 class CommonTypeTreeNode;
 
 extern std::ofstream astOut;
-extern std::set<TreeNode*> printedNodes;
+extern std::set<TreeNode *> printedNodes;
+extern std::ofstream checkOut;
+extern bool isPrint;//默认不打印日志
+
 
 class TreeNode {
 private:
@@ -27,7 +31,7 @@ public:
 
     TreeNode() : addr((long) this) {}
 
-    const std::string &getName() const {
+    virtual std::string getName() {
         return name;
     }
 
@@ -51,14 +55,19 @@ public:
         this->environment = environment;
     }
 
-    virtual void updateEnvironment(SymbolTable *environment) {}
+    virtual void updateEnvironment(SymbolTable *environment) {
+        if (isPrint)std::cout << "default update environment" << std::endl;
+    }
 
     virtual SymbolBucket *generateCode(SymbolTable *environment) { return NULL; }
 
-    virtual std::string typeCheck(SymbolTable *environment) { return "type check"; }
+    virtual std::string typeCheck(SymbolTable *environment) {
+        checkOut << "default type check" << std::endl;
+        return "default type check";
+    }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " TreeNode" << std::endl;
             if (!children.empty()) {
                 astOut << "\tChildren ID: ";
@@ -86,7 +95,7 @@ public:
     void setLabel(int label) { this->label = label; }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " StatementTreeNode" << std::endl;
             astOut << "\tlabel: " << label << std::endl;
             printedNodes.insert(this);
@@ -98,10 +107,10 @@ public:
 class ExprTreeNode : public TreeNode {
 
 public:
-    virtual ~ExprTreeNode() { }
+    virtual ~ExprTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ExprTreeNode" << std::endl;
         }
@@ -136,7 +145,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ListTreeNode" << std::endl;
             astOut << "\ttype: " << type << std::endl;
             if (!list.empty()) {
@@ -154,28 +163,11 @@ public:
     std::vector<TreeNode *> getChildren() {
         return list;
     }
-};
 
-class FuncOrProcTreeNode : public TreeNode {
-private:
-    const std::string name;
-    ListTreeNode *args;
-    ListTreeNode *body;
-    CommonTypeTreeNode *return_type;
-    bool isFunc;
-    SymbolTable *tab;
+    void updateEnvironment(SymbolTable *symtab);
 
-public:
-    FuncOrProcTreeNode(const std::string name, TreeNode *args, TreeNode *body,
-                       TreeNode *rtype=nullptr,bool isFunc=false)
-            : name(name), args((ListTreeNode *) args), body((ListTreeNode *) body),
-              isFunc(isFunc),return_type((CommonTypeTreeNode*)rtype)
-    {
-        children.push_back(this->args);
-        children.push_back(this->body);
-    }
+    std::string typeCheck(SymbolTable *symtab);
 
-    virtual void printSelf();
 };
 
 class IDTreeNode : public TreeNode {
@@ -183,7 +175,7 @@ public:
     virtual ~IDTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " IDTreeNode" << std::endl;
         }
@@ -201,7 +193,7 @@ public:
     ProgramHeadTreeNode(const std::string name) : name(name) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ProgramHeadTreeNode" << std::endl;
             astOut << "\tname: " << name << std::endl;
@@ -218,6 +210,7 @@ private:
     ListTreeNode *body;
 
 public:
+    //todo 修改过
     ProgramBodyTreeNode(TreeNode *const_,
                         TreeNode *type_,
                         TreeNode *var_,
@@ -225,6 +218,7 @@ public:
                         TreeNode *body_)
             : const_decl((ListTreeNode *) const_), type_decl((ListTreeNode *) type_),
               var_decl((ListTreeNode *) var_), routine_decl((ListTreeNode *) routine_), body((ListTreeNode *) body_) {
+        TreeNode *test = (ListTreeNode *) nullptr;
         children.push_back(const_decl);
         children.push_back(type_decl);
         children.push_back(var_decl);
@@ -233,7 +227,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ProgramTreeNode" << std::endl;
             astOut << "\tname: " << this->getName() << std::endl;
             astOut << "\tconst_part: " << const_decl << std::endl;
@@ -249,6 +243,12 @@ public:
             body->printSelf();
         }
     }
+
+    void updateEnvironment(SymbolTable *symtab);
+
+    std::string typeCheck(SymbolTable *symtab);
+
+
 };
 
 class TypeTreeNode : public TreeNode {
@@ -256,10 +256,14 @@ public:
     virtual ~TypeTreeNode() {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " TypeTreeNode" << std::endl;
         }
+    }
+
+    virtual SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab) {
+        std::cout << "default gen symbol bucket" << std::endl;
     }
 };
 
@@ -280,7 +284,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " BinaryExprTreeNode" << std::endl;
             astOut << "\toperator: " << op << std::endl;
             astOut << "\tleft operand: " << loprand << std::endl;
@@ -290,6 +294,11 @@ public:
             roprand->printSelf();
         }
     }
+
+    void updateEnvironment(SymbolTable *symtab);//专门用于表示const
+    std::string typeCheck(SymbolTable *symtab);
+
+
 };
 
 class UnaryExprTreeNode : public ExprTreeNode {
@@ -303,7 +312,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " UnaryExprTreeNode" << std::endl;
             astOut << "\toperator: " << op << std::endl;
             astOut << "\toperand: " << oprand << std::endl;
@@ -311,6 +320,9 @@ public:
             oprand->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class CallExprTreeNode : public ExprTreeNode {
@@ -324,7 +336,7 @@ public:
             : name(name), args(args), isFunc(isFunc) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CallExprTreeNode" << std::endl;
             astOut << "\tname: " << name << "; isFunc: " << isFunc << std::endl;
             printedNodes.insert(this);
@@ -339,6 +351,9 @@ public:
             }
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -351,7 +366,7 @@ public:
             : label(label), body(body) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CaseExprTreeNode" << std::endl;
             astOut << "\tlabel node: " << label << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -360,6 +375,9 @@ public:
             body->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 //--------------------------------------------
@@ -373,12 +391,15 @@ public:
     CommonTypeTreeNode(const std::string type) : type(type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CommonTypeTreeNode" << std::endl;
             astOut << "\ttype: " << type << std::endl;
             printedNodes.insert(this);
         }
     }
+
+    SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab);
+
 };
 
 class RangeTypeTreeNode : public TypeTreeNode {
@@ -390,7 +411,7 @@ public:
     RangeTypeTreeNode(IDTreeNode *upper, IDTreeNode *lower) : upper(upper), lower(lower) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RangeTypeTreeNode" << std::endl;
             astOut << "\tupper node: " << upper << std::endl;
             astOut << "\tlower node: " << lower << std::endl;
@@ -399,6 +420,9 @@ public:
             lower->printSelf();
         }
     }
+
+    SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab);
+
 };
 
 class ArrayTypeTreeNode : public TypeTreeNode {
@@ -411,7 +435,7 @@ public:
             : index(index), elem(elem) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ArrayTypeTreeNode" << std::endl;
             astOut << "\trange node: " << index << std::endl;
             astOut << "\ttype node: " << elem << std::endl;
@@ -420,12 +444,15 @@ public:
             elem->printSelf();
         }
     }
+
+    SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab);
+
 };
 
 //结构体类型
 class RecordTypeTreeNode : public TypeTreeNode {
 private:
-    std::vector<TreeNode *> elems;//record的各个域可以是不同的类型
+    std::vector<TreeNode *> elems;//record的各个域可以是不同的类型,都是variable treenode
 
 public:
     RecordTypeTreeNode(std::vector<TreeNode *> &elems) : elems(elems) {}
@@ -446,8 +473,10 @@ public:
         return elems;
     }
 
+    SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab);
+
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RecordTypeTreeNode" << std::endl;
             printedNodes.insert(this);
             if (!elems.empty()) {
@@ -473,11 +502,11 @@ private:
     const std::string name;
 
 public:
-    EnumTypeTreeNode(TreeNode *elems,const std::string name)
-            : elems((ListTreeNode *) elems),name(name) {}
+    EnumTypeTreeNode(TreeNode *elems, const std::string name)
+            : elems((ListTreeNode *) elems), name(name) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " EnumTypeTreeNode" << std::endl;
             astOut << "\tname: " << name << "; enums node: " << elems << std::endl;
             printedNodes.insert(this);
@@ -496,7 +525,7 @@ public:
             : name(name), type((TypeTreeNode *) type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CustomTypeTreeNode" << std::endl;
             astOut << "\tname: " << name << "; type node: " << type << std::endl;
             if (type)
@@ -504,6 +533,11 @@ public:
             printedNodes.insert(this);
         }
     }
+
+    void updateEnvironment(SymbolTable *symtab);
+
+    SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab);
+
 };
 
 //---------------------------------------
@@ -520,13 +554,16 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " CompoundStmtTreeNode" << std::endl;
             astOut << "\tstatements node: " << stmtlist << std::endl;
             printedNodes.insert(this);
             stmtlist->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class IfStmtTreeNode : public StatementTreeNode {
@@ -546,7 +583,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " IfStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tthen node: " << then_stmt << std::endl;
@@ -558,6 +595,9 @@ public:
                 else_stmt->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class RepeatStmtTreeNode : public StatementTreeNode {
@@ -573,7 +613,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RepeatStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -582,6 +622,9 @@ public:
             body->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class WhileStmtTreeNode : public StatementTreeNode {
@@ -597,7 +640,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " WhileStmtTreeNode" << std::endl;
             astOut << "\tcondition node: " << condition << std::endl;
             astOut << "\tstatement node: " << body << std::endl;
@@ -606,6 +649,9 @@ public:
             body->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class SwitchStmtTreeNode : public StatementTreeNode {
@@ -620,7 +666,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " SwitchStmtTreeNode" << std::endl;
             astOut << "\texpression node: " << expr << std::endl;
             astOut << "\tcase list node: " << case_list << std::endl;
@@ -629,6 +675,9 @@ public:
             case_list->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class ForStmtTreeNode : public StatementTreeNode {
@@ -647,7 +696,7 @@ public:
     }
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ForStmtTreeNode" << std::endl;
             astOut << "\tdirection: " << direction << std::endl;
             astOut << "\tsrc node: " << src << "; dst node: " << dst << std::endl;
@@ -658,6 +707,9 @@ public:
             body->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
 class GotoStmtTreeNode : public StatementTreeNode {
@@ -668,7 +720,7 @@ public:
     GotoStmtTreeNode(const std::string label) : label(label) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " GotoStmtTreeNode" << std::endl;
             astOut << "\tlabel: " << label << std::endl;
@@ -688,11 +740,11 @@ private:
     bool isConst;
 
 public:
-    VariableTreeNode(const std::string name, TreeNode *type= nullptr, bool isConst = false)
-            :name(name),type((TypeTreeNode *)type),isConst(isConst) {}
+    VariableTreeNode(const std::string name, TreeNode *type = nullptr, bool isConst = false)
+            : name(name), type((TypeTreeNode *) type), isConst(isConst) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " VariableTreeNode" << std::endl;
             astOut << "\tname: " << name << "; isConst: " << isConst << std::endl;
@@ -701,38 +753,75 @@ public:
                 type->printSelf();
         }
     }
+
+    std::string getName() {
+        return name;
+    }
+
+    void updateEnvironment(SymbolTable *symtab);
+
+    TypeTreeNode *getTypeNode() {
+        return this->type;
+    };
+
+    std::string typeCheck(SymbolTable *symtab);
+
+
 };
 
 //字面值常量，需要指明值和类型，类型如char,int,double
-class LiteralTreeNode:public IDTreeNode{
+class LiteralTreeNode : public IDTreeNode {
 private:
     const std::string value;
     const std::string type;
 
 public:
-    LiteralTreeNode(const std::string value,const std::string type)
-            :value(value),type(type){}
+    LiteralTreeNode(const std::string value, const std::string type)
+            : value(value), type(type) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " LiteralTreeNode" << std::endl;
             astOut << "\tvalue: " << value << "; type: " << type << std::endl;
         }
     }
+
+    int getInt() {
+        return atoi(value.c_str());
+    }
+
+    char getChar() {
+        return value[0];
+    }
+
+    double getDouble() {
+        return atof(value.c_str());
+    }
+
+    std::string getString() {
+        return value;
+    }
+
+    std::string getLiteralType() {
+        return this->type;
+    }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
-class ArrayElemTreeNode:public IDTreeNode{
+class ArrayElemTreeNode : public IDTreeNode {
 private:
     const std::string name;//数组名
     ExprTreeNode *index;
 
 public:
-    ArrayElemTreeNode(const std::string name,TreeNode * expr)
-            :name(name),index((ExprTreeNode *)expr){}
+    ArrayElemTreeNode(const std::string name, TreeNode *expr)
+            : name(name), index((ExprTreeNode *) expr) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ArrayElemTreeNode" << std::endl;
             astOut << "\tname: " << name << std::endl;
@@ -740,24 +829,66 @@ public:
             index->printSelf();
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
 };
 
-class RecordElemTreeNode:public IDTreeNode{
+class RecordElemTreeNode : public IDTreeNode {
 private:
     const std::string rname;//record的名字
     const std::string ename;//元素的名字
 
 public:
-    RecordElemTreeNode(const std::string n1,const std::string n2)
-            :rname(n1),ename(n2){}
+    RecordElemTreeNode(const std::string n1, const std::string n2)
+            : rname(n1), ename(n2) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " RecordElemTreeNode" << std::endl;
             astOut << "\trecord name: " << rname << "; element name: " << ename << std::endl;
         }
     }
+
+    std::string typeCheck(SymbolTable *symtab);
+
+};
+
+class FuncOrProcTreeNode : public TreeNode {
+private:
+    const std::string name;
+    ListTreeNode *args;
+    ListTreeNode *body;
+    CommonTypeTreeNode *return_type;
+    bool isFunc;
+    SymbolTable *tab;
+
+public:
+    FuncOrProcTreeNode(const std::string name, TreeNode *args, TreeNode *body,
+                       TreeNode *rtype = nullptr, bool isFunc = false)
+            : name(name), args((ListTreeNode *) args), body((ListTreeNode *) body),
+              isFunc(isFunc), return_type((CommonTypeTreeNode *) rtype) {
+        children.push_back(this->args);
+        children.push_back(this->body);
+    }
+
+    virtual void printSelf() {
+        if (printedNodes.find(this) != printedNodes.end()) {
+            astOut << "Node ID 0x" << std::hex << addr << ":" << " FuncOrProcTreeNode" << std::endl;
+            astOut << "\tname: " << name << "; isFunction: " << isFunc << std::endl;
+            astOut << "\targs node: " << args << "; body node: " << body
+                   << "; return type node: " << return_type << std::endl;
+            printedNodes.insert(this);
+            args->printSelf();
+            body->printSelf();
+            if (return_type)
+                return_type->printSelf();
+        }
+    }
+
+    void updateEnvironment(SymbolTable *symtab);
+
 };
 
 #endif //COMPILER_TREE_H
