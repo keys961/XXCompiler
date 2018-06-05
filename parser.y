@@ -21,6 +21,7 @@ std::queue<std::string> stringQueue; //store string values
 static int yylex(void);
 static int hashCodeForString(const std::string& str);
 static void showNodeInfo(const std::string& info);
+static void updateLineNoForTreeNode(TreeNode* node);
 int yyerror(const char *);
 
 extern TreeNode* root;
@@ -51,6 +52,7 @@ program_head: PROGRAM ID
                   showNodeInfo("program_head -> PROGRAM ID");
                   $$ = new TreeNode();
                   $$->setName($2->getName());
+                  updateLineNoForTreeNode($$);
                   delete $2;
               }
     ;
@@ -63,6 +65,7 @@ block: constant_definition_part
         showNodeInfo("block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part");
         $$ = new ProgramBodyTreeNode($1, $2, $3, $4, $5);
         createdNodes.insert($$);
+        updateLineNoForTreeNode($$);
     }
     ;
 id_list: id_list COMMA ID 
@@ -72,7 +75,7 @@ id_list: id_list COMMA ID
              std::string name = $3->getName();
              TreeNode* node = new TreeNode();
              node->setName(name);
-
+             updateLineNoForTreeNode(node);
              ((ListTreeNode*)$$)->insert(node);
              delete $3;
          }
@@ -82,11 +85,13 @@ id_list: id_list COMMA ID
           std::string name = $1->getName();
           std::vector<TreeNode*> list;
           TreeNode* node = new TreeNode();
+          updateLineNoForTreeNode(node);
           node->setName(name);
           list.push_back(node);
           delete $1;
           $$ = new ListTreeNode("id_list", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 
@@ -100,6 +105,7 @@ constant_definition_part: CONST constant_list
          std::vector<TreeNode*> list;
          $$ = new ListTreeNode("constant_definition_part", list);
          createdNodes.insert($$);
+         updateLineNoForTreeNode($$);
       }
     ;
 constant_list: constant_list constant_definition
@@ -115,6 +121,7 @@ constant_list: constant_list constant_definition
           list.push_back($1);
           $$ = new ListTreeNode("constant_list", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 constant_definition: ID EQUAL constant_value SEMICOLON
@@ -122,35 +129,41 @@ constant_definition: ID EQUAL constant_value SEMICOLON
                          showNodeInfo("constant_definition -> ID EQUAL constant_value SEMICOLON");
                          std::string name = $1->getName();
                          VariableTreeNode* varNode = new VariableTreeNode(name, nullptr, true);
+                         updateLineNoForTreeNode(varNode);
                          BinaryExprTreeNode* binNode = new BinaryExprTreeNode(":=", varNode, $3);
                          $$ = binNode;
                          delete $1;
                          createdNodes.insert($$);
                          createdNodes.insert(varNode);
+                         updateLineNoForTreeNode($$);
                      }
     ;
 constant_value: INTEGER 
                 {
                     showNodeInfo("constant_value -> INTEGER");
                     $$ = new LiteralTreeNode(yytext, "integer");
+                    updateLineNoForTreeNode($$);
                     createdNodes.insert($$);
                 }
     | REAL
       {
           showNodeInfo("constant_value -> REAL");
           $$ = new LiteralTreeNode(yytext, "real");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | CHAR
       {
           showNodeInfo("constant_value -> CHAR");
           $$ = new LiteralTreeNode(yytext, "char");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | STRING
       {
           showNodeInfo("constant_value -> STRING");
           $$ = new LiteralTreeNode(yytext, "string");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -164,6 +177,7 @@ type_definition_part: TYPE type_definition_list
          showNodeInfo("type_definition_part -> ");
          std::vector<TreeNode*> list;
          $$ = new ListTreeNode("type_definition_part", list);
+         updateLineNoForTreeNode($$);
          createdNodes.insert($$);
       }
     ;
@@ -179,6 +193,7 @@ type_definition_list: type_definition_list type_definition
           std::vector<TreeNode*> list;
           list.push_back($1);
           $$ = new ListTreeNode("type_definition_list", list);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -187,6 +202,7 @@ type_definition: ID EQUAL type_denoter SEMICOLON
                      showNodeInfo("type_definition -> ID EQUAL type_denoter SEMICOLON");
                      std::string name = $1->getName();
                      $$ = new CustomTypeTreeNode(name, $3);
+                     updateLineNoForTreeNode($$);
                      delete $1;
                      createdNodes.insert($$);
                  }
@@ -220,30 +236,35 @@ simple_type: TYPE_INTEGER
              {
                  showNodeInfo("simple_type -> TYPE_INTEGER");
                  $$ = new CommonTypeTreeNode("integer");
+                 updateLineNoForTreeNode($$);
                  createdNodes.insert($$);
              }
     | TYPE_CHAR
       {
           showNodeInfo("simple_type -> TYPE_CHAR");
           $$ = new CommonTypeTreeNode("char");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | TYPE_REAL
       {
           showNodeInfo("simple_type -> TYPE_REAL");
           $$ = new CommonTypeTreeNode("real");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | TYPE_STRING 
       {
           showNodeInfo("simple_type -> TYPE_STRING");
           $$ = new CommonTypeTreeNode("string");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | ID 
       {
           showNodeInfo("simple_type -> ID");
           $$ = new CustomTypeTreeNode($1->getName(), nullptr);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
           delete $1;
       }
@@ -251,6 +272,7 @@ simple_type: TYPE_INTEGER
       {
           showNodeInfo("simple_type -> LP id_list RP");
           $$ = new EnumTypeTreeNode($2, "enum_type");
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -258,6 +280,7 @@ range_type: constant_value DOTDOT constant_value
             {
                 showNodeInfo("range_type -> constant_value DOTDOT constant_value");
                 $$ = new RangeTypeTreeNode((IDTreeNode*)$3, (IDTreeNode*)$1);
+                updateLineNoForTreeNode($$);
                 createdNodes.insert($$);
             }
     ;
@@ -266,6 +289,7 @@ array_type: ARRAY LB range_type RB OF type_denoter
                 showNodeInfo("array_type -> ARRAY LB range_type RB OF type_denoter");
                 $$ = new ArrayTypeTreeNode((RangeTypeTreeNode*)$3, (CommonTypeTreeNode*)$6);
                 createdNodes.insert($$);
+                updateLineNoForTreeNode($$);
             }
     ;
 record_type: RECORD field_definition_list END
@@ -273,6 +297,7 @@ record_type: RECORD field_definition_list END
                  showNodeInfo("record_type -> RECORD field_definition_list END");
                  std::vector<TreeNode*> list = ((ListTreeNode*)$2)->getList();
                  $$ = new RecordTypeTreeNode(list);
+                 updateLineNoForTreeNode($$);
                  createdNodes.insert($$);
              }
     ;
@@ -288,6 +313,7 @@ field_definition_list: field_definition_list SEMICOLON field_definition
           std::vector<TreeNode*> list;
           list.push_back($1);
           $$ = new ListTreeNode("field_definition_list", list);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -297,6 +323,7 @@ field_definition: ID COLON type_denoter
                       std::string name = $1->getName();
                       delete $1;
                       $$ = new VariableTreeNode(name, $3);
+                      updateLineNoForTreeNode($$);
                       createdNodes.insert($$);
                   }
     ;
@@ -311,6 +338,7 @@ variable_declaration_part: VAR variable_declaration_list SEMICOLON
           std::vector<TreeNode*> list;
           $$ = new ListTreeNode("variable_declaration_part", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 variable_declaration_list: variable_declaration_list SEMICOLON variable_declaration
@@ -326,6 +354,7 @@ variable_declaration_list: variable_declaration_list SEMICOLON variable_declarat
           std::vector<TreeNode*> list;
           list.push_back($1);
           $$ = new ListTreeNode("variable_declaration_list", list);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -336,6 +365,7 @@ variable_declaration: ID COLON type_denoter
                           delete $1;
                           $$ = new VariableTreeNode(name, $3);
                           createdNodes.insert($$);
+                          updateLineNoForTreeNode($$);
                       }
     ;
 
@@ -352,12 +382,14 @@ procedure_function_declaration_part: procedure_function_declaration_part procedu
           list.push_back($1);
           $$ = new ListTreeNode("procedure_function_declaration_part", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     | {
           showNodeInfo("procedure_function_declaration_part ->");
           std::vector<TreeNode*> list;
           $$ = new ListTreeNode("procedure_function_declaration_part", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 procedure_function_declaration: procedure_declaration 
@@ -378,6 +410,7 @@ procedure_declaration: PROCEDURE ID parameters SEMICOLON block SEMICOLON
                            delete $2;
                            $$ = new FuncOrProcTreeNode(name, $3, $5);
                            createdNodes.insert($$);
+                           updateLineNoForTreeNode($$);
                        }
     ;
 function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON
@@ -387,6 +420,7 @@ function_declaration: FUNCTION ID parameters COLON simple_type SEMICOLON block S
                            delete $2;
                           $$ = new FuncOrProcTreeNode(name, $3, $7, $5, true);
                           createdNodes.insert($$);
+                          updateLineNoForTreeNode($$);
                       }
     ;
 parameters: LP parameter_list RP
@@ -399,6 +433,7 @@ parameters: LP parameter_list RP
           showNodeInfo("parameters -> LP RP");
           std::vector<TreeNode*> emptyList;
           $$ = new ListTreeNode("parameters", emptyList);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -415,6 +450,7 @@ parameter_list: parameter_list SEMICOLON parameter
           list.push_back($1);
           $$ = new ListTreeNode("parameter_list", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 parameter: ID COLON simple_type
@@ -424,6 +460,7 @@ parameter: ID COLON simple_type
                delete $1;
                $$ = new VariableTreeNode(name, $3);
                createdNodes.insert($$);
+               updateLineNoForTreeNode($$);
            }
     ;
 
@@ -434,6 +471,7 @@ block_body_part: compound_statement
                      body.push_back($1);
                      $$ = new ListTreeNode("block_body_part", body);
                      createdNodes.insert($$);
+                     updateLineNoForTreeNode($$);
                  }
     ;
 compound_statement: BEGIN_ statememt_list END
@@ -441,6 +479,7 @@ compound_statement: BEGIN_ statememt_list END
                         showNodeInfo("compound_statement -> BEGIN_ statememt_list END");
                         $$ = new CompoundStmtTreeNode((ListTreeNode*)$2);
                         createdNodes.insert($$);
+                        updateLineNoForTreeNode($$);
                     }
     ;
 statememt_list: statememt_list statememt SEMICOLON
@@ -455,6 +494,7 @@ statememt_list: statememt_list statememt SEMICOLON
          std::vector<TreeNode*> list;
          $$ = new ListTreeNode("statement_list", list);
          createdNodes.insert($$);
+         updateLineNoForTreeNode($$);
       }
     ;
 label: STRING
@@ -532,6 +572,7 @@ assign_statememt: variable_access ASSIGN expression
                      showNodeInfo("assign_statememt -> variable_access ASSIGN expression");
                      $$ = new BinaryExprTreeNode(":=", $1, $3);
                      createdNodes.insert($$);
+                     updateLineNoForTreeNode($$);
                   }
     ;
 variable_access: ID
@@ -540,6 +581,7 @@ variable_access: ID
                      $$ = new VariableTreeNode($1->getName());
                      createdNodes.insert($$);
                      delete $1;
+                     updateLineNoForTreeNode($$);
                  }
     | ID LB expression RB
       {
@@ -547,6 +589,7 @@ variable_access: ID
           std::string arrayName = $1->getName();
           $$ = new ArrayElemTreeNode(arrayName, $3);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     | ID DOT ID
       {
@@ -555,6 +598,7 @@ variable_access: ID
           createdNodes.insert($$);
           delete $1;
           delete $3;
+          updateLineNoForTreeNode($$);
       }
     ;
 
@@ -566,7 +610,7 @@ procedure_statement: READ LP factor RP
                          list->push_back($3);
                          $$ = new CallExprTreeNode("read", list, false);
                          createdNodes.insert($$);
-                         
+                         updateLineNoForTreeNode($$);
                      }
     | WRITE LP expression RP
       {
@@ -575,6 +619,7 @@ procedure_statement: READ LP factor RP
           list->push_back($3);
           $$ = new CallExprTreeNode("write", list, false);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     | ID LP args RP
       {
@@ -584,6 +629,7 @@ procedure_statement: READ LP factor RP
           $$ = new CallExprTreeNode(procName, &(((ListTreeNode*)$3)->getList()), 
             false);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     | ID LP RP
       {
@@ -591,6 +637,7 @@ procedure_statement: READ LP factor RP
           std::string procName = $1->getName();
           delete $1;
           $$ = new CallExprTreeNode(procName, nullptr, false);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -600,11 +647,13 @@ if_statememt: IF expression THEN statememt ELSE statememt
                   showNodeInfo("if_statememt -> IF expression THEN statememt ELSE statememt");
                   $$ = new IfStmtTreeNode((ExprTreeNode*)$2, (StatementTreeNode*)$4, (StatementTreeNode*)$6);
                   createdNodes.insert($$);
+                  updateLineNoForTreeNode($$);
               }
     | IF expression THEN statememt
       {
           showNodeInfo("if_statememt -> IF expression THEN statememt");
           $$ = new IfStmtTreeNode((ExprTreeNode*)$2, (StatementTreeNode*)$4, nullptr);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     ;
@@ -614,6 +663,7 @@ repeat_statememt: REPEAT statememt_list UNTIL expression
                       showNodeInfo("repeat_statememt -> REPEAT statememt_list UNTIL expression");
                       $$ = new RepeatStmtTreeNode((ExprTreeNode *)$4, (StatementTreeNode *)$2);
                       createdNodes.insert($$);
+                      updateLineNoForTreeNode($$);
                   } 
     ;
 
@@ -623,9 +673,12 @@ for_statememt: FOR ID { stringQueue.push(yytext); } ASSIGN expression direction 
                    std::string variableId = $2->getName();
                    delete $2;
                    VariableTreeNode* varNode = new VariableTreeNode(variableId);
+                   updateLineNoForTreeNode(varNode);
                    BinaryExprTreeNode* exprNode = new BinaryExprTreeNode(":=", varNode, $5);
+                   updateLineNoForTreeNode(exprNode);
                    std::string direction = $6->getName();
                    $$ = new ForStmtTreeNode(exprNode, direction, $7, (StatementTreeNode *)$9);
+                   updateLineNoForTreeNode($$);
                    delete $6;
                    createdNodes.insert($$);
                    createdNodes.insert(varNode);
@@ -651,6 +704,7 @@ while_statememt: WHILE expression DO statememt
                      showNodeInfo("while_statement -> WHILE expression DO statement");
                      $$ = new WhileStmtTreeNode((ExprTreeNode *)$2, (StatementTreeNode *)$4);
                      createdNodes.insert($$);
+                     updateLineNoForTreeNode($$);
                  }
     ;
 
@@ -659,6 +713,7 @@ case_statememt: CASE expression OF case_list END
                     showNodeInfo("case_statement -> CASE expresion OF case_list END");
                     $$ = new SwitchStmtTreeNode((ExprTreeNode *)$2, (ListTreeNode *)$4);
                     createdNodes.insert($$);
+                    updateLineNoForTreeNode($$);
                 }
     ;
 case_list: case_list SEMICOLON case_item
@@ -674,6 +729,7 @@ case_list: case_list SEMICOLON case_item
           list.push_back($1);
           $$ = new ListTreeNode("case_list", list);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 case_item: constant_value COLON statememt
@@ -681,6 +737,7 @@ case_item: constant_value COLON statememt
                showNodeInfo("case_item -> constant_value COLON statement");
                $$ = new CaseExprTreeNode((IDTreeNode *)$1, (StatementTreeNode *)$3);
                createdNodes.insert($$);
+               updateLineNoForTreeNode($$);
            }
     ;
 
@@ -690,6 +747,7 @@ goto_statememt: GOTO label
                     std::string labelName = $2->getName();
                     // you need to hash the labelName 
                     $$ = new GotoStmtTreeNode(labelName);
+                    updateLineNoForTreeNode($$);
                     // remove tree node created for label
                     delete $2;
                     createdNodes.insert($$);
@@ -700,36 +758,42 @@ expression: expression LT expr
             {
                 showNodeInfo("expression -> expression LT expr");
                 $$ = new BinaryExprTreeNode("<", $1, $3);
+                updateLineNoForTreeNode($$);
                 createdNodes.insert($$);
             }
     | expression LE expr
       {
           showNodeInfo("expression -> expression LE expr");
           $$ = new BinaryExprTreeNode("<=", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expression EQUAL expr
       {
           showNodeInfo("expression -> expression EQUAL expr");
           $$ = new BinaryExprTreeNode("=", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expression GE expr
       {
           showNodeInfo("expression -> expression GE expr");
           $$ = new BinaryExprTreeNode(">=", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expression GT expr
       {
           showNodeInfo("expression -> expression GT expr");
           $$ = new BinaryExprTreeNode(">", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expression UNEQUAL expr
       {
           showNodeInfo("expression -> expression UNEQUAL expr");
           $$ = new BinaryExprTreeNode("!=", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expr
@@ -742,24 +806,28 @@ expr: expr PLUS term
       {
           showNodeInfo("expr -> expr PLUS term");
           $$ = new BinaryExprTreeNode("+", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expr MINUS term
       {
           showNodeInfo("expr -> expr MNUS term");
           $$ = new BinaryExprTreeNode("-", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expr OR term
       {
           showNodeInfo("expr -> expr OR term");
           $$ = new BinaryExprTreeNode("or", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | expr XOR term
       {
           showNodeInfo("expr -> expr XOR term");
           $$ = new BinaryExprTreeNode("xor", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | term
@@ -772,24 +840,28 @@ term: term MULTIPLY factor
       {
           showNodeInfo("term -> term MULTIPLY factor");
           $$ = new BinaryExprTreeNode("*", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | term DIVIDE factor
       {
           showNodeInfo("term -> term DIVIDE factor");
           $$ = new BinaryExprTreeNode("/", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | term MOD factor
       {
           showNodeInfo("term -> term MOD factor");
           $$ = new BinaryExprTreeNode("%", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | term AND factor
       {
           showNodeInfo("term -> term AND factor");
           $$ = new BinaryExprTreeNode("and", $1, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | factor
@@ -803,6 +875,7 @@ factor: ID
           // Simple variable
           showNodeInfo("factor -> ID");
           $$ = new VariableTreeNode($1->getName());
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
           delete $1;
         }
@@ -814,6 +887,7 @@ factor: ID
           delete $1;
           $$ = new CallExprTreeNode(functionName,
             &(((ListTreeNode*)$3)->getList()));
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | ID LB expression RB
@@ -823,6 +897,7 @@ factor: ID
           std::string arrayName = $1->getName();
           delete $1;
           $$ = new ArrayElemTreeNode(arrayName, $3);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | ID DOT ID
@@ -830,6 +905,7 @@ factor: ID
           // Record element
           showNodeInfo("factor -> ID DOT ID");
           $$ = new RecordElemTreeNode($1->getName(), $3->getName());
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
           delete $1;
           delete $3;
@@ -849,6 +925,7 @@ factor: ID
           // Negative value
           showNodeInfo("factor -> MINUS factor");
           $$ = new UnaryExprTreeNode("-", $2);
+          updateLineNoForTreeNode($$);
           createdNodes.insert($$);
       }
     | NOT factor
@@ -857,6 +934,7 @@ factor: ID
           showNodeInfo("factor -> NOT factor");
           $$ = new UnaryExprTreeNode("not", $2);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 args: args COMMA expression
@@ -872,6 +950,7 @@ args: args COMMA expression
           expressionList.push_back($1);
           $$ = new ListTreeNode("args", expressionList);
           createdNodes.insert($$);
+          updateLineNoForTreeNode($$);
       }
     ;
 %%
@@ -894,6 +973,11 @@ static void showNodeInfo(const std::string& info)
 {
     grammarOut << "At line " << globalInfo.currentLineIndex
         << ": " << info << std::endl; 
+}
+
+static void updateLineNoForTreeNode(TreeNode* node)
+{
+    node->setLineNum(globalInfo.currentLineIndex);
 }
 
 int yyerror(const char* str)
