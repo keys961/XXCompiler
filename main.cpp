@@ -91,7 +91,7 @@ int main(int argc, const char *argv[])
     // Optimize & print the AST
     TreeOptimizer optimizer(root);
     astOut = std::ofstream(astFileName, std::ios::out);
-    if(!astOut.bad())
+    if(!astOut.bad() && astOut != nullptr)
     {
         std::cout << "Optimizing & printing AST with " << fileName << "..." << std::endl;
         root = optimizer.getOptimizedTree();
