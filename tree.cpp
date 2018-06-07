@@ -7,7 +7,7 @@ int getSizeByType(string type) {
     if (type == "integer") {
         return 4;
     } else if (type == "char") {
-        return 1;
+        return 4;
     } else if (type == "real") {
         return 4;
     }
@@ -113,6 +113,8 @@ void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
         SymbolBucket *returnNameBucket = new SymbolBucket(returnTypeBucket);
         returnNameBucket->setCurrentTable(subSymtab);
         returnNameBucket->getSymbol()->setName(name);
+        //设置函数返回值在函数符号表中的位置
+        returnNameBucket->getSymbol()->setLocation(subSymtab->getAndUpdateLocation(returnNameBucket->getSymbol()->getSize()));
         // set return reg num
         //returnNameBucket->setRegNum(V1);
         subSymtab->insert(returnNameBucket);
