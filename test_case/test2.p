@@ -12,5 +12,7 @@ program HelloWorld;
         result := num1;
     end;
 begin
+    n1 := 1;
+    n2 := 2;
 	max(n1,n2);
 end.

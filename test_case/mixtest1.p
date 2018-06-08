@@ -4,7 +4,7 @@ type
 	book = record
 		id1 : integer;
 		id2 : integer;
-		id3 : integer;
+		id3 : real;
 		name : integer
 	end;
 var
@@ -18,6 +18,7 @@ begin
 	ar[1] := b1;
 	re := 1.1;
 	re := 2.2 * re;
+	b1.id3 := 1.2;
 	write(b1.id1);
 	write(re);
 end.

@@ -5,9 +5,9 @@ const
 type
 	int = integer;
 	book = record
-		id : integer;
-		id : integer;
-		id : integer;
+		id1 : integer;
+		id2 : integer;
+		id3 : integer;
 		name : char
 	end;
 var
