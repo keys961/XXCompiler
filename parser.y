@@ -8,12 +8,16 @@
 #include <string>
 #include "tree.h"
 #include "lexer.h"
+#include "codegen.h"
 
 class GlobalInfo;
 
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
 extern std::ofstream grammarOut;
+extern std::map<std::string, std::string> constCharMap;
+extern std::map<std::string, std::string> constRealMap;
+extern LabelManager *labelManager;
 std::set<TreeNode*> createdNodes;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
@@ -151,6 +155,7 @@ constant_value: INTEGER
           $$ = new LiteralTreeNode(yytext, "real");
           updateLineNoForTreeNode($$);
           createdNodes.insert($$);
+          constRealMap[yytext] = labelManager->getRealLabel();
       }
     | CHAR
       {
@@ -158,6 +163,7 @@ constant_value: INTEGER
           $$ = new LiteralTreeNode(yytext, "char");
           updateLineNoForTreeNode($$);
           createdNodes.insert($$);
+          constCharMap[yytext] = labelManager->getRealLabel();
       }
     | STRING
       {

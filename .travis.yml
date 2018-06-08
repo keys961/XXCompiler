@@ -29,8 +29,6 @@ before_install:
 script:
   - cmake .
   - make
-  - ./Compiler ./test_case/test1.p test1
-  - ./Compiler ./test_case/test2.p test2
   - ./Compiler ./test_case/test3.p test3
   - ./Compiler ./test_case/test4.p test4
   - ./Compiler ./test_case/test5.p test5
@@ -38,7 +36,6 @@ script:
   - ./Compiler ./test_case/test7.p test7
   - ./Compiler ./test_case/test8.p test8
   - ./Compiler ./test_case/test9.p test9
-  - ./Compiler ./test_case/test10.p test10
-  - ./Compiler ./test_case/mixtest1.p mixtest1
-  - ./Compiler ./test_case/mixtest2.p mixtest2
+  - ./Compiler ./test_case/test10.p test12
+  - ./Compiler ./test_case/test10.p test13
   - ./Compiler ./test_case/mixtest3.p mixtest3
