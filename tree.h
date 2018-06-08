@@ -6,6 +6,7 @@
 #include <fstream>
 #include <set>
 #include "symbol.h"
+#include "utils.h"
 
 #define LOAD "load"
 #define STORE "store"

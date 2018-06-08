@@ -15,7 +15,7 @@ class GlobalInfo;
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
 extern std::ofstream grammarOut;
-extern std::map<std::string, std::string> constStringMap;
+extern std::map<std::string, std::string> constCharMap;
 extern std::map<std::string, std::string> constRealMap;
 extern LabelManager *labelManager;
 std::set<TreeNode*> createdNodes;

@@ -14,3 +14,4 @@ void autoFreeReg(int beFree, int *contrain) {
 bool isTmpReg(int r) {
     return r >= 8 && r <= 15;
 }
+

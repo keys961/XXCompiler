@@ -26,7 +26,7 @@ void Initialize() {
     opMap["jal"] = JAL1;
 }
 
-int isFloatType(SymbolBucket* b, int reg) {
+int isRealType(SymbolBucket* b, int reg) {
     if ( (b != nullptr && b->getSymbol()->getTypeName() == "real") || reg > 31)
         return 1;
     else return 0;
@@ -41,4 +41,16 @@ int getSize(const std::string &type) {
     else if (type == "char")
         size = 4;
     return size;
+}
+
+//utils 函数
+int getSizeByType(std::string type) {
+    if (type == "integer") {
+        return 4;
+    } else if (type == "char") {
+        return 4;
+    } else if (type == "real") {
+        return 4;
+    }
+    return -1;
 }

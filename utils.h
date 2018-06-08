@@ -14,8 +14,9 @@ extern std::map<std::string, enum myOption> opMap;
 
 void Initialize();
 
-int isFloatType(SymbolBucket* b, int reg);
+int isRealType(SymbolBucket* b, int reg);
 
 int getSize(const std::string &type);
 
+int getSizeByType(std::string type);
 #endif //COMPILER_OPMAP_H

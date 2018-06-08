@@ -151,7 +151,7 @@ int main(int argc, const char *argv[]) {
     if (!code.bad()) {
         std::cout << "begin gencode" << std::endl;
         root->genCode(mainSymtab);
-        CodeGenerator::addLabel("exit");
+        CodeGenerator::genLabel("exit");
         code << "li $v0 10" << std::endl;
         code << "syscall" << std::endl;
         code.close();

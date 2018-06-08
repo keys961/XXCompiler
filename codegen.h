@@ -6,6 +6,7 @@
 #include <cctype>
 #include <cstdio>
 #include <map>
+#include <sstream>
 #include "utils.h"
 
 #define SP 29
@@ -98,14 +99,13 @@ class RegManager {
     static const int END_FLOAT = 63;
     int reg[32];
 public:
-    int getTmpReg(int isFloat = 0) {
-        if (isFloat) {
+    int getTmpReg(int isReal = 0) {
+        if (isReal) {
             return getFloatReg();
         }
         for (int i = BEGIN_TMP; i <= END_TMP; i++) {
             if (reg[i] == 0) {
                 reg[i] = 1;
-                std::cout << "use reg " << regTable[i] << std::endl;
                 return i;
             }
         }
@@ -117,7 +117,6 @@ public:
         for (int i = BEGIN_FLOAT; i <= END_FLOAT; i++) {
             if (reg[i] == 0) {
                 reg[i] = 1;
-                std::cout << "use reg " << regTable[i] << std::endl;
                 return i;
             }
         }
@@ -149,12 +148,10 @@ public:
 
 class LabelManager {
     static int loopNumber;
-    static int funcNumber;
     static int switchNumber;
     static int caseNumber;
     static int ifNumber;
     static int doNumber;
-    static int stringLabelNumber;
     static int realLabelNumber;
 public:
 
@@ -192,15 +189,6 @@ private:
     static int equal;
 
 public:
-    static std::string intTostring(int x) {
-        char t[256];
-        std::string s;
-
-        sprintf(t, "%d", x);
-        s = t;
-        return s;
-    }
-
     /**
      * R型指令
      *
@@ -208,41 +196,42 @@ public:
      * @param dst 目的寄存器
      * @param src_1 源寄存器1
      * @param src_2 源寄存器2
-     * @param isFloat 是否是浮点数，默认为否
+     * @param isReal 是否是浮点数，默认为否
      */
     static void
-    genRType(const std::string &op, int dst, int src_1, int src_2, int isFloat = 0) {
-        std::cout << "emit R : " << op << " " << dst << " " << src_1 << " " << src_2 << std::endl;
+    genRType(const std::string &op, int dst, int src_1, int src_2, int isReal = 0) {
         std::string c;
         std::string temp = " " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
         std::string temp2 = " " + regTable[dst] + "," + regTable[src_2] + "," + regTable[src_1];
         enum myOption opEnum = opMap[op];
-        std::string s = "equal" + intTostring(equal);
+        std::stringstream ss;
+        ss << "equal" << equal;
+        std::string s = ss.str();
         switch (opEnum) {
             case PLUS1:
             case ASSIGN1:
-                if (!isFloat) {
+                if (!isReal) {
                     c = "add" + temp;
                 } else {
                     c = "add.s" + temp;
                 }
                 break;
             case SUB1:
-                if (!isFloat) {
+                if (!isReal) {
                     c = "sub" + temp;
                 } else {
                     c = "sub.s" + temp;
                 }
                 break;
             case MUL1:
-                if (!isFloat) {
+                if (!isReal) {
                     c = "mul" + temp;
                 } else {
                     c = "mul.s" + temp;
                 }
                 break;
             case DIV1:
-                if (!isFloat) {
+                if (!isReal) {
                     c = "div" + temp;
                 } else {
                     c = "div.s" + temp;
@@ -306,14 +295,15 @@ public:
      * @param label 标签，只用于beq、bne，默认为空
      */
     static void genIType(const std::string &op, int dst, int src, int imm, const std::string &label = "") {
-        std::cout << "emit I op = " << op << " dst = " << dst << " src = " << src << std::endl;
         char ch[16] = {0,};
         sprintf(ch, "%d", imm);
         std::string c;
         std::string temp = " " + regTable[dst] + "," + regTable[src] + ",";
         enum myOption option1 = opMap[op];
         int tmp = regManager->getTmpReg();
-        std::string s = "equal" + intTostring(equal);
+        std::stringstream ss;
+        ss << "equal" << equal;
+        std::string s = ss.str();
         switch (option1) {
             case PLUS1:
             case ASSIGN1:
@@ -408,7 +398,12 @@ public:
         code << c << std::endl;
     }
 
-    static void addLabel(const std::string &label) {
+    /**
+     * 标签生成
+     *
+     * @param label 标签
+     */
+    static void genLabel(const std::string &label) {
         code << label << ":" << std::endl;
     }
 
@@ -418,54 +413,46 @@ public:
      * @param offset 偏移量
      * @param regAddr 源寄存器
      * @param reg 目的寄存器
-     * @param isFloat 是否是浮点数
+     * @param isReal 是否是浮点数
      */
-    static void emitCodeM(const std::string &op, int offset, int regAddr, int reg, int isFloat = 0) {
-//        std::cout << "emit M " << "op = " << op << " offset = " << offset << std::endl;
-        if (op.find("reg") != std::string::npos)
-            offset = -offset;
+    static void genLoadOrStore(const std::string &op, int offset, int reg1, int reg2, int isReal = 0) {
         std::string c;
         char ch[16] = {0,};
-        std::string instr;
+        std::string option;
         const std::string &localOP = op;
-        if (localOP == "load" || localOP == "load_reg") {
-            if (!isFloat)
-                instr = "lw";
-            else instr = "l.s";
+        if (op == "load") {
+            if (!isReal)
+                option = "lw";
+            else option = "l.s";
         } else {
-            if (!isFloat)
-                instr = "sw";
+            if (!isReal)
+                option = "sw";
             else
-                instr = "s.s";
+                option = "s.s";
         }
-        if (localOP == "load" || localOP == "store") {
-            sprintf(ch, "%d", offset);
-            c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[regAddr] + ")";
-            code << c << std::endl;
-        } else if (localOP == "load_reg" || localOP == "store_reg") {
-            std::cout << offset << " " << regAddr << std::endl;
-            ch[0] = '\0';
-            sprintf(ch, "0");
-            std::string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
-            c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
-            code << c1 << std::endl << c << std::endl;
-        }
+        sprintf(ch, "%d", offset);
+        c = option + " " + regTable[reg2] + ", " + ch + "(" + regTable[reg1] + ")";
+        code << c << std::endl;
     }
 
-
-    static void emitCodeConstStr(const std::string &constStr, const std::string &label) {
-        code << label << ": .asciiz " << "\"" << constStr.substr(1, constStr.length() - 2) << "\"" << std::endl;
+    /**
+     * 生成字符字面量
+     * @param str 要生成的字符
+     * @param label 对应的标签
+     */
+    static void genAsciiz(const std::string &str, const std::string &label) {
+        code << label << ": .asciiz " << "\"" << str.substr(1, str.length() - 2) << "\"" << std::endl;
     }
 
-    static void emitCodeConstReal(const std::string &constReal, const std::string &label) {
-        code << label << ": .float " << " " << constReal << std::endl;
+    static void genFloat(const std::string &real, const std::string &label) {
+        code << label << ": .float " << " " << real << std::endl;
     }
 
-    static void emitCodeLA(const std::string &label, int regDst) {
-        code << "la " << regTable[regDst] << " " << label << std::endl;
+    static void genLa(int dst, const std::string &label) {
+        code << "la " << regTable[dst] << " " << label << std::endl;
     }
 
-    static void emitSysCall(const std::string &type) {
+    static void genSysCall(const std::string &type) {
         if (type == "printString") {
             code << "addi $v0, $zero, 4" << std::endl;
         } else if (type == "printInteger") {
@@ -479,6 +466,7 @@ public:
     }
 
 };
+
 void autoFreeReg(int beFree, int *contrain);
 
 bool isTmpReg(int r);
