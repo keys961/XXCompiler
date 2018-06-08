@@ -26,7 +26,7 @@ std::ofstream codeOut; // Target code output
 std::ofstream symOut; // symbol output
 std::ofstream checkOut; // type check output
 std::ofstream code; // codegen output
-bool isPrint = false;//默认不打印日志
+bool isPrint = false;//TODO: remove LOG option
 RegManager *regManager;
 LabelManager *labelManager;
 
