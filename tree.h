@@ -7,7 +7,7 @@
 #include <set>
 #include "symbol.h"
 
-extern std::map<std::string, std::string> constStringMap;
+extern std::map<std::string, std::string> constCharMap;
 extern std::map<std::string, std::string> constRealMap;
 
 class TreeNode;
@@ -172,13 +172,10 @@ public:
     }
 
     SymbolBucket *genCode(SymbolTable *symbolTable, int *reg = NULL);
-};
 
     void updateEnvironment(SymbolTable *symtab);
 
     std::string typeCheck(SymbolTable *symtab);
-
-    virtual void printSelf();
 };
 
 class IDTreeNode : public TreeNode {
@@ -204,7 +201,7 @@ public:
     ProgramHeadTreeNode(const std::string name) : name(name) {}
 
     virtual void printSelf() {
-        if(printedNodes.find(this) == printedNodes.end()) {
+        if (printedNodes.find(this) == printedNodes.end()) {
             printedNodes.insert(this);
             astOut << "Node ID 0x" << std::hex << addr << ":" << " ProgramHeadTreeNode" << std::endl;
             astOut << "\tname: " << name << std::endl;
@@ -348,7 +345,7 @@ public:
         }
     }
 
-    SymbolBucket *UnaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -385,6 +382,7 @@ public:
 
 
     void genSysFunc(SymbolTable *symbolTable, std::string name);
+
     SymbolBucket *genCode(SymbolTable *symbolTable, int *reg = NULL);
 };
 
@@ -407,7 +405,8 @@ public:
             body->printSelf();
         }
     }
-    SymbolBucket *CaseExprTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -597,6 +596,7 @@ public:
 
     std::string typeCheck(SymbolTable *symtab);
 
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class IfStmtTreeNode : public StatementTreeNode {
@@ -628,7 +628,8 @@ public:
                 else_stmt->printSelf();
         }
     }
-    SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -660,7 +661,7 @@ public:
     std::string typeCheck(SymbolTable *symtab);
 
 
-    SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class WhileStmtTreeNode : public StatementTreeNode {
@@ -686,7 +687,7 @@ public:
         }
     }
 
-    SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -716,7 +717,7 @@ public:
 
     std::string typeCheck(SymbolTable *symtab);
 
-    SymbolBucket *SwitchStmtTreeNode::genCode(SymbolTable *symtab, int *reg);
+    SymbolBucket *genCode(SymbolTable *symtab, int *reg);
 };
 
 class ForStmtTreeNode : public StatementTreeNode {
@@ -750,7 +751,7 @@ public:
     std::string typeCheck(SymbolTable *symtab);
 
 
-    SymbolBucket *ForStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 };
 
 class GotoStmtTreeNode : public StatementTreeNode {
@@ -796,7 +797,7 @@ public:
         }
     }
 
-    SymbolBucket *VariableTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string getName() {
         return name;
@@ -830,30 +831,6 @@ public:
             astOut << "\tvalue: " << value << "; type: " << type << std::endl;
         }
     }
-    int getInt() {
-        if (type  == "integer") {
-            return atoi(value.c_str());
-        }
-    }
-
-    char getChar() {
-        if (type == "char") {
-            return value[0];
-        }
-    }
-
-    double getFloat() {
-        if (type == "float") {
-            return atof(value.c_str());
-        }
-    }
-
-    std::string getString() {
-        if (type == "string") {
-            return value;
-        }
-    }
-    SymbolBucket *LiteralTreeNode::genCode(SymbolTable *symbolTable, int *reg);
 
     int getInt() {
         return atoi(value.c_str());
@@ -863,13 +840,11 @@ public:
         return value[0];
     }
 
-    double getDouble() {
+    float getReal() {
         return atof(value.c_str());
     }
 
-    std::string getString() {
-        return value;
-    }
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string getLiteralType() {
         return this->type;
@@ -898,7 +873,7 @@ public:
         }
     }
 
-    SymbolBucket *ArrayElemTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -921,7 +896,7 @@ public:
         }
     }
 
-    SymbolBucket *RecordElemTreeNode::genCode(SymbolTable *symbolTable, int *reg);
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 
     std::string typeCheck(SymbolTable *symtab);
 
@@ -961,6 +936,7 @@ public:
 
     void updateEnvironment(SymbolTable *symtab);
 
+    SymbolBucket *genCode(SymbolTable *symbolTable, int *reg);
 };
 
 #endif //COMPILER_TREE_H

@@ -24,17 +24,18 @@ private:
 
     int size;//这个symbol的字节数
 
-    int immediateValue;
-
     std::string name;//变量名
 
     std::string typeName;//类型名
 
     bool isConst;
 
+    int immediateValue;
 public:
+
     Symbol(int lineNum, std::string name, std::string typeName)
-            : lineNum(lineNum), location(-1), immediateValue(0), name(name), typeName(typeName), isConst(false) {}
+            : lineNum(lineNum), location(-1), name(name), typeName(typeName), isConst(false), immediateValue(0) {
+    }
 
     Symbol(const Symbol &symbol) {
         this->typeName = symbol.typeName;

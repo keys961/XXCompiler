@@ -1,9 +1,9 @@
-#include <altivec.h>
 #include "tree.h"
 #include "codegen.h"
 #include <sstream>
-std::map<std::string, std::string> constStringMap;
-std::map<std::string, std::string> constRealMap;
+
+extern std::map<std::string, std::string> constCharMap;
+extern std::map<std::string, std::string> constRealMap;
 bool isMain = true;
 
 void selectOP(SymbolBucket *bucket, int &reg, std::string &load, std::string &store, int &loc, int currentLevel = 0) {
@@ -11,7 +11,7 @@ void selectOP(SymbolBucket *bucket, int &reg, std::string &load, std::string &st
         reg = -1;
         // loc = bucket->getOffsetReg();
         // 表明 loc是一个寄存器号，array和record的情形
-        loc = bucket->getSymbol().getLocation();
+        loc = bucket->getSymbol()->getLocation();
         load = "load_reg";
         store = "store_reg";
         return;
@@ -21,7 +21,7 @@ void selectOP(SymbolBucket *bucket, int &reg, std::string &load, std::string &st
     }
 
     if (reg == -1 && bucket != NULL) {
-        loc = bucket->getSymbol().getLocation();
+        loc = bucket->getSymbol()->getLocation();
         std::cout << "in select " << bucket->getCurrentTable() << std::endl;
         int level = bucket->getCurrentTable()->getLevel();
         if (level < currentLevel) {
@@ -42,7 +42,7 @@ int getSizeByType(string type) {
     if (type == "integer") {
         return 4;
     } else if (type == "char") {
-        return 1;
+        return 4;
     } else if (type == "real") {
         return 4;
     }
@@ -148,6 +148,8 @@ void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
         SymbolBucket *returnNameBucket = new SymbolBucket(returnTypeBucket);
         returnNameBucket->setCurrentTable(subSymtab);
         returnNameBucket->getSymbol()->setName(name);
+        returnNameBucket->getSymbol()->setLocation(
+                subSymtab->getAndUpdateLocation(returnNameBucket->getSymbol()->getSize()));
         // set return reg num
         //returnNameBucket->setRegNum(V1);
         subSymtab->insert(returnNameBucket);
@@ -176,10 +178,8 @@ void BinaryExprTreeNode::updateEnvironment(SymbolTable *symtab) {
         sprintf(cu, "%d", rop->getInt());
     } else if (rop->getLiteralType() == "char") {
         sprintf(cu, "%c", rop->getChar());
-    } else if (rop->getLiteralType() == "string") {
-        sprintf(cu, "%s", rop->getString().c_str());//todo
     } else if (rop->getLiteralType() == "real") {
-        sprintf(cu, "%f", rop->getDouble());
+        sprintf(cu, "%f", rop->getReal());
     }
     SymbolBucket *head = new SymbolBucket(this->loprand->getName(), getLineNum(), "const", symtab);
     //将const值用字符数组表示，强行赋值给TypeName
@@ -303,17 +303,6 @@ string ListTreeNode::typeCheck(SymbolTable *symtab) {
         if ((this->list[i]->typeCheck(symtab)) == "failure") {
             res = "failure";
         }
-void FuncOrProcTreeNode::printSelf() {
-    if (printedNodes.find(this) != printedNodes.end()) {
-        astOut << "Node ID 0x" << std::hex << addr << ":" << " FuncOrProcTreeNode" << std::endl;
-        astOut << "\tname: " << name << "; isFunction: " << isFunc << std::endl;
-        astOut << "\targs node: " << args << "; body node: " << body
-               << "; return type node: " << return_type << std::endl;
-        printedNodes.insert(this);
-        args->printSelf();
-        body->printSelf();
-        if (return_type)
-            return_type->printSelf();
     }
     return res;
 }
@@ -322,9 +311,18 @@ void FuncOrProcTreeNode::printSelf() {
 //todo 初始化
 SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 //    traceGen("pg");
-    code << ".data" << std::endl;
-    for (std::map<std::string, std::string>::iterator iter = constStringMap.begin();
-         iter != constStringMap.end(); iter++) {
+    if (!isMain) {
+        //刚进来时，SP位于RA所在的4字节内存的底部，要取到RA所在的地址头需要+4
+        CodeGenerator::genIType("+", SP, SP, 4);
+        CodeGenerator::emitCodeM("store", 0, SP, RA);
+        CodeGenerator::genIType("-", SP, SP, 4);
+        //此处同步FP、SP
+        CodeGenerator::genRType("+", FP, SP, 0);
+    } else {
+        code << ".data 0x10000000" << std::endl;
+    }
+    for (std::map<std::string, std::string>::iterator iter = constCharMap.begin();
+         iter != constCharMap.end(); iter++) {
         std::string constStr = iter->first;
         std::string label = iter->second;
         CodeGenerator::emitCodeConstStr(constStr, label);
@@ -334,18 +332,23 @@ SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
         std::string label = iter->second;
         CodeGenerator::emitCodeConstReal(constStr, label);
     }
-    code << ".text" << std::endl;
+    if (isMain) {
+        code << ".text" << std::endl;
+        code << "main:" << std::endl;
+    }
 //    routine->genCode(environment);
 
     std::vector<SymbolBucket *> bucketList;
     //todo 获取bucketlist
-    symbolTable->getSymbolBucketListByType(bucketList, );
+    symbolTable->getSymBucketList(bucketList);
     //所需的栈大小
     int totalStackSize = 0;
     for (int i = 0; i < bucketList.size(); i++) {
         SymbolBucket *b = bucketList[i];
-        std::cout << b->getSymbol().getName() << "'s size is " << b->getSymbol().getSize() << std::endl;
-        totalStackSize += b->getSymbol().getSize();
+        if (b->getSymbol()->getLocation() != -1) {
+            std::cout << b->getSymbol()->getName() << "'s size is " << b->getSymbol()->getSize() << std::endl;
+            totalStackSize += b->getSymbol()->getSize();
+        }
     }
     if (isMain) {
         CodeGenerator::genRType("+", FP, SP, 0);
@@ -355,10 +358,13 @@ SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     }
     getConst_decl()->genCode(environment);
     body->genCode(environment);
-    if (totalStackSize > 0)
-        CodeGenerator::genIType("+", SP, SP, totalStackSize);
+//    if (totalStackSize > 0){
+//    }
     if (!isMain) {
-        CodeGenerator::genJType("jr", "");
+        //12指的是存fp、v1、ra的内存大小，12字节
+        CodeGenerator::genIType("+", SP, SP, totalStackSize + 12);
+        CodeGenerator::emitCodeM("load", 4, FP, RA);
+        CodeGenerator::genRType("jr", RA, 0, 0);
     } else {
         CodeGenerator::genJType("j", "exit");
     }
@@ -366,9 +372,9 @@ SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
         isMain = false;
     }
     routine_decl->genCode(symbolTable);
-    return NULL;
+//    CodeGenerator::addLabel("exit");
 
-    CodeGenerator::addLabel("exit");
+    return NULL;
 }
 
 SymbolBucket *ListTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
@@ -383,51 +389,46 @@ SymbolBucket *ListTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 
 void CallExprTreeNode::genSysFunc(SymbolTable *symbolTable, std::string name) {
     if ((*args).size() > 1 || (*args).size() == 0) {
-        std::cout << getLineNum() << " writeln's argument num is incorrect " << std::endl;
+        std::cout << getLineNum() << " write's argument num is incorrect " << std::endl;
     }
     int argReg;
     SymbolBucket *argBucket = (*args)[0]->genCode(symbolTable, &argReg);
-    std::string type = argBucket->getSymbol().getTypeName();
+    std::string type = argBucket->getSymbol()->getTypeName();
     std::string loadOP, storeOP;
-    int loc;
-    selectOP(argBucket, argReg, loadOP, storeOP, loc, symbolTable->getLevel());
-    if (type == "string") {
-        if (argReg > 0) {
-            CodeGenerator::genRType("+", A0, argReg, 0);
-        } else if (argReg == -1) {
-            CodeGenerator::emitCodeM(loadOP, loc, FP, A0);
-        }
-        CodeGenerator::emitSysCall("printString");
-    } else if (type == "integer") {
-        if (argReg > 0) {
-            CodeGenerator::genRType("+", A0, argReg, 0);
-        } else if (argReg == -1) {
-            CodeGenerator::emitCodeM(loadOP, loc, FP, A0);
+    int location;
+    selectOP(argBucket, argReg, loadOP, storeOP, location, symbolTable->getLevel());
+    location = argBucket->getSymbol()->getLocation();
+    if (type == "integer") {
+        if (argReg == -1) {
+            CodeGenerator::emitCodeM(loadOP, -location, FP, A0);
         } else if (argReg == -2) {
-            int imme = argBucket->getSymbol().getImmediateValue();
+            int imme = argBucket->getSymbol()->getImmediateValue();
             CodeGenerator::genIType("+", A0, 0, imme);
         }
         CodeGenerator::emitSysCall("printInteger");
     } else if (type == "real") {
-        if (argReg > 0) {
-            CodeGenerator::genRType("+", F12, argReg, 0, 1);
-        } else if (argReg == -1) {
-            CodeGenerator::emitCodeM(loadOP, loc, FP, F12, 1);
+        if (argReg == -1) {
+            CodeGenerator::emitCodeM(loadOP, -location, FP, F12, 1);
+        } else if (argReg == -2) {
+            int imme = argBucket->getSymbol()->getImmediateValue();
+            CodeGenerator::genIType("+", F12, 0, imme);
         }
         CodeGenerator::emitSysCall("printReal");
     } else if (type == "char") {
         if (argReg == -1) {
-            CodeGenerator::emitCodeM(loadOP, loc, FP, A0);
+            CodeGenerator::emitCodeM(loadOP, -location, FP, A0);
+        } else if (argReg > 0) {
+            CodeGenerator::emitCodeM(loadOP, 0, argReg, A0);
         }
         CodeGenerator::emitSysCall("printChar");
     }
     regManager->freeReg(argReg);
-    if (argBucket != NULL) delete argBucket;
+    delete argBucket;
 }
 
 SymbolBucket *CallExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     std::cout << "in call " << name << std::endl;
-    if (name == "writeln" || name == "readln") {
+    if (name == "write" || name == "read") {
         genSysFunc(symbolTable, name);
         return NULL;
     }
@@ -437,41 +438,48 @@ SymbolBucket *CallExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     std::cout << funcBucket << std::endl;
     SymbolBucket *returnBucket;
     returnBucket = new SymbolBucket(funcBucket->getSymbol(), symbolTable);
-    if (funcBucket->getSymbol().getTypeName() == "func")
-        returnBucket->getSymbol().setTypeName("null");
+    if (funcBucket->getSymbol()->getTypeName() == "func")
+        returnBucket->getSymbol()->setTypeName("null");
     std::vector<SymbolBucket *> argsTypeList;
     SymbolBucket *member = funcBucket->getNextBucket();
     do {
-        argsTypeList.push_back(funcBucket->getNextTable()->find(member->getSymbol().getName()));
+        argsTypeList.push_back(funcBucket->getNextTable()->find(member->getSymbol()->getName()));
         member = member->getLastBucket()->getNextBucket();
     } while (member != funcBucket);
+    //依次压入FP（调用者的）、返回值、返回地址
+    CodeGenerator::emitCodeM("store", -4, SP, FP);
+    CodeGenerator::emitCodeM("store", -8, SP, V1);
+    //此处预留4字节，用于在被调用者开头处压入返回地址
+    CodeGenerator::genIType("-", SP, SP, 12);
     // pass arguments
-    int tmpDst;
-    int tmp;
+    int tmpDst, tmp;
     for (int i = 0; i < args->size(); i++) {
         tmpDst = regManager->getTmpReg();
         SymbolBucket *argType = argsTypeList[i];
         int argReg, argLoc;
         std::string loadOP, storeOP;
-        SymbolBucket *argBucket = (*args)[0]->genCode(symbolTable, &argReg);
+        SymbolBucket *argBucket = (*args)[i]->genCode(symbolTable, &argReg);
         int isElem = argReg == -3;
         selectOP(argBucket, argReg, loadOP, storeOP, argLoc, symbolTable->getLevel());
-        //将参数放到tmpDst寄存器
-        CodeGenerator::emitCodeM(loadOP, argLoc, FP, tmpDst);
+        //-2表明参数是字面量，则直接从该bucket的symbol的立即值中取值
+        if (argReg == -2) {
+            CodeGenerator::genIType("+", tmpDst, 0, argBucket->getSymbol()->getImmediateValue());
+        } else {
+            argLoc = argBucket->getSymbol()->getLocation();
+            //将参数放到tmpDst寄存器
+            CodeGenerator::emitCodeM(loadOP, -argLoc, FP, tmpDst);
+        }
+
         //将tmpDst中的值压栈
-        CodeGenerator::emitCodeM("store", argType->getSymbol().getLocation(), SP, tmpDst);
+        CodeGenerator::emitCodeM("store", -argType->getSymbol()->getSize() * i, SP, tmpDst);
         //SP下移
-        CodeGenerator::genIType("-", SP, SP, argType->getSymbol().getLocation());
+//        CodeGenerator::genIType("-", SP, SP, argType->getSymbol()->getSize() * (i + 1));
 
         regManager->freeReg(tmpDst);
-        if (argBucket != NULL) delete argBucket;
+        delete argBucket;
     }
-    //依次压入FP（调用者的）、返回值、返回地址
-    CodeGenerator::emitCodeM("store", -4, SP, FP);
-    CodeGenerator::emitCodeM("store", -8, SP, V1);
-    CodeGenerator::emitCodeM("store", -12, SP, RA);
-    CodeGenerator::genIType("+", FP, SP, 0);
-    CodeGenerator::genIType("-", SP, SP, -12);
+
+//    CodeGenerator::genIType("+", FP, SP, 0);
     CodeGenerator::genJType("jal", name);
     if (isFunc) {
         tmp = regManager->getTmpReg();
@@ -480,15 +488,19 @@ SymbolBucket *CallExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     } else {
         if (reg != NULL) *reg = -4;
     }
-    CodeGenerator::genIType("+", SP, FP, 0);
-    CodeGenerator::emitCodeM("load", -12, FP, RA);
+//    CodeGenerator::genIType("+", SP, FP, 0);
+    //todo 改动：此处逻辑错误，应该在被调用者里取出返回地址
+//    CodeGenerator::emitCodeM("load", -12, FP, RA);
     CodeGenerator::emitCodeM("load", -8, FP, V1);
-    CodeGenerator::emitCodeM("load", -4, FP, FP);
+    CodeGenerator::emitCodeM("load", -12, FP, FP);
     std::cout << "out call " << std::endl;
+    regManager->freeReg(tmp);
     return returnBucket;
 }
 
 SymbolBucket *VariableTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
+    if (reg != NULL)
+        *reg = -1;
     if (!isConst) {
         std::cout << "vg : " << name << " environment : " << symbolTable << std::endl;
         environment = symbolTable;
@@ -528,50 +540,109 @@ SymbolBucket *BinaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     std::string loadOPL, storeOPL;
     selectOP(bucketR, regR, loadOPR, storeOPR, locationR, symbolTable->getLevel());
     selectOP(bucketL, regL, loadOPL, storeOPL, locationL, symbolTable->getLevel());
+    locationR = -bucketR->getSymbol()->getLocation();
+    locationL = -bucketL->getSymbol()->getLocation();
     std::cout << "regL : " << regL << " regR " << regR << std::endl;
-//    if (regL == -1 && regR == -1) {
-    int tmpSrc_1 = regManager->getTmpReg(isFloat);
-    int tmpSrc_2 = regManager->getTmpReg(isFloat);
-    int tmpDst = regManager->getTmpReg(isFloat);
-    if (op == "=") {
-        //todo 变量大小大于4
-        if (bucketR->getSymbol().getSize() > 4) {
-            if (bucketL->getSymbol().getSize() == bucketR->getSymbol().getSize()) {
+    if (regL == -1 && regR == -1) {
+        int tmpSrc_1 = regManager->getTmpReg(isFloat);
+        int tmpSrc_2 = regManager->getTmpReg(isFloat);
+        int tmpDst = regManager->getTmpReg(isFloat);
+        if (op == ":=") {
+            //todo 变量大小大于4
+            if (bucketR->getSymbol()->getSize() > 4) {
+                if (bucketL->getSymbol()->getSize() == bucketR->getSymbol()->getSize()) {
 //                CodeGenerator::emitCodeB(loadOPR, storeOPL, bucketR->getSize(), locationL, locationR, FP, 4);
+                } else {
+                    std::cout << getLineNum() << ": error two record has different size" << std::endl;
+                    exit(-1);
+                }
             } else {
-                std::cout << getLineNum() << ": error two record has different size" << std::endl;
-                exit(-1);
+                //赋值操作右节点的值直接写进左节点内存，设置reg为-1代表结果在内存中
+                CodeGenerator::emitCodeM(loadOPR, locationR, FP, tmpSrc_1, isFloat);
+                CodeGenerator::emitCodeM(storeOPL, locationL, FP, tmpSrc_1, isFloat);
+                if (reg != NULL)
+                    *reg = -1;
             }
         } else {
+            CodeGenerator::emitCodeM(loadOPL, locationL, FP, tmpSrc_1, isFloat);
             CodeGenerator::emitCodeM(loadOPR, locationR, FP, tmpSrc_2, isFloat);
-            CodeGenerator::emitCodeM(storeOPL, locationL, FP, tmpSrc_2, isFloat);
-            if (reg != NULL) *reg = tmpSrc_2;
+            CodeGenerator::genRType(op, tmpDst, tmpSrc_1, tmpSrc_2, isFloat);
+            if (reg != NULL) *reg = tmpDst;
         }
-    } else {
-        CodeGenerator::emitCodeM(loadOPL, locationL, FP, tmpSrc_1, isFloat);
-        CodeGenerator::emitCodeM(loadOPR, locationR, FP, tmpSrc_2, isFloat);
-        CodeGenerator::genRType(op, tmpDst, tmpSrc_1, tmpSrc_2, isFloat);
-        if (reg != NULL) *reg = tmpDst;
-    }
-    regManager->freeReg(tmpSrc_1);
-    regManager->freeReg(tmpSrc_2);
+        regManager->freeReg(tmpSrc_1);
+        regManager->freeReg(tmpSrc_2);
 //    regManager->freeReg(tmpDst);
-    //todo 释放寄存器
-    autoFreeReg(tmpDst, reg);
-//    }
-    if (bucketL != NULL) delete bucketL;
-    if (bucketR != NULL) delete bucketR;
+        //todo 释放寄存器
+        autoFreeReg(tmpDst, reg);
+    } else if (regL == -2 || regR == -2) {
+        int tmpDst, tmpSrc;
+        cout << "br = " << bucketR << " bl = " << bucketL << endl;
+        int intImmeR, intImmeL;
+        if (bucketR != NULL)
+            intImmeR = bucketR->getSymbol()->getImmediateValue();
+        if (bucketL != NULL)
+            intImmeL = bucketL->getSymbol()->getImmediateValue();
+
+        cout << "immeR = " << intImmeR << " immeL = " << intImmeL << endl;
+        if (regL == -2 && regR == -2) {
+            tmpDst = regManager->getTmpReg(isFloat);
+            CodeGenerator::genIType(op, tmpDst, tmpDst, intImmeR);
+            CodeGenerator::genIType(op, tmpDst, tmpDst, intImmeL);
+            if (reg != NULL) *reg = tmpDst;
+        } else if (regL == -2 && regR == -1) {
+            tmpDst = regManager->getTmpReg(isFloat);
+            tmpSrc = regManager->getTmpReg(isFloat);
+            CodeGenerator::emitCodeM(loadOPR, locationR, FP, tmpSrc, isFloat);
+            CodeGenerator::genIType(op, tmpDst, tmpSrc, intImmeL);
+            if (reg != NULL) *reg = tmpDst;
+        } else if (regL == -1 && regR == -2) {
+            if (op == ":=") {
+                tmpDst = regManager->getTmpReg(isFloat);
+                CodeGenerator::genIType(op, tmpDst, 0, intImmeR);
+                CodeGenerator::emitCodeM(storeOPL, locationL, FP, tmpDst, isFloat);
+                if (reg != NULL) *reg = tmpDst;
+            } else {
+                tmpDst = regManager->getTmpReg(isFloat);
+                tmpSrc = regManager->getTmpReg(isFloat);
+                CodeGenerator::emitCodeM(loadOPL, locationL, FP, tmpSrc, isFloat);
+                CodeGenerator::genIType(op, tmpDst, tmpSrc, intImmeR);
+                if (reg != NULL) *reg = tmpDst;
+            }
+        } else if (regL == -2 && regR > 0) {
+            //左边字面量，右边在寄存器里，则不会有“:=”的情况
+            tmpDst = regManager->getTmpReg(isFloat);
+            tmpSrc = regManager->getTmpReg(isFloat);
+            CodeGenerator::genIType(op, tmpSrc, 0, intImmeL);
+            CodeGenerator::genRType(op, tmpDst, tmpSrc, regR);
+            if (reg != NULL) *reg = tmpDst;
+        } else if (regL > 0 && regR == -2) {
+            //左边在寄存器里，右边字面量，也不会有:=的情况
+            tmpDst = regManager->getTmpReg(isFloat);
+            tmpSrc = regManager->getTmpReg(isFloat);
+            CodeGenerator::genIType(op, tmpSrc, 0, intImmeR);
+            CodeGenerator::genRType(op, tmpDst, tmpSrc, regL);
+            if (reg != NULL) *reg = tmpDst;
+        }
+        regManager->freeReg(tmpSrc);
+        autoFreeReg(tmpDst, reg);
+    } else if (regR > 0) {
+        int tmpSrc = regManager->getTmpReg(isFloat);
+        int tmpDst = regManager->getTmpReg(isFloat);
+        if (op == ":=") {
+            CodeGenerator::emitCodeM(storeOPL, locationL, FP, regR);
+        } else {
+            CodeGenerator::emitCodeM(loadOPL, locationL, FP, tmpSrc, isFloat);
+            CodeGenerator::genRType(op, tmpDst, tmpSrc, regR);
+            if (reg != NULL) *reg = tmpDst;
+        }
+        regManager->freeReg(tmpSrc);
+        autoFreeReg(tmpDst, reg);
+    }
+    delete bucketL;
+    delete bucketR;
     autoFreeReg(regL, reg);
     autoFreeReg(regR, reg);
     return returnBucket;
-}
-
-TreeNode *BinaryExprTreeNode::getLoprand() const {
-    return loprand;
-}
-
-TreeNode *BinaryExprTreeNode::getRoprand() const {
-    return roprand;
 }
 
 SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
@@ -628,14 +699,19 @@ SymbolBucket *ForStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     //把id存在这个寄存器里
     int idReg = regManager->getTmpReg();
     //从内存中加载id，放到idReg表示的寄存器中
-    CodeGenerator::emitCodeM("load", idBucket->getSymbol().getLocation(), FP, idReg);
+    CodeGenerator::emitCodeM("load", idBucket->getSymbol()->getLocation(), FP, idReg);
     bucketR = dst->genCode(symbolTable, &regR);
     selectOP(bucketR, regR, loadOPR, storeOPR, locationR, symbolTable->getLevel());
-    locationR = bucketR->getSymbol().getLocation();
+    locationR = bucketR->getSymbol()->getLocation();
     int compReg = regManager->getTmpReg();
     int dstReg = regManager->getTmpReg();
     //获取循环终值，与当前id值进行比较以决定是否跳出循环
-    CodeGenerator::emitCodeM(loadOPR, locationR, FP, dstReg);
+    if (locationR == -1) {
+        int immeR = bucketR->getSymbol()->getImmediateValue();
+        CodeGenerator::genIType("+", dstReg, 0, immeR);
+    } else {
+        CodeGenerator::emitCodeM(loadOPR, locationR, FP, dstReg);
+    }
     CodeGenerator::genRType("<=", compReg, idReg, dstReg);
     CodeGenerator::genIType("beq", compReg, 0, 0, breakLabel);
     regManager->freeReg(dstReg);
@@ -644,14 +720,14 @@ SymbolBucket *ForStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 
     //根据for循环的类型决定进行id++或id--
     int tmp = regManager->getTmpReg();
-    CodeGenerator::emitCodeM("load", idBucket->getSymbol().getLocation(), FP, tmp);
+    CodeGenerator::emitCodeM("load", idBucket->getSymbol()->getLocation(), FP, tmp);
     if (direction == "to") {
         CodeGenerator::genIType("+", tmp, tmp, 1);
     } else {
         CodeGenerator::genIType("-", tmp, tmp, 1);
     }
 
-    CodeGenerator::emitCodeM("store", idBucket->getSymbol().getLocation(), FP, tmp);
+    CodeGenerator::emitCodeM("store", idBucket->getSymbol()->getLocation(), FP, tmp);
     CodeGenerator::genJType("j", loopLabel);
     CodeGenerator::addLabel(breakLabel);
     regManager->freeReg(tmp);
@@ -701,7 +777,7 @@ SymbolBucket *CaseExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     bucketID = label->genCode(symbolTable, &idReg);
 
     selectOP(bucketID, idReg, loadOPID, storeOPID, locationID, symbolTable->getLevel());
-    locationID = bucketID->getSymbol().getLocation();
+    locationID = bucketID->getSymbol()->getLocation();
     int tmp = regManager->getTmpReg();
     CodeGenerator::emitCodeM(loadOPID, locationID, FP, tmp);
     CodeGenerator::genIType("bne", tmp, regE, 0, caseLabel);
@@ -721,7 +797,7 @@ SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     std::string loadOPC, storeOPC;
     bucketC = condition->genCode(symbolTable, &regC);
     selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
-    locationC = bucketC->getSymbol().getLocation();
+    locationC = bucketC->getSymbol()->getLocation();
 
     std::stringstream ss;
     ss << "endif" << ifNum;
@@ -761,7 +837,7 @@ SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     bucketB = body->genCode(symbolTable, &regB);
     bucketC = condition->genCode(symbolTable, &regC);
     selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
-    locationC = bucketC->getSymbol().getLocation();
+    locationC = bucketC->getSymbol()->getLocation();
     CodeGenerator::genIType("beq", regC, 0, 0, doLabel);
 
     regManager->freeReg(regC);
@@ -777,14 +853,14 @@ SymbolBucket *ArrayElemTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *elemType = type->getNextBucket()->getLastBucket()->getNextBucket();
     SymbolBucket *returnBucket = new SymbolBucket(elemType->getSymbol(), symbolTable);
     //数组的元素类型的大小
-    int elemSize = elemType->getSymbol().getSize();
+    int elemSize = elemType->getSymbol()->getSize();
     int exprReg;
     // the stack offset of the index
     int indexLocation;
     std::string loadOP, storeOP;
     SymbolBucket *indexBucket = index->genCode(symbolTable, &exprReg);
     selectOP(indexBucket, exprReg, loadOP, storeOP, indexLocation, symbolTable->getLevel());
-    indexLocation = indexBucket->getSymbol().getLocation();
+    indexLocation = indexBucket->getSymbol()->getLocation();
 
     int tmpSrc_1 = regManager->getTmpReg();
     int tmpSrc_2 = regManager->getTmpReg();
@@ -792,14 +868,14 @@ SymbolBucket *ArrayElemTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     CodeGenerator::emitCodeM("load", indexLocation, FP, tmpSrc_1);
     CodeGenerator::genIType("+", tmpSrc_2, 0, elemSize);
     CodeGenerator::genRType("*", tmpDst, tmpSrc_1, tmpSrc_2);
-    CodeGenerator::genIType("+", tmpDst, tmpDst, type->getSymbol().getLocation());
+    CodeGenerator::genIType("+", tmpDst, tmpDst, type->getSymbol()->getLocation());
     if (reg != NULL) *reg = -3;
     //returnBucket->setOffsetReg(tmpDst);
-    returnBucket->getSymbol().setLocation(tmpDst);
+    returnBucket->getSymbol()->setLocation(tmpDst);
     regManager->freeReg(tmpSrc_1);
     regManager->freeReg(tmpSrc_2);
 
-    returnBucket->getSymbol().setSize(elemSize);
+    returnBucket->getSymbol()->setSize(elemSize);
     autoFreeReg(exprReg, reg);
     return returnBucket;
 }
@@ -810,10 +886,10 @@ SymbolBucket *RecordElemTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *bucket = environment->find(rname);
     SymbolBucket *member = bucket->getNextBucket();
     do {
-        if (member->getSymbol().getName() == ename) {
+        if (member->getSymbol()->getName() == ename) {
             returnBucket = new SymbolBucket(bucket->getSymbol(), symbolTable);
-            returnBucket->getSymbol().setLocation(member->getSymbol().getLocation());
-            returnBucket->getSymbol().setSize(member->getSymbol().getSize());
+            returnBucket->getSymbol()->setLocation(member->getSymbol()->getLocation());
+            returnBucket->getSymbol()->setSize(member->getSymbol()->getSize());
             break;
         }
         member = member->getLastBucket()->getNextBucket();
@@ -832,7 +908,7 @@ SymbolBucket *UnaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *oprandBucket = oprand->genCode(symbolTable, &oprandReg);
     SymbolBucket *returnBucket = new SymbolBucket(oprandBucket->getSymbol(), symbolTable);
     selectOP(oprandBucket, oprandReg, loadOP, storeOP, operandLocation, symbolTable->getLevel());
-    operandLocation = oprandBucket->getSymbol().getLocation();
+    operandLocation = oprandBucket->getSymbol()->getLocation();
     std::cout << "in unaryExpr reg = " << oprandReg << " with op = " << op << std::endl;
     int tmpDst;
     tmpDst = regManager->getTmpReg();
@@ -849,27 +925,31 @@ SymbolBucket *UnaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 SymbolBucket *LiteralTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     std::cout << "ng" << std::endl;
     environment = symbolTable;
-    SymbolBucket *typeBucket = environment->find(type);
-    SymbolBucket *returnBucket = new SymbolBucket(typeBucket->getSymbol(), symbolTable);
-    returnBucket->getSymbol().setSize(getSize(type));
-    if (type == "string") {
-        int tmp = regManager->getTmpReg();
-        CodeGenerator::emitCodeLA(constStringMap[value], tmp);
-        if (reg != NULL) *reg = tmp;
-    } else if (type == "integer") {
-        returnBucket->getSymbol().setSize(getSize(type));
-        returnBucket->getSymbol().setImmediateValue(getInt());
+//    SymbolBucket *typeBucket = environment->find(type);
+    //todo 暴力改type
+    Symbol *symbol = new Symbol(getLineNum(), "LiteralTreeNode", type);
+    SymbolBucket *returnBucket = new SymbolBucket(symbol, symbolTable);
+    returnBucket->getSymbol()->setSize(getSize(type));
+
+    if (type == "integer") {
+        returnBucket->getSymbol()->setImmediateValue(getInt());
         if (reg != NULL) *reg = -2;
-    } else if (type == "float") {
-        int tmp = regManager->getTmpReg();
-        CodeGenerator::emitCodeLA(constRealMap[value], tmp);
+    } else if (type == "real") {
+        int labelReg = regManager->getTmpReg();
+        CodeGenerator::emitCodeLA(constRealMap[value], labelReg);
         int tmpDst = regManager->getTmpReg(1);
-        CodeGenerator::emitCodeM("load", 0, tmp, tmpDst, 1);
+        CodeGenerator::emitCodeM("load", 0, labelReg, tmpDst, 1);
         if (reg != NULL) *reg = tmpDst;
-        regManager->freeReg(tmp);
+        regManager->freeReg(labelReg);
+        if (reg != NULL) *reg = -tmpDst;
+    } else {
+        int labelReg = regManager->getTmpReg();
+        CodeGenerator::emitCodeLA(constCharMap[value], labelReg);
+        if (reg != NULL) *reg = labelReg;
     }
     return returnBucket;
 }
+
 string ProgramBodyTreeNode::typeCheck(SymbolTable *symtab) {
     checkOut << "programbody treenode check type" << endl;
     return this->body->typeCheck(symtab);
@@ -1068,3 +1148,15 @@ string RecordElemTreeNode::typeCheck(SymbolTable *symtab) {
     return "failure";
 }
 
+SymbolBucket *CompoundStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
+    stmtlist->genCode(symbolTable);
+    return NULL;
+}
+
+SymbolBucket *FuncOrProcTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
+    string label = name;
+    //labelManager->addFuncLabel(label);
+    CodeGenerator::addLabel(label);
+    body->genCode(tab);
+    return NULL;
+}

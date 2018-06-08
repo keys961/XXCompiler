@@ -8,9 +8,12 @@
 #include "parser.hpp"
 #include "tree.h"
 #include "optimizer.h"
+#include "codegen.h"
 
-extern std::map<std::string, std::string> constStringMap;
-extern std::map<std::string, std::string> constRealMap;
+std::map<std::string, std::string> constCharMap;
+std::map<std::string, std::string> constRealMap;
+std::map<std::string, enum myOption> opMap;
+
 /**
  * Global variables
  */
@@ -22,12 +25,25 @@ std::ofstream astOut; // AST output
 std::ofstream codeOut; // Target code output
 std::ofstream symOut; // symbol output
 std::ofstream checkOut; // type check output
+std::ofstream code; // codegen output
 bool isPrint = false;//默认不打印日志
+RegManager *regManager;
+LabelManager *labelManager;
 
 GlobalInfo globalInfo;
 TreeNode *root; // ProgramBodyTreeNode
 
 std::set<TreeNode *> printedNodes;
+
+int LabelManager::loop_number = 0;
+int LabelManager::func_number = 0;
+int LabelManager::case_number = 0;
+int LabelManager::if_number = 0;
+int LabelManager::do_number = 0;
+int LabelManager::string_label_number = 0;
+int LabelManager::real_label_number = 0;
+int LabelManager::equal_number = 0;
+int CodeGenerator::equal = 0;
 
 int main(int argc, const char *argv[]) {
     /* Format: compiler src_file_name output_file_name */
@@ -45,6 +61,10 @@ int main(int argc, const char *argv[]) {
     std::string codeFileName = fileName + ".s";
     std::string symFileName = fileName + ".sym";
     std::string chkFileName = fileName + ".chk";
+    std::string asmFileName = fileName + ".asm";
+    regManager = new RegManager();
+    labelManager = new LabelManager();
+    Initialize();
     // Pre-processing
     CommemtProcessor processor;
     std::fstream fin(argv[1], std::ios::in);
@@ -127,7 +147,22 @@ int main(int argc, const char *argv[]) {
         return 1;
     }
     // Generate code
+    code = std::ofstream(asmFileName, std::ios::out);
+    if (!code.bad()) {
+        std::cout << "begin gencode" << std::endl;
+        root->genCode(mainSymtab);
+        CodeGenerator::addLabel("exit");
+        code << "li $v0 10" << std::endl;
+        code << "syscall" << std::endl;
+        code.close();
+        std::cout << "end of gencode" << std::endl;
+    } else {
+        std::cerr << "Error when gencode!" << std::endl;
+        return 1;
+    }
 
+    delete regManager;
+    delete labelManager;
 
     // finally dispose resources
     for (auto &it : printedNodes)

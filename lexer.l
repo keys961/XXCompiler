@@ -87,8 +87,8 @@ letter [A-Za-z]
 integer {digits}
 real {digits}"."{digits}
 
-string \'[^']\' 
 char \'[.]\'
+string \'[^']*\'
 newline \n
 whitespace [ \t]+
 id ({letter}|_)+({letter}|{digit}|_)*
@@ -154,8 +154,8 @@ id ({letter}|_)+({letter}|{digit}|_)*
 
 {integer} { return INTEGER; }
 {real} { return REAL; }
-{char} { return CHAR; }
-{string} { return STRING; }
+{char} { if(yyleng == 3) return CHAR; return STRING; }
+{string} { if(yyleng == 3) return CHAR; return STRING; }
 
 {whitespace} {}
 {newline} { globalInfo.currentLineIndex++; globalInfo.currentTokenIndex = 0; }
