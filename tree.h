@@ -7,6 +7,9 @@
 #include <set>
 #include "symbol.h"
 
+#define LOAD "load"
+#define STORE "store"
+
 extern std::map<std::string, std::string> constCharMap;
 extern std::map<std::string, std::string> constRealMap;
 

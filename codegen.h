@@ -148,58 +148,39 @@ public:
 };
 
 class LabelManager {
-    static int loop_number;
-    static int func_number;
-    static int case_number;
-    static int goto_number;
-    static int if_number;
-    static int do_number;
-    static int string_label_number;
-    static int real_label_number;
-    static int equal_number;
+    static int loopNumber;
+    static int funcNumber;
+    static int switchNumber;
+    static int caseNumber;
+    static int ifNumber;
+    static int doNumber;
+    static int stringLabelNumber;
+    static int realLabelNumber;
 public:
 
-    int getLoopLabel() { return loop_number; }
+    int getLoopLabel() { return loopNumber; }
 
-    void addLoopLabel() { loop_number++; }
+    void addLoopLabel() { loopNumber++; }
 
-    int getRepeatLabel() { return do_number; }
+    int getRepeatLabel() { return doNumber; }
 
-    void addRepeatLabel() { do_number++; }
+    void addRepeatLabel() { doNumber++; }
 
-    int getEqualLabel() { return equal_number; }
+    int getIfLabel() { return ifNumber; }
 
-    void addEqualLabel() { equal_number++; }
+    void addIfLabel() { ifNumber++; }
 
-    int getIfLabel() { return if_number; }
+    int getCaseLabel() { return caseNumber; }
 
-    void addIfLabel() { if_number++; }
+    void addCaseLabel() { caseNumber++; }
 
-    int getgotoLabel() { return goto_number; }
+    int getSwitchLabel() { return switchNumber; };
 
-    void addgotoLabel() { goto_number++; }
-
-    int getCaseLabel() { return case_number; }
-
-    void addCaseLabel() { case_number++; }
-
-    int getFuncLabel() { return func_number; }
-
-    void addFuncLabel(std::string &label) {
-        char labelNum[10] = {0,};
-        sprintf(labelNum, "%d", func_number++);
-        label = label + labelNum;
-    }
-
-    std::string getStringLabel() {
-        char ch[32] = {0,};
-        sprintf(ch, "string%d", string_label_number++);
-        return ch;
-    }
+    void addSwitchLabel() { switchNumber++; };
 
     std::string getRealLabel() {
         char ch[32] = {0,};
-        sprintf(ch, "real%d", real_label_number++);
+        sprintf(ch, "real%d", realLabelNumber++);
         return ch;
     }
 
@@ -230,7 +211,7 @@ public:
      * @param isFloat 是否是浮点数，默认为否
      */
     static void
-    genRType(const std::string op, int dst, int src_1, int src_2, int isFloat = 0) {
+    genRType(const std::string &op, int dst, int src_1, int src_2, int isFloat = 0) {
         std::cout << "emit R : " << op << " " << dst << " " << src_1 << " " << src_2 << std::endl;
         std::string c;
         std::string temp = " " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
@@ -324,7 +305,7 @@ public:
      * @param imm 立即数
      * @param label 标签，只用于beq、bne，默认为空
      */
-    static void genIType(const std::string op, int dst, int src, int imm, const std::string label = "") {
+    static void genIType(const std::string &op, int dst, int src, int imm, const std::string &label = "") {
         std::cout << "emit I op = " << op << " dst = " << dst << " src = " << src << std::endl;
         char ch[16] = {0,};
         sprintf(ch, "%d", imm);
@@ -399,7 +380,7 @@ public:
                 break;
             }
             case BNE1: {
-                c = "beq" + temp + label;
+                c = "bne" + temp + label;
                 break;
             }
         }
@@ -413,7 +394,7 @@ public:
      * @param op 操作符，j或jal
      * @param label 要跳转的标签
      */
-    static void genJType(const std::string op, const std::string label) {
+    static void genJType(const std::string &op, const std::string &label) {
         std::string c;
         enum myOption option1 = opMap[op];
         switch (option1) {
@@ -427,32 +408,9 @@ public:
         code << c << std::endl;
     }
 
-    static void addLabel(const std::string label) {
+    static void addLabel(const std::string &label) {
         code << label << ":" << std::endl;
     }
-
-//    /**
-//     * 寻找最顶层的帧指针
-//     *
-//     * @param op 操作符
-//     * @param localOP “-”前面的原始操作符
-//     * @param tmpAC 找到的帧指针
-//     */
-//    static void findFP(string op, string &localOP, int &tmpAC) {
-//        if (op.find("-") != string::npos) {
-//            tmpAC = regManager->getTmpReg();
-//            int pos = op.find('-');
-//            int level = atoi(op.substr(pos + 1, op.length()).c_str());
-//            CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);            //应为fp在ac上面，所有ac所在的地址高于当前fp的地址
-//            //根据level的差值向上获取level - 1次ac，最后一次获取到的ac就是fp
-//            //fp指向栈的最后一个位置，ac指向栈的第一个位置，因此fp - 4指向ac
-//            for (int i = 1; i < level; i++) {
-//                CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
-//            }
-//            CodeGenerator::emitCodeI("+", tmpAC, tmpAC, -4);
-//            localOP = op.substr(0, pos);
-//        }
-//    }
 
     /**
      *
@@ -462,19 +420,14 @@ public:
      * @param reg 目的寄存器
      * @param isFloat 是否是浮点数
      */
-    static void emitCodeM(const std::string op, int offset, int regAddr, int reg, int isFloat = 0) {
-        std::cout << "emit M " << "op = " << op << " offset = " << offset << std::endl;
+    static void emitCodeM(const std::string &op, int offset, int regAddr, int reg, int isFloat = 0) {
+//        std::cout << "emit M " << "op = " << op << " offset = " << offset << std::endl;
         if (op.find("reg") != std::string::npos)
             offset = -offset;
         std::string c;
-//        char loadInstr[][4] = {"", "lb", "lh", "", "lw"};
-//        char storeInstr[][4] = {"", "sb", "sh", "", "sw"};
-//        string ls = "l.s";
-//        string ss = "s.s";
         char ch[16] = {0,};
         std::string instr;
-        std::string localOP = op;
-//        findFP(op, localOP, regAddr);
+        const std::string &localOP = op;
         if (localOP == "load" || localOP == "load_reg") {
             if (!isFloat)
                 instr = "lw";
@@ -499,74 +452,20 @@ public:
         }
     }
 
-//    static void
-//    emitCodeB(const std::string loadOP, const std::string storeOP, int size, int dstOffset, int srcOffset, int addrReg,
-//              int copysize) {
-//        int loopTime = size / copysize;
-//
-//        std::string s = "copy";
-//        labelManager->addLoopLabel();
-//        int loopNum = labelManager->getLoopLabel();
-//        char ch[8] = {0,};
-//        sprintf(ch, "%d", loopNum);
-//        s += ch;
-//        int loop = regManager->getTmpReg();
-//        int tmp = regManager->getTmpReg();
-//        std::string localLoadOP = loadOP, localStoreOP = storeOP;
-//        //int tmpAddr = regManager->getTmpReg();
-//        int addrRegSrc = addrReg;
-//        int addrRegDst = addrReg;
-////        findFP(loadOP, localLoadOP, addrRegSrc);
-////        findFP(storeOP, localStoreOP, addrRegDst);
-//        if (addrRegSrc == addrReg) {
-//            addrRegSrc = regManager->getTmpReg();
-//            CodeGenerator::emitCodeR("+", addrRegSrc, addrReg, 0);
-//        }
-//        if (addrRegDst == addrReg) {
-//            addrRegDst = regManager->getTmpReg();
-//            CodeGenerator::emitCodeR("+", addrRegDst, addrReg, 0);
-//        }
-//        if (loadOP.find("reg") != string::npos) {
-//            CodeGenerator::emitCodeR("+", addrRegSrc, addrRegSrc, srcOffset);
-//        } else {
-//            CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -srcOffset);
-//        }
-//        if (storeOP.find("reg") != string::npos) {
-//            CodeGenerator::emitCodeR("+", addrRegDst, addrRegDst, dstOffset);
-//        } else {
-//            CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -dstOffset);
-//        }
-//        CodeGenerator::emitCodeR("+", loop, 0, 0);
-//        CodeGenerator::addLabel(s);
-//        CodeGenerator::emitCodeM(copysize, "load", 0, addrRegSrc, tmp);
-//        CodeGenerator::emitCodeM(copysize, "store", 0, addrRegDst, tmp);
-//        CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -copysize);
-//        CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -copysize);
-//        CodeGenerator::emitCodeI("+", loop, loop, 1);
-//        int tmp2 = regManager->getTmpReg();
-//        CodeGenerator::emitCodeI("<", tmp2, loop, loopTime);
-//        CodeGenerator::emitCodeJ("bne", tmp2, 0, 0, s);
-//        regManager->freeReg(addrRegSrc);
-//        regManager->freeReg(addrRegDst);
-//        regManager->freeReg(tmp);
-//        regManager->freeReg(tmp2);
-//        regManager->freeReg(loop);
-//        cout << "yyyy" << endl;
-//    }
 
-    static void emitCodeConstStr(std::string constStr, std::string label) {
+    static void emitCodeConstStr(const std::string &constStr, const std::string &label) {
         code << label << ": .asciiz " << "\"" << constStr.substr(1, constStr.length() - 2) << "\"" << std::endl;
     }
 
-    static void emitCodeConstReal(std::string constReal, std::string label) {
+    static void emitCodeConstReal(const std::string &constReal, const std::string &label) {
         code << label << ": .float " << " " << constReal << std::endl;
     }
 
-    static void emitCodeLA(std::string label, int regDst) {
+    static void emitCodeLA(const std::string &label, int regDst) {
         code << "la " << regTable[regDst] << " " << label << std::endl;
     }
 
-    static void emitSysCall(std::string type) {
+    static void emitSysCall(const std::string &type) {
         if (type == "printString") {
             code << "addi $v0, $zero, 4" << std::endl;
         } else if (type == "printInteger") {
@@ -579,25 +478,7 @@ public:
         code << "syscall" << std::endl;
     }
 
-//    static void emitGetAccessLink(int levelDiff) {
-//        cout << "========== levelDiff = " << levelDiff << endl;
-//        int tmpAC = regManager->getTmpReg();
-//        if (levelDiff == 1) {
-//            CodeGenerator::emitCodeI("+", tmpAC, FP, 4);
-//        } else if (levelDiff <= 0) {
-//            CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);
-//            for (int i = 0; i < -levelDiff; i++) {
-//                CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
-//            }
-//        } else if (levelDiff > 0) {
-//            cout << "error : can not call inner function !!" << endl;
-//        }
-//        //SP - 4得到AC的位置（地址），然后把tmpAC代表的寄存器的值存到该地址处
-//        CodeGenerator::emitCodeM(4, "store", -4, SP, tmpAC);
-//        regManager->freeReg(tmpAC);
-//    }
 };
-
 void autoFreeReg(int beFree, int *contrain);
 
 bool isTmpReg(int r);

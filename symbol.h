@@ -5,6 +5,8 @@
 #include <map>
 #include <list>
 #include <algorithm>
+#include <utility>
+#include <utility>
 #include <vector>
 #include <iostream>
 
@@ -18,23 +20,23 @@ bool compare(SymbolBucket *a, SymbolBucket *b);
 
 class Symbol {
 private:
-    int lineNum;
+    int lineNum{};
 
-    int location;
+    int location{};
 
-    int size;//这个symbol的字节数
+    int size{};//这个symbol的字节数
 
     std::string name;//变量名
 
     std::string typeName;//类型名
 
-    bool isConst;
+    bool isConst{};
 
     int immediateValue;
 public:
 
     Symbol(int lineNum, std::string name, std::string typeName)
-            : lineNum(lineNum), location(-1), name(name), typeName(typeName), isConst(false), immediateValue(0) {
+            : lineNum(lineNum), location(-1), name(std::move(std::move(name))), typeName(std::move(std::move(typeName))), isConst(false), immediateValue(0) {
     }
 
     Symbol(const Symbol &symbol) {
@@ -110,21 +112,21 @@ private:
 
     SymbolTable *nextTable;
 public:
-    SymbolBucket(Symbol *symbol, SymbolTable *currentTable, SymbolTable *nextTable = NULL) :
-            order(0), next(NULL), last(NULL), symbol(symbol), currentTable(currentTable), nextTable(nextTable) {}
+    SymbolBucket(Symbol *symbol, SymbolTable *currentTable, SymbolTable *nextTable = nullptr) :
+            order(0), next(nullptr), last(nullptr), symbol(symbol), currentTable(currentTable), nextTable(nextTable) {}
 
-    SymbolBucket(const SymbolBucket *bucket) {
+    explicit SymbolBucket(const SymbolBucket *bucket) {
         this->symbol = new Symbol(*bucket->symbol);
         order = bucket->order;
         next = this;
         last = this;
         currentTable = bucket->currentTable;//todo
-        nextTable = NULL;
+        nextTable = nullptr;
     }
 
     SymbolBucket(std::string name, int lineNum, std::string typeName, SymbolTable *currentTable)
-            : order(0), next(this), last(this), currentTable(currentTable), nextTable(NULL) {
-        this->symbol = new Symbol(lineNum, name, typeName);
+            : order(0), next(this), last(this), currentTable(currentTable), nextTable(nullptr) {
+        this->symbol = new Symbol(lineNum, std::move(name), std::move(typeName));
     }
 
     int getOrder() const {
@@ -191,7 +193,7 @@ public:
     //根据当前的SymBucket重新构造一个Symbucket(深拷贝)
     //todo 可能有问题
     SymbolBucket *deepCopyBucket() {
-        SymbolBucket *head = new SymbolBucket(this);
+        auto *head = new SymbolBucket(this);
         SymbolBucket *tmpBucket = head;
         SymbolBucket *member = next;
 
@@ -202,12 +204,12 @@ public:
         }
 
         do {
-            SymbolBucket *newBucket = new SymbolBucket(member);
+            auto *newBucket = new SymbolBucket(member);
             SymbolBucket *subTmpBucket = newBucket;
             if (member->last != member) {
                 SymbolBucket *subMem = member->next;
                 do {
-                    SymbolBucket *subNewBucket = new SymbolBucket(subMem);
+                    auto *subNewBucket = new SymbolBucket(subMem);
                     subTmpBucket->next = subNewBucket;
                     subTmpBucket = subNewBucket;
                     subMem = subMem->next;
@@ -243,11 +245,11 @@ private:
 
     std::map<std::string, std::list<SymbolBucket *> *> table;
 
-    SymbolBucket *parentBucket;
+    SymbolBucket *parentBucket{};
 
 public:
-    SymbolTable(std::string name, SymbolBucket *parent = NULL) :
-            level(0), tableName(name), parentBucket(parent), count(0), location(0) {}
+    explicit SymbolTable(std::string name, SymbolBucket *parent = nullptr) :
+            level(0), tableName(std::move(std::move(name))), parentBucket(parent), count(0), location(0) {}
 
     //深拷贝
     SymbolTable(const SymbolTable &symbolTable) {
@@ -256,23 +258,22 @@ public:
         location = symbolTable.location;
         count = symbolTable.count;
 
-        for (auto it = symbolTable.table.begin(); it != symbolTable.table.end(); it++) {
-            table[it->first] = new std::list<SymbolBucket *>();
-            std::list<SymbolBucket *> *newList = table[it->first];
-            std::list<SymbolBucket *> *oldList = it->second;
+        for (const auto &it : symbolTable.table) {
+            table[it.first] = new std::list<SymbolBucket *>();
+            std::list<SymbolBucket *> *newList = table[it.first];
+            std::list<SymbolBucket *> *oldList = it.second;
             // copy the bucket pointers
-            for (auto itList = oldList->begin(); itList != oldList->end(); itList++)
-                newList->push_back(*itList);
+            for (auto &itList : *oldList)
+                newList->push_back(itList);
         }
     }
 
     void getSymBucketList(std::vector<SymbolBucket *> &v) {
-        for (std::map<std::string, std::list<SymbolBucket *> *>::iterator iter = table.begin();
-             iter != table.end(); iter++) {
-            std::list<SymbolBucket *> *q = iter->second;
-            for (std::list<SymbolBucket *>::iterator it = q->begin(); it != q->end(); it++) {
+        for (auto &iter : table) {
+            std::list<SymbolBucket *> *q = iter.second;
+            for (auto &it : *q) {
                 //if (!(*q)[i]->getIsType())
-                v.push_back(*it);
+                v.push_back(it);
             }
         }
         sort(v.begin(), v.end(), compare);
@@ -317,6 +318,10 @@ public:
         this->parentBucket = parentBucket;
     }
 
+    std::string getTableName() const  {
+        return tableName;
+    }
+
     void insert(SymbolBucket *bucket);
 
     SymbolBucket *find(std::string name);
@@ -326,8 +331,8 @@ public:
     void printTable(std::ostream &out);
 
     virtual ~SymbolTable() {
-        for (auto it = table.begin(); it != table.end(); it++)
-            delete it->second;
+        for (auto &it : table)
+            delete it.second;
     }
 };
 

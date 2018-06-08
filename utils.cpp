@@ -27,7 +27,7 @@ void Initialize() {
 }
 
 int isFloatType(SymbolBucket* b, int reg) {
-    if ( (b != NULL && b->getSymbol()->getTypeName() == "float") || reg > 31)
+    if ( (b != nullptr && b->getSymbol()->getTypeName() == "real") || reg > 31)
         return 1;
     else return 0;
 }
