@@ -36,11 +36,11 @@ TreeNode *root; // ProgramBodyTreeNode
 std::set<TreeNode *> printedNodes;
 
 int LabelManager::loopNumber = 0;
-int LabelManager::funcNumber = 0;
+//int LabelManager::funcNumber = 0;
 int LabelManager::caseNumber = 0;
 int LabelManager::ifNumber = 0;
 int LabelManager::doNumber = 0;
-int LabelManager::stringLabelNumber = 0;
+//int LabelManager::stringLabelNumber = 0;
 int LabelManager::realLabelNumber = 0;
 int LabelManager::switchNumber = 0;
 int CodeGenerator::equal = 0;
