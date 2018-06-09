@@ -3,16 +3,13 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <exception>
 #include "comment.h"
 #include "lexer.h"
 #include "parser.hpp"
 #include "tree.h"
 #include "optimizer.h"
 #include "codegen.h"
-
-std::map<std::string, std::string> constCharMap;
-std::map<std::string, std::string> constRealMap;
-std::map<std::string, enum myOption> opMap;
 
 /**
  * Global variables
@@ -22,28 +19,21 @@ std::ofstream preProcessOut; // Code output after pre-processing
 FILE *lexerOut; // Lexer analysis output
 std::ofstream grammarOut; // Grammar output
 std::ofstream astOut; // AST output
-std::ofstream codeOut; // Target code output
 std::ofstream symOut; // symbol output
 std::ofstream checkOut; // type check output
 std::ofstream code; // codegen output
-bool isPrint = false;//TODO: remove LOG option
+
 RegManager *regManager;
 LabelManager *labelManager;
+CodeGenerator* codeGenerator;
+std::map<std::string, std::string> constCharMap;
+std::map<std::string, std::string> constRealMap;
+std::map<std::string, enum myOption> opMap;
 
 GlobalInfo globalInfo;
 TreeNode *root; // ProgramBodyTreeNode
 
 std::set<TreeNode *> printedNodes;
-
-int LabelManager::loopNumber = 0;
-//int LabelManager::funcNumber = 0;
-int LabelManager::caseNumber = 0;
-int LabelManager::ifNumber = 0;
-int LabelManager::doNumber = 0;
-//int LabelManager::stringLabelNumber = 0;
-int LabelManager::realLabelNumber = 0;
-int LabelManager::switchNumber = 0;
-int CodeGenerator::equal = 0;
 
 int main(int argc, const char *argv[]) {
     /* Format: compiler src_file_name output_file_name */
@@ -64,6 +54,7 @@ int main(int argc, const char *argv[]) {
     std::string asmFileName = fileName + ".asm";
     regManager = new RegManager();
     labelManager = new LabelManager();
+    codeGenerator = new CodeGenerator();
     Initialize();
     // Pre-processing
     CommemtProcessor processor;
@@ -151,7 +142,7 @@ int main(int argc, const char *argv[]) {
     if (!code.bad()) {
         std::cout << "begin gencode" << std::endl;
         root->genCode(mainSymtab);
-        CodeGenerator::genLabel("exit");
+        codeGenerator->genLabel("exit");
         code << "li $v0 10" << std::endl;
         code << "syscall" << std::endl;
         code.close();
@@ -165,8 +156,13 @@ int main(int argc, const char *argv[]) {
     delete labelManager;
 
     // finally dispose resources
-    for (auto &it : printedNodes)
-        delete it;
+    try {
+        for (auto &it : printedNodes)
+            delete it;
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return 0;
+    }
 
     return 0;
 }

@@ -21,7 +21,6 @@ class CommonTypeTreeNode;
 extern std::ofstream astOut;
 extern std::set<TreeNode *> printedNodes;
 extern std::ofstream checkOut;
-extern bool isPrint;//默认不打印日志
 
 
 class TreeNode {
@@ -63,10 +62,10 @@ public:
     }
 
     virtual void updateEnvironment(SymbolTable *environment) {
-        if (isPrint)std::cout << "default update environment" << std::endl;
+        if (false)std::cout << "default update environment" << std::endl;
     }
 
-    virtual SymbolBucket *generateCode(SymbolTable *environment) { return NULL; }
+    virtual SymbolBucket *generateCode(SymbolTable *environment) { return nullptr; }
 
     virtual std::string typeCheck(SymbolTable *environment) {
         checkOut << "default type check" << std::endl;
@@ -89,7 +88,7 @@ public:
         }
     }
 
-    virtual SymbolBucket *genCode(SymbolTable *symtab, int *reg = NULL) {
+    virtual SymbolBucket *genCode(SymbolTable *symtab, int *reg = nullptr) {
         astOut << "default genCode" << std::endl;
     }
 
