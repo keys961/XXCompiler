@@ -46,7 +46,7 @@ int main(int argc, const char *argv[]) {
     /* Format: compiler src_file_name [-options] output_file_name */
     if (argc < 3) {
         std::cerr << "Wrong input format!" << std::endl;
-        std::cout << "\t compiler $src_file_name [-options] $output_file_name" << std::endl;
+        std::cerr << "\t compiler $src_file_name [-options] $output_file_name" << std::endl;
         std::cout << "Options: " << std::endl;
         std::cout << "\t -l: Print lexical analysis result to standard output." << std::endl;
         std::cout << "\t -g: Print grammar analysis result to standard output." << std::endl;
@@ -186,10 +186,10 @@ int main(int argc, const char *argv[]) {
         return 1;
     }
 
+    // finally dispose resources
     delete regManager;
     delete labelManager;
-
-    // finally dispose resources
+    delete codeGenerator;
     try {
         for (auto &it : printedNodes)
             delete it;

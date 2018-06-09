@@ -1,4 +1,4 @@
-program HelloWorld;
+program test9;
 const
 	ccc = 1;
 	sub = 'a';

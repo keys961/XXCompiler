@@ -1,4 +1,4 @@
-program HelloWorld;
+program test8;
 type
 	book = record
 		id : array [1..20] of char

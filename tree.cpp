@@ -552,7 +552,7 @@ SymbolBucket *BinaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 
 SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *leftBucket;
-    int regL, regR, locationL;
+    int regL, regR;
     std::string loadOPL, storeOPL;
     int loopNum = labelManager->getLoopLabel();
     labelManager->addLoopLabel();
@@ -642,7 +642,7 @@ SymbolBucket *ForStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 }
 
 SymbolBucket *SwitchStmtTreeNode::genCode(SymbolTable *symtab, int *reg) {
-    SymbolBucket *bucketE, *bucketCase;
+    SymbolBucket *bucketE;
     int regE, locationE;
     //条件
     bucketE = expr->genCode(symtab, &regE);
@@ -651,10 +651,10 @@ SymbolBucket *SwitchStmtTreeNode::genCode(SymbolTable *symtab, int *reg) {
         int tmp = regManager->getTmpReg();
         codeGenerator->genLoadOrStore(LOAD, -locationE, FP, tmp);
         //case
-        bucketCase = case_list->genCode(symtab, &tmp);
+        case_list->genCode(symtab, &tmp);
         regManager->freeReg(tmp);
     } else if (regE > 0) {
-        bucketCase = case_list->genCode(symtab, &regE);
+        case_list->genCode(symtab, &regE);
     }
     regManager->freeReg(regE);
     int switchNumber = labelManager->getSwitchLabel();
@@ -702,12 +702,11 @@ SymbolBucket *CaseExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *bucketC;
     int regC, regB, regE;
-    int locationC;
     int ifNum = labelManager->getIfLabel();
     std::string loadOPC, storeOPC;
     bucketC = condition->genCode(symbolTable, &regC);
 //    selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
-    locationC = bucketC->getSymbol()->getLocation();
+    bucketC->getSymbol()->getLocation();
 
     std::stringstream ss;
     ss << "endif" << ifNum;
@@ -733,10 +732,9 @@ SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 }
 
 SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
-    //B为循环体，C为循环条件
-    SymbolBucket *bucketB, *bucketC;
+    //C为循环条件
+    SymbolBucket *bucketC;
     int regB, regC;
-    int locationC;
     std::string loadOPC, storeOPC;
     std::stringstream ss;
     ss << "do" << labelManager->getRepeatLabel();
@@ -744,10 +742,10 @@ SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     labelManager->addRepeatLabel();
     //添加do标签，开始do-while循环
     codeGenerator->genLabel(doLabel);
-    bucketB = body->genCode(symbolTable, &regB);
+    body->genCode(symbolTable, &regB);
     bucketC = condition->genCode(symbolTable, &regC);
 //    selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
-    locationC = bucketC->getSymbol()->getLocation();
+    bucketC->getSymbol()->getLocation();
     codeGenerator->genIType("beq", regC, 0, 0, doLabel);
 
     regManager->freeReg(regC);

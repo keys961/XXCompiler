@@ -1,4 +1,4 @@
-program HelloWorld;
+program test7;
 type
 	int = integer;
 var

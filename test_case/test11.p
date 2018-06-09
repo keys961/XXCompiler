@@ -1,5 +1,6 @@
 // Just used for type checking...
-program HelloWorld;
+// It will cause an error when type checking!
+program test11witherror;
 const
 	con = 10;
 var
