@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.5.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.5"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -80,13 +80,13 @@ class GlobalInfo;
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
 extern std::ofstream grammarOut;
-extern std::map<std::string, std::string> constStringMap;
-extern std::map<std::string, std::string> constRealMap;
 extern LabelManager *labelManager;
+
 std::set<TreeNode*> createdNodes;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
+
 static int yylex(void);
 static int hashCodeForString(const std::string& str);
 static void showNodeInfo(const std::string& info);
@@ -95,7 +95,8 @@ int yyerror(const char *);
 
 extern TreeNode* root;
 
-#line 99 "parser.cpp" /* yacc.c:339  */
+
+#line 100 "parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -270,7 +271,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 274 "parser.cpp" /* yacc.c:358  */
+#line 275 "parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -573,18 +574,18 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    44,    44,    54,    63,    75,    86,   102,   107,   115,
-     121,   131,   145,   152,   160,   168,   177,   182,   190,   196,
-     206,   216,   222,   228,   234,   241,   248,   255,   262,   269,
-     277,   285,   293,   301,   310,   316,   326,   337,   342,   350,
-     357,   367,   378,   384,   393,   401,   406,   412,   422,   432,
-     437,   446,   452,   462,   473,   483,   491,   498,   506,   515,
-     523,   529,   534,   539,   544,   549,   554,   559,   564,   569,
-     576,   584,   592,   600,   611,   621,   630,   640,   651,   658,
-     667,   676,   676,   694,   700,   708,   717,   725,   731,   741,
-     750,   763,   770,   777,   784,   791,   798,   805,   811,   818,
-     825,   832,   839,   845,   852,   859,   866,   873,   879,   888,
-     899,   909,   919,   924,   929,   937,   946,   952
+       0,    45,    45,    55,    64,    76,    87,   103,   108,   116,
+     122,   132,   146,   153,   161,   169,   178,   183,   191,   197,
+     207,   217,   223,   229,   235,   242,   249,   256,   263,   270,
+     278,   286,   294,   302,   311,   317,   327,   338,   343,   351,
+     358,   368,   379,   385,   394,   402,   407,   413,   423,   433,
+     438,   447,   453,   463,   474,   484,   492,   499,   507,   516,
+     524,   530,   535,   540,   545,   550,   555,   560,   565,   570,
+     577,   585,   593,   601,   612,   622,   631,   641,   652,   659,
+     668,   677,   677,   695,   701,   709,   718,   726,   732,   742,
+     751,   764,   771,   778,   785,   792,   799,   806,   812,   819,
+     826,   833,   840,   846,   853,   860,   867,   874,   880,   889,
+     900,   910,   920,   925,   930,   938,   947,   953
 };
 #endif
 
@@ -1220,7 +1221,6 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
-    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1537,7 +1537,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 45 "parser.y" /* yacc.c:1663  */
+#line 46 "parser.y" /* yacc.c:1646  */
     {
              showNodeInfo("program -> program_head SEMICOLON block DOT");
              (yyval) = (yyvsp[-1]);
@@ -1546,11 +1546,11 @@ yyreduce:
 
              root = (yyval);
          }
-#line 1550 "parser.cpp" /* yacc.c:1663  */
+#line 1550 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 55 "parser.y" /* yacc.c:1663  */
+#line 56 "parser.y" /* yacc.c:1646  */
     {
                   showNodeInfo("program_head -> PROGRAM ID");
                   (yyval) = new TreeNode();
@@ -1558,22 +1558,22 @@ yyreduce:
                   updateLineNoForTreeNode((yyval));
                   delete (yyvsp[0]);
               }
-#line 1562 "parser.cpp" /* yacc.c:1663  */
+#line 1562 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 68 "parser.y" /* yacc.c:1663  */
+#line 69 "parser.y" /* yacc.c:1646  */
     {
         showNodeInfo("block -> constant_definition_part type_definition_part variable_declaration_part procedure_function_declaration_part block_body_part");
         (yyval) = new ProgramBodyTreeNode((yyvsp[-4]), (yyvsp[-3]), (yyvsp[-2]), (yyvsp[-1]), (yyvsp[0]));
         createdNodes.insert((yyval));
         updateLineNoForTreeNode((yyval));
     }
-#line 1573 "parser.cpp" /* yacc.c:1663  */
+#line 1573 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 76 "parser.y" /* yacc.c:1663  */
+#line 77 "parser.y" /* yacc.c:1646  */
     {
              showNodeInfo("id_list -> id_list COMMA ID");
              (yyval) = (yyvsp[-2]);
@@ -1584,11 +1584,11 @@ yyreduce:
              ((ListTreeNode*)(yyval))->insert(node);
              delete (yyvsp[0]);
          }
-#line 1588 "parser.cpp" /* yacc.c:1663  */
+#line 1588 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 87 "parser.y" /* yacc.c:1663  */
+#line 88 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("id_list -> ID");
           std::string name = (yyvsp[0])->getName();
@@ -1602,20 +1602,20 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 1606 "parser.cpp" /* yacc.c:1663  */
+#line 1606 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 103 "parser.y" /* yacc.c:1663  */
+#line 104 "parser.y" /* yacc.c:1646  */
     {
                               showNodeInfo("constant_definition_part -> CONST constant_list");
                               (yyval) = (yyvsp[0]);
                           }
-#line 1615 "parser.cpp" /* yacc.c:1663  */
+#line 1615 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 107 "parser.y" /* yacc.c:1663  */
+#line 108 "parser.y" /* yacc.c:1646  */
     {
          showNodeInfo("constant_definition_part ->");
          std::vector<TreeNode*> list;
@@ -1623,21 +1623,21 @@ yyreduce:
          createdNodes.insert((yyval));
          updateLineNoForTreeNode((yyval));
       }
-#line 1627 "parser.cpp" /* yacc.c:1663  */
+#line 1627 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 116 "parser.y" /* yacc.c:1663  */
+#line 117 "parser.y" /* yacc.c:1646  */
     {
                    showNodeInfo("constant_list -> constant_list constant_definition");
                    (yyval) = (yyvsp[-1]);
                    ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                }
-#line 1637 "parser.cpp" /* yacc.c:1663  */
+#line 1637 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 122 "parser.y" /* yacc.c:1663  */
+#line 123 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("constant_list -> constant_definition");
           std::vector<TreeNode*> list;
@@ -1646,11 +1646,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 1650 "parser.cpp" /* yacc.c:1663  */
+#line 1650 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 132 "parser.y" /* yacc.c:1663  */
+#line 133 "parser.y" /* yacc.c:1646  */
     {
                          showNodeInfo("constant_definition -> ID EQUAL constant_value SEMICOLON");
                          std::string name = (yyvsp[-3])->getName();
@@ -1663,66 +1663,66 @@ yyreduce:
                          createdNodes.insert(varNode);
                          updateLineNoForTreeNode((yyval));
                      }
-#line 1667 "parser.cpp" /* yacc.c:1663  */
+#line 1667 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 146 "parser.y" /* yacc.c:1663  */
+#line 147 "parser.y" /* yacc.c:1646  */
     {
                     showNodeInfo("constant_value -> INTEGER");
                     (yyval) = new LiteralTreeNode(yytext, "integer");
                     updateLineNoForTreeNode((yyval));
                     createdNodes.insert((yyval));
                 }
-#line 1678 "parser.cpp" /* yacc.c:1663  */
+#line 1678 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 153 "parser.y" /* yacc.c:1663  */
+#line 154 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("constant_value -> REAL");
           (yyval) = new LiteralTreeNode(yytext, "real");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
-          constRealMap[yytext] = labelManager->getRealLabel();
+          labelManager->insertIntoRealMap(std::string(yytext), labelManager->getRealLabel());
       }
-#line 1690 "parser.cpp" /* yacc.c:1663  */
+#line 1690 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 161 "parser.y" /* yacc.c:1663  */
+#line 162 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("constant_value -> CHAR");
           (yyval) = new LiteralTreeNode(yytext, "char");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
-          constCharMap[yytext] = labelManager->getRealLabel();
+          labelManager->insertIntoCharMap(std::string(yytext), labelManager->getRealLabel());
       }
-#line 1702 "parser.cpp" /* yacc.c:1663  */
+#line 1702 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 169 "parser.y" /* yacc.c:1663  */
+#line 170 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("constant_value -> STRING");
           (yyval) = new LiteralTreeNode(yytext, "string");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1713 "parser.cpp" /* yacc.c:1663  */
+#line 1713 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 178 "parser.y" /* yacc.c:1663  */
+#line 179 "parser.y" /* yacc.c:1646  */
     {
                           showNodeInfo("type_definition_part -> TYPE type_definition_list");
                           (yyval) = (yyvsp[0]);
                       }
-#line 1722 "parser.cpp" /* yacc.c:1663  */
+#line 1722 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 182 "parser.y" /* yacc.c:1663  */
+#line 183 "parser.y" /* yacc.c:1646  */
     {
          showNodeInfo("type_definition_part -> ");
          std::vector<TreeNode*> list;
@@ -1730,21 +1730,21 @@ yyreduce:
          updateLineNoForTreeNode((yyval));
          createdNodes.insert((yyval));
       }
-#line 1734 "parser.cpp" /* yacc.c:1663  */
+#line 1734 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 191 "parser.y" /* yacc.c:1663  */
+#line 192 "parser.y" /* yacc.c:1646  */
     {
                           showNodeInfo("type_definition_list -> type_definition_list type_definition");
                           (yyval) = (yyvsp[-1]);
                           ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                       }
-#line 1744 "parser.cpp" /* yacc.c:1663  */
+#line 1744 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 197 "parser.y" /* yacc.c:1663  */
+#line 198 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("type_definition_list -> type_definition");
           std::vector<TreeNode*> list;
@@ -1753,11 +1753,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1757 "parser.cpp" /* yacc.c:1663  */
+#line 1757 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 207 "parser.y" /* yacc.c:1663  */
+#line 208 "parser.y" /* yacc.c:1646  */
     {
                      showNodeInfo("type_definition -> ID EQUAL type_denoter SEMICOLON");
                      std::string name = (yyvsp[-3])->getName();
@@ -1766,95 +1766,95 @@ yyreduce:
                      delete (yyvsp[-3]);
                      createdNodes.insert((yyval));
                  }
-#line 1770 "parser.cpp" /* yacc.c:1663  */
+#line 1770 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 217 "parser.y" /* yacc.c:1663  */
+#line 218 "parser.y" /* yacc.c:1646  */
     {
                   showNodeInfo("type_denoter -> simple_type");
                   (yyval) = (yyvsp[0]);
                   createdNodes.insert((yyval));
               }
-#line 1780 "parser.cpp" /* yacc.c:1663  */
+#line 1780 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 223 "parser.y" /* yacc.c:1663  */
+#line 224 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("type_denoter -> range_type");
           (yyval) = (yyvsp[0]);
           createdNodes.insert((yyval));
       }
-#line 1790 "parser.cpp" /* yacc.c:1663  */
+#line 1790 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 229 "parser.y" /* yacc.c:1663  */
+#line 230 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("type_denoter -> array_type");
           (yyval) = (yyvsp[0]);
           createdNodes.insert((yyval));
       }
-#line 1800 "parser.cpp" /* yacc.c:1663  */
+#line 1800 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 235 "parser.y" /* yacc.c:1663  */
+#line 236 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("type_denoter -> record_type");
           (yyval) = (yyvsp[0]);
           createdNodes.insert((yyval));
       }
-#line 1810 "parser.cpp" /* yacc.c:1663  */
+#line 1810 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 242 "parser.y" /* yacc.c:1663  */
+#line 243 "parser.y" /* yacc.c:1646  */
     {
                  showNodeInfo("simple_type -> TYPE_INTEGER");
                  (yyval) = new CommonTypeTreeNode("integer");
                  updateLineNoForTreeNode((yyval));
                  createdNodes.insert((yyval));
              }
-#line 1821 "parser.cpp" /* yacc.c:1663  */
+#line 1821 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 249 "parser.y" /* yacc.c:1663  */
+#line 250 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("simple_type -> TYPE_CHAR");
           (yyval) = new CommonTypeTreeNode("char");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1832 "parser.cpp" /* yacc.c:1663  */
+#line 1832 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 256 "parser.y" /* yacc.c:1663  */
+#line 257 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("simple_type -> TYPE_REAL");
           (yyval) = new CommonTypeTreeNode("real");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1843 "parser.cpp" /* yacc.c:1663  */
+#line 1843 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 263 "parser.y" /* yacc.c:1663  */
+#line 264 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("simple_type -> TYPE_STRING");
           (yyval) = new CommonTypeTreeNode("string");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1854 "parser.cpp" /* yacc.c:1663  */
+#line 1854 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 270 "parser.y" /* yacc.c:1663  */
+#line 271 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("simple_type -> ID");
           (yyval) = new CustomTypeTreeNode((yyvsp[0])->getName(), nullptr);
@@ -1862,44 +1862,44 @@ yyreduce:
           createdNodes.insert((yyval));
           delete (yyvsp[0]);
       }
-#line 1866 "parser.cpp" /* yacc.c:1663  */
+#line 1866 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 278 "parser.y" /* yacc.c:1663  */
+#line 279 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("simple_type -> LP id_list RP");
           (yyval) = new EnumTypeTreeNode((yyvsp[-1]), "enum_type");
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1877 "parser.cpp" /* yacc.c:1663  */
+#line 1877 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 286 "parser.y" /* yacc.c:1663  */
+#line 287 "parser.y" /* yacc.c:1646  */
     {
                 showNodeInfo("range_type -> constant_value DOTDOT constant_value");
                 (yyval) = new RangeTypeTreeNode((IDTreeNode*)(yyvsp[0]), (IDTreeNode*)(yyvsp[-2]));
                 updateLineNoForTreeNode((yyval));
                 createdNodes.insert((yyval));
             }
-#line 1888 "parser.cpp" /* yacc.c:1663  */
+#line 1888 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 294 "parser.y" /* yacc.c:1663  */
+#line 295 "parser.y" /* yacc.c:1646  */
     {
                 showNodeInfo("array_type -> ARRAY LB range_type RB OF type_denoter");
                 (yyval) = new ArrayTypeTreeNode((RangeTypeTreeNode*)(yyvsp[-3]), (CommonTypeTreeNode*)(yyvsp[0]));
                 createdNodes.insert((yyval));
                 updateLineNoForTreeNode((yyval));
             }
-#line 1899 "parser.cpp" /* yacc.c:1663  */
+#line 1899 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 302 "parser.y" /* yacc.c:1663  */
+#line 303 "parser.y" /* yacc.c:1646  */
     {
                  showNodeInfo("record_type -> RECORD field_definition_list END");
                  std::vector<TreeNode*> list = ((ListTreeNode*)(yyvsp[-1]))->getList();
@@ -1907,21 +1907,21 @@ yyreduce:
                  updateLineNoForTreeNode((yyval));
                  createdNodes.insert((yyval));
              }
-#line 1911 "parser.cpp" /* yacc.c:1663  */
+#line 1911 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 311 "parser.y" /* yacc.c:1663  */
+#line 312 "parser.y" /* yacc.c:1646  */
     {
                            showNodeInfo("field_definition_list -> field_definition_list SEMICOLON field_definition");
                            (yyval) = (yyvsp[-2]);
                            ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                        }
-#line 1921 "parser.cpp" /* yacc.c:1663  */
+#line 1921 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 317 "parser.y" /* yacc.c:1663  */
+#line 318 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("field_definition_list -> field_definition");
           std::vector<TreeNode*> list;
@@ -1930,11 +1930,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1934 "parser.cpp" /* yacc.c:1663  */
+#line 1934 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 327 "parser.y" /* yacc.c:1663  */
+#line 328 "parser.y" /* yacc.c:1646  */
     {
                       showNodeInfo("field_definition -> ID COLON type_denoter");
                       std::string name = (yyvsp[-2])->getName();
@@ -1943,20 +1943,20 @@ yyreduce:
                       updateLineNoForTreeNode((yyval));
                       createdNodes.insert((yyval));
                   }
-#line 1947 "parser.cpp" /* yacc.c:1663  */
+#line 1947 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 338 "parser.y" /* yacc.c:1663  */
+#line 339 "parser.y" /* yacc.c:1646  */
     {
                                showNodeInfo("variable_declaration_part -> VAR variable_declaration_list SEMICOLON");
                                (yyval) = (yyvsp[-1]);
                            }
-#line 1956 "parser.cpp" /* yacc.c:1663  */
+#line 1956 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 342 "parser.y" /* yacc.c:1663  */
+#line 343 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("variable_declaration_part ->");
           std::vector<TreeNode*> list;
@@ -1964,22 +1964,22 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 1968 "parser.cpp" /* yacc.c:1663  */
+#line 1968 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 351 "parser.y" /* yacc.c:1663  */
+#line 352 "parser.y" /* yacc.c:1646  */
     {
                                showNodeInfo("variable_declaration_list -> variable_declaration_list SEMICOLON variable_declaration");
                                (yyval) = (yyvsp[-2]);
                                ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                                createdNodes.insert((yyval));
                            }
-#line 1979 "parser.cpp" /* yacc.c:1663  */
+#line 1979 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 358 "parser.y" /* yacc.c:1663  */
+#line 359 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("variable_declaration_list -> variable_declaration");
           std::vector<TreeNode*> list;
@@ -1988,11 +1988,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 1992 "parser.cpp" /* yacc.c:1663  */
+#line 1992 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 368 "parser.y" /* yacc.c:1663  */
+#line 369 "parser.y" /* yacc.c:1646  */
     {
                           showNodeInfo("variable_declaration -> ID COLON type_denoter");
                           std::string name = (yyvsp[-2])->getName();
@@ -2001,21 +2001,21 @@ yyreduce:
                           createdNodes.insert((yyval));
                           updateLineNoForTreeNode((yyval));
                       }
-#line 2005 "parser.cpp" /* yacc.c:1663  */
+#line 2005 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 379 "parser.y" /* yacc.c:1663  */
+#line 380 "parser.y" /* yacc.c:1646  */
     {
                                          showNodeInfo("procedure_function_declaration_part -> procedure_function_declaration_part procedure_function_declaration");
                                          (yyval) = (yyvsp[-1]);
                                          ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                                      }
-#line 2015 "parser.cpp" /* yacc.c:1663  */
+#line 2015 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 385 "parser.y" /* yacc.c:1663  */
+#line 386 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_function_declaration_part -> procedure_function_declaration");
           std::vector<TreeNode*> list;
@@ -2024,11 +2024,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2028 "parser.cpp" /* yacc.c:1663  */
+#line 2028 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 393 "parser.y" /* yacc.c:1663  */
+#line 394 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_function_declaration_part ->");
           std::vector<TreeNode*> list;
@@ -2036,29 +2036,29 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2040 "parser.cpp" /* yacc.c:1663  */
+#line 2040 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 402 "parser.y" /* yacc.c:1663  */
+#line 403 "parser.y" /* yacc.c:1646  */
     {
                                     showNodeInfo("procedure_function_declaration -> procedure_declaration ");
                                     (yyval) = (yyvsp[0]);
                                 }
-#line 2049 "parser.cpp" /* yacc.c:1663  */
+#line 2049 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 407 "parser.y" /* yacc.c:1663  */
+#line 408 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_function_declaration -> function_declaration");
           (yyval) = (yyvsp[0]);
       }
-#line 2058 "parser.cpp" /* yacc.c:1663  */
+#line 2058 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 413 "parser.y" /* yacc.c:1663  */
+#line 414 "parser.y" /* yacc.c:1646  */
     {
                            showNodeInfo("procedure_declaration -> PROCEDURE ID parameters SEMICOLON block SEMICOLON");
                            std::string name = (yyvsp[-4])->getName();
@@ -2067,11 +2067,11 @@ yyreduce:
                            createdNodes.insert((yyval));
                            updateLineNoForTreeNode((yyval));
                        }
-#line 2071 "parser.cpp" /* yacc.c:1663  */
+#line 2071 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 423 "parser.y" /* yacc.c:1663  */
+#line 424 "parser.y" /* yacc.c:1646  */
     {
                           showNodeInfo("function_declaration -> FUNCTION ID parameters COLON simple_type SEMICOLON block SEMICOLON");
                           std::string name = (yyvsp[-6])->getName();
@@ -2080,20 +2080,20 @@ yyreduce:
                           createdNodes.insert((yyval));
                           updateLineNoForTreeNode((yyval));
                       }
-#line 2084 "parser.cpp" /* yacc.c:1663  */
+#line 2084 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 433 "parser.y" /* yacc.c:1663  */
+#line 434 "parser.y" /* yacc.c:1646  */
     {
                 showNodeInfo("parameters -> LP parameter_list RP");
                 (yyval) = (yyvsp[-1]);
             }
-#line 2093 "parser.cpp" /* yacc.c:1663  */
+#line 2093 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 438 "parser.y" /* yacc.c:1663  */
+#line 439 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("parameters -> LP RP");
           std::vector<TreeNode*> emptyList;
@@ -2101,21 +2101,21 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2105 "parser.cpp" /* yacc.c:1663  */
+#line 2105 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 447 "parser.y" /* yacc.c:1663  */
+#line 448 "parser.y" /* yacc.c:1646  */
     {
                     showNodeInfo("parameter_list -> parameter_list SEMICOLON parameter");
                     (yyval) = (yyvsp[-2]);
                     ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
                 }
-#line 2115 "parser.cpp" /* yacc.c:1663  */
+#line 2115 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 453 "parser.y" /* yacc.c:1663  */
+#line 454 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("parameter_list -> parameter");
           std::vector<TreeNode*> list;
@@ -2124,11 +2124,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2128 "parser.cpp" /* yacc.c:1663  */
+#line 2128 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 463 "parser.y" /* yacc.c:1663  */
+#line 464 "parser.y" /* yacc.c:1646  */
     {
                showNodeInfo("parameter -> ID COLON simple_type");
                std::string name = (yyvsp[-2])->getName();
@@ -2137,11 +2137,11 @@ yyreduce:
                createdNodes.insert((yyval));
                updateLineNoForTreeNode((yyval));
            }
-#line 2141 "parser.cpp" /* yacc.c:1663  */
+#line 2141 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 474 "parser.y" /* yacc.c:1663  */
+#line 475 "parser.y" /* yacc.c:1646  */
     {
                      showNodeInfo("block_body_part -> compound_statement");
                      std::vector<TreeNode*> body;
@@ -2150,32 +2150,32 @@ yyreduce:
                      createdNodes.insert((yyval));
                      updateLineNoForTreeNode((yyval));
                  }
-#line 2154 "parser.cpp" /* yacc.c:1663  */
+#line 2154 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 484 "parser.y" /* yacc.c:1663  */
+#line 485 "parser.y" /* yacc.c:1646  */
     {
                         showNodeInfo("compound_statement -> BEGIN_ statememt_list END");
                         (yyval) = new CompoundStmtTreeNode((ListTreeNode*)(yyvsp[-1]));
                         createdNodes.insert((yyval));
                         updateLineNoForTreeNode((yyval));
                     }
-#line 2165 "parser.cpp" /* yacc.c:1663  */
+#line 2165 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 492 "parser.y" /* yacc.c:1663  */
+#line 493 "parser.y" /* yacc.c:1646  */
     {
                     showNodeInfo("statememt_list -> statememt_list statememt SEMICOLON");
                     (yyval) = (yyvsp[-2]);
                     ((ListTreeNode*)(yyval))->insert((yyvsp[-1]));
                 }
-#line 2175 "parser.cpp" /* yacc.c:1663  */
+#line 2175 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 498 "parser.y" /* yacc.c:1663  */
+#line 499 "parser.y" /* yacc.c:1646  */
     {
          showNodeInfo("statememt_list -> ");
          std::vector<TreeNode*> list;
@@ -2183,11 +2183,11 @@ yyreduce:
          createdNodes.insert((yyval));
          updateLineNoForTreeNode((yyval));
       }
-#line 2187 "parser.cpp" /* yacc.c:1663  */
+#line 2187 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 507 "parser.y" /* yacc.c:1663  */
+#line 508 "parser.y" /* yacc.c:1646  */
     {
            showNodeInfo("label -> STRING");
            std::string labelName = yytext;
@@ -2195,11 +2195,11 @@ yyreduce:
            node->setName(labelName);
            (yyval) = node;
        }
-#line 2199 "parser.cpp" /* yacc.c:1663  */
+#line 2199 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 516 "parser.y" /* yacc.c:1663  */
+#line 517 "parser.y" /* yacc.c:1646  */
     {
                showNodeInfo("statement -> label COLON stmt");
                (yyval) = (yyvsp[0]);
@@ -2207,112 +2207,112 @@ yyreduce:
                ((StatementTreeNode*)(yyval))->setLabel(hashCodeForString(labelName));
                delete (yyvsp[-2]);
            }
-#line 2211 "parser.cpp" /* yacc.c:1663  */
+#line 2211 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 524 "parser.y" /* yacc.c:1663  */
+#line 525 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("statement -> stmt");
           (yyval) = (yyvsp[0]);
       }
-#line 2220 "parser.cpp" /* yacc.c:1663  */
+#line 2220 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 530 "parser.y" /* yacc.c:1663  */
+#line 531 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> assign_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2229 "parser.cpp" /* yacc.c:1663  */
+#line 2229 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 535 "parser.y" /* yacc.c:1663  */
+#line 536 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> procedure_statement");
           (yyval) = (yyvsp[0]);
       }
-#line 2238 "parser.cpp" /* yacc.c:1663  */
+#line 2238 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 540 "parser.y" /* yacc.c:1663  */
+#line 541 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> if_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2247 "parser.cpp" /* yacc.c:1663  */
+#line 2247 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 545 "parser.y" /* yacc.c:1663  */
+#line 546 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> repeat_statement");
           (yyval) = (yyvsp[0]);
       }
-#line 2256 "parser.cpp" /* yacc.c:1663  */
+#line 2256 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 550 "parser.y" /* yacc.c:1663  */
+#line 551 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> for_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2265 "parser.cpp" /* yacc.c:1663  */
+#line 2265 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 555 "parser.y" /* yacc.c:1663  */
+#line 556 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> while_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2274 "parser.cpp" /* yacc.c:1663  */
+#line 2274 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 560 "parser.y" /* yacc.c:1663  */
+#line 561 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> case_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2283 "parser.cpp" /* yacc.c:1663  */
+#line 2283 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 565 "parser.y" /* yacc.c:1663  */
+#line 566 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> goto_statememt");
           (yyval) = (yyvsp[0]);
       }
-#line 2292 "parser.cpp" /* yacc.c:1663  */
+#line 2292 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 570 "parser.y" /* yacc.c:1663  */
+#line 571 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("stmt -> compound_statement");
           (yyval) = (yyvsp[0]);
       }
-#line 2301 "parser.cpp" /* yacc.c:1663  */
+#line 2301 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 577 "parser.y" /* yacc.c:1663  */
+#line 578 "parser.y" /* yacc.c:1646  */
     {
                      showNodeInfo("assign_statememt -> variable_access ASSIGN expression");
                      (yyval) = new BinaryExprTreeNode(":=", (yyvsp[-2]), (yyvsp[0]));
                      createdNodes.insert((yyval));
                      updateLineNoForTreeNode((yyval));
                   }
-#line 2312 "parser.cpp" /* yacc.c:1663  */
+#line 2312 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 585 "parser.y" /* yacc.c:1663  */
+#line 586 "parser.y" /* yacc.c:1646  */
     {
                      showNodeInfo("variable_access -> ID");
                      (yyval) = new VariableTreeNode((yyvsp[0])->getName());
@@ -2320,11 +2320,11 @@ yyreduce:
                      delete (yyvsp[0]);
                      updateLineNoForTreeNode((yyval));
                  }
-#line 2324 "parser.cpp" /* yacc.c:1663  */
+#line 2324 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 593 "parser.y" /* yacc.c:1663  */
+#line 594 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("variable_access -> ID LB expression RB");
           std::string arrayName = (yyvsp[-3])->getName();
@@ -2332,11 +2332,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2336 "parser.cpp" /* yacc.c:1663  */
+#line 2336 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 601 "parser.y" /* yacc.c:1663  */
+#line 602 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("variable_access -> ID DOT ID");
           (yyval) = new RecordElemTreeNode((yyvsp[-2])->getName(), (yyvsp[0])->getName());
@@ -2345,11 +2345,11 @@ yyreduce:
           delete (yyvsp[0]);
           updateLineNoForTreeNode((yyval));
       }
-#line 2349 "parser.cpp" /* yacc.c:1663  */
+#line 2349 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 612 "parser.y" /* yacc.c:1663  */
+#line 613 "parser.y" /* yacc.c:1646  */
     {
                          showNodeInfo("procedure_statement -> READ LP factor RP");
                          // You need to release it and make it NULL
@@ -2359,11 +2359,11 @@ yyreduce:
                          createdNodes.insert((yyval));
                          updateLineNoForTreeNode((yyval));
                      }
-#line 2363 "parser.cpp" /* yacc.c:1663  */
+#line 2363 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 622 "parser.y" /* yacc.c:1663  */
+#line 623 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_statement -> WRITE LP expression RP");
           std::vector<TreeNode*>* list = new std::vector<TreeNode*>;
@@ -2372,11 +2372,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2376 "parser.cpp" /* yacc.c:1663  */
+#line 2376 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 631 "parser.y" /* yacc.c:1663  */
+#line 632 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_statement -> ID LP args RP");
           std::string procName = (yyvsp[-3])->getName();
@@ -2386,11 +2386,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2390 "parser.cpp" /* yacc.c:1663  */
+#line 2390 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 641 "parser.y" /* yacc.c:1663  */
+#line 642 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("procedure_statement -> ID");
           std::string procName = (yyvsp[-2])->getName();
@@ -2399,50 +2399,50 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2403 "parser.cpp" /* yacc.c:1663  */
+#line 2403 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 652 "parser.y" /* yacc.c:1663  */
+#line 653 "parser.y" /* yacc.c:1646  */
     {
                   showNodeInfo("if_statememt -> IF expression THEN statememt ELSE statememt");
                   (yyval) = new IfStmtTreeNode((ExprTreeNode*)(yyvsp[-4]), (StatementTreeNode*)(yyvsp[-2]), (StatementTreeNode*)(yyvsp[0]));
                   createdNodes.insert((yyval));
                   updateLineNoForTreeNode((yyval));
               }
-#line 2414 "parser.cpp" /* yacc.c:1663  */
+#line 2414 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 659 "parser.y" /* yacc.c:1663  */
+#line 660 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("if_statememt -> IF expression THEN statememt");
           (yyval) = new IfStmtTreeNode((ExprTreeNode*)(yyvsp[-2]), (StatementTreeNode*)(yyvsp[0]), nullptr);
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2425 "parser.cpp" /* yacc.c:1663  */
+#line 2425 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 668 "parser.y" /* yacc.c:1663  */
+#line 669 "parser.y" /* yacc.c:1646  */
     {
                       showNodeInfo("repeat_statememt -> REPEAT statememt_list UNTIL expression");
                       (yyval) = new RepeatStmtTreeNode((ExprTreeNode *)(yyvsp[0]), (StatementTreeNode *)(yyvsp[-2]));
                       createdNodes.insert((yyval));
                       updateLineNoForTreeNode((yyval));
                   }
-#line 2436 "parser.cpp" /* yacc.c:1663  */
+#line 2436 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 676 "parser.y" /* yacc.c:1663  */
+#line 677 "parser.y" /* yacc.c:1646  */
     { stringQueue.push(yytext); }
-#line 2442 "parser.cpp" /* yacc.c:1663  */
+#line 2442 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 677 "parser.y" /* yacc.c:1663  */
+#line 678 "parser.y" /* yacc.c:1646  */
     {
                    showNodeInfo("for_statement -> FOR ID ASSIGN expression direction expression DO statememt");
                    std::string variableId = (yyvsp[-7])->getName();
@@ -2459,63 +2459,63 @@ yyreduce:
                    createdNodes.insert(varNode);
                    createdNodes.insert(exprNode);
                }
-#line 2463 "parser.cpp" /* yacc.c:1663  */
+#line 2463 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 695 "parser.y" /* yacc.c:1663  */
+#line 696 "parser.y" /* yacc.c:1646  */
     {
                showNodeInfo("direction -> TO");
                (yyval) = new TreeNode();
                (yyval)->setName("to");
            }
-#line 2473 "parser.cpp" /* yacc.c:1663  */
+#line 2473 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 701 "parser.y" /* yacc.c:1663  */
+#line 702 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("direction -> DOWNTO");
           (yyval) = new TreeNode();
           (yyval)->setName("downto");
       }
-#line 2483 "parser.cpp" /* yacc.c:1663  */
+#line 2483 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 709 "parser.y" /* yacc.c:1663  */
+#line 710 "parser.y" /* yacc.c:1646  */
     {
                      showNodeInfo("while_statement -> WHILE expression DO statement");
                      (yyval) = new WhileStmtTreeNode((ExprTreeNode *)(yyvsp[-2]), (StatementTreeNode *)(yyvsp[0]));
                      createdNodes.insert((yyval));
                      updateLineNoForTreeNode((yyval));
                  }
-#line 2494 "parser.cpp" /* yacc.c:1663  */
+#line 2494 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 718 "parser.y" /* yacc.c:1663  */
+#line 719 "parser.y" /* yacc.c:1646  */
     {
                     showNodeInfo("case_statement -> CASE expresion OF case_list END");
                     (yyval) = new SwitchStmtTreeNode((ExprTreeNode *)(yyvsp[-3]), (ListTreeNode *)(yyvsp[-1]));
                     createdNodes.insert((yyval));
                     updateLineNoForTreeNode((yyval));
                 }
-#line 2505 "parser.cpp" /* yacc.c:1663  */
+#line 2505 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 726 "parser.y" /* yacc.c:1663  */
+#line 727 "parser.y" /* yacc.c:1646  */
     {
                showNodeInfo("case_list -> case_list SEMICOLON case_item");
                (yyval) = (yyvsp[-2]);
                ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
            }
-#line 2515 "parser.cpp" /* yacc.c:1663  */
+#line 2515 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 732 "parser.y" /* yacc.c:1663  */
+#line 733 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("case_list -> case_item");
           std::vector<TreeNode*> list;
@@ -2524,22 +2524,22 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2528 "parser.cpp" /* yacc.c:1663  */
+#line 2528 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 742 "parser.y" /* yacc.c:1663  */
+#line 743 "parser.y" /* yacc.c:1646  */
     {
                showNodeInfo("case_item -> constant_value COLON statement");
                (yyval) = new CaseExprTreeNode((IDTreeNode *)(yyvsp[-2]), (StatementTreeNode *)(yyvsp[0]));
                createdNodes.insert((yyval));
                updateLineNoForTreeNode((yyval));
            }
-#line 2539 "parser.cpp" /* yacc.c:1663  */
+#line 2539 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 751 "parser.y" /* yacc.c:1663  */
+#line 752 "parser.y" /* yacc.c:1646  */
     {
                     showNodeInfo("goto_statememt -> GOTO label");
                     std::string labelName = (yyvsp[0])->getName();
@@ -2550,192 +2550,192 @@ yyreduce:
                     delete (yyvsp[0]);
                     createdNodes.insert((yyval));
                 }
-#line 2554 "parser.cpp" /* yacc.c:1663  */
+#line 2554 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 764 "parser.y" /* yacc.c:1663  */
+#line 765 "parser.y" /* yacc.c:1646  */
     {
                 showNodeInfo("expression -> expression LT expr");
                 (yyval) = new BinaryExprTreeNode("<", (yyvsp[-2]), (yyvsp[0]));
                 updateLineNoForTreeNode((yyval));
                 createdNodes.insert((yyval));
             }
-#line 2565 "parser.cpp" /* yacc.c:1663  */
+#line 2565 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 771 "parser.y" /* yacc.c:1663  */
+#line 772 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expression LE expr");
           (yyval) = new BinaryExprTreeNode("<=", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2576 "parser.cpp" /* yacc.c:1663  */
+#line 2576 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 778 "parser.y" /* yacc.c:1663  */
+#line 779 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expression EQUAL expr");
           (yyval) = new BinaryExprTreeNode("=", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2587 "parser.cpp" /* yacc.c:1663  */
+#line 2587 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 785 "parser.y" /* yacc.c:1663  */
+#line 786 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expression GE expr");
           (yyval) = new BinaryExprTreeNode(">=", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2598 "parser.cpp" /* yacc.c:1663  */
+#line 2598 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 792 "parser.y" /* yacc.c:1663  */
+#line 793 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expression GT expr");
           (yyval) = new BinaryExprTreeNode(">", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2609 "parser.cpp" /* yacc.c:1663  */
+#line 2609 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 799 "parser.y" /* yacc.c:1663  */
+#line 800 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expression UNEQUAL expr");
           (yyval) = new BinaryExprTreeNode("!=", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2620 "parser.cpp" /* yacc.c:1663  */
+#line 2620 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 806 "parser.y" /* yacc.c:1663  */
+#line 807 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expression -> expr");
           (yyval) = (yyvsp[0]);
       }
-#line 2629 "parser.cpp" /* yacc.c:1663  */
+#line 2629 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 812 "parser.y" /* yacc.c:1663  */
+#line 813 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expr -> expr PLUS term");
           (yyval) = new BinaryExprTreeNode("+", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2640 "parser.cpp" /* yacc.c:1663  */
+#line 2640 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 819 "parser.y" /* yacc.c:1663  */
+#line 820 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expr -> expr MNUS term");
           (yyval) = new BinaryExprTreeNode("-", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2651 "parser.cpp" /* yacc.c:1663  */
+#line 2651 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 826 "parser.y" /* yacc.c:1663  */
+#line 827 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expr -> expr OR term");
           (yyval) = new BinaryExprTreeNode("or", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2662 "parser.cpp" /* yacc.c:1663  */
+#line 2662 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 833 "parser.y" /* yacc.c:1663  */
+#line 834 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expr -> expr XOR term");
           (yyval) = new BinaryExprTreeNode("xor", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2673 "parser.cpp" /* yacc.c:1663  */
+#line 2673 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 840 "parser.y" /* yacc.c:1663  */
+#line 841 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("expr -> term");
           (yyval) = (yyvsp[0]);
       }
-#line 2682 "parser.cpp" /* yacc.c:1663  */
+#line 2682 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 846 "parser.y" /* yacc.c:1663  */
+#line 847 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("term -> term MULTIPLY factor");
           (yyval) = new BinaryExprTreeNode("*", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2693 "parser.cpp" /* yacc.c:1663  */
+#line 2693 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 853 "parser.y" /* yacc.c:1663  */
+#line 854 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("term -> term DIVIDE factor");
           (yyval) = new BinaryExprTreeNode("/", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2704 "parser.cpp" /* yacc.c:1663  */
+#line 2704 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 860 "parser.y" /* yacc.c:1663  */
+#line 861 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("term -> term MOD factor");
           (yyval) = new BinaryExprTreeNode("%", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2715 "parser.cpp" /* yacc.c:1663  */
+#line 2715 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 867 "parser.y" /* yacc.c:1663  */
+#line 868 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("term -> term AND factor");
           (yyval) = new BinaryExprTreeNode("and", (yyvsp[-2]), (yyvsp[0]));
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2726 "parser.cpp" /* yacc.c:1663  */
+#line 2726 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 874 "parser.y" /* yacc.c:1663  */
+#line 875 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("term -> factor");
           (yyval) = (yyvsp[0]);
       }
-#line 2735 "parser.cpp" /* yacc.c:1663  */
+#line 2735 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 880 "parser.y" /* yacc.c:1663  */
+#line 881 "parser.y" /* yacc.c:1646  */
     { 
           // Simple variable
           showNodeInfo("factor -> ID");
@@ -2744,11 +2744,11 @@ yyreduce:
           createdNodes.insert((yyval));
           delete (yyvsp[0]);
         }
-#line 2748 "parser.cpp" /* yacc.c:1663  */
+#line 2748 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 889 "parser.y" /* yacc.c:1663  */
+#line 890 "parser.y" /* yacc.c:1646  */
     { 
           // Function value
           showNodeInfo("factor -> ID LP args RP"); 
@@ -2759,11 +2759,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2763 "parser.cpp" /* yacc.c:1663  */
+#line 2763 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 900 "parser.y" /* yacc.c:1663  */
+#line 901 "parser.y" /* yacc.c:1646  */
     {
           // Array Element
           showNodeInfo("factor -> ID LB expression RB");
@@ -2773,11 +2773,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2777 "parser.cpp" /* yacc.c:1663  */
+#line 2777 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 910 "parser.y" /* yacc.c:1663  */
+#line 911 "parser.y" /* yacc.c:1646  */
     {
           // Record element
           showNodeInfo("factor -> ID DOT ID");
@@ -2787,29 +2787,29 @@ yyreduce:
           delete (yyvsp[-2]);
           delete (yyvsp[0]);
       }
-#line 2791 "parser.cpp" /* yacc.c:1663  */
+#line 2791 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 920 "parser.y" /* yacc.c:1663  */
+#line 921 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("factor -> constant_value");
           (yyval) = (yyvsp[0]);
       }
-#line 2800 "parser.cpp" /* yacc.c:1663  */
+#line 2800 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 925 "parser.y" /* yacc.c:1663  */
+#line 926 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("factor -> LP expression RP");
           (yyval) = (yyvsp[-1]);
       }
-#line 2809 "parser.cpp" /* yacc.c:1663  */
+#line 2809 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 930 "parser.y" /* yacc.c:1663  */
+#line 931 "parser.y" /* yacc.c:1646  */
     {
           // Negative value
           showNodeInfo("factor -> MINUS factor");
@@ -2817,11 +2817,11 @@ yyreduce:
           updateLineNoForTreeNode((yyval));
           createdNodes.insert((yyval));
       }
-#line 2821 "parser.cpp" /* yacc.c:1663  */
+#line 2821 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 938 "parser.y" /* yacc.c:1663  */
+#line 939 "parser.y" /* yacc.c:1646  */
     {
           // Not value for bit..
           showNodeInfo("factor -> NOT factor");
@@ -2829,21 +2829,21 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2833 "parser.cpp" /* yacc.c:1663  */
+#line 2833 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 116:
-#line 947 "parser.y" /* yacc.c:1663  */
+#line 948 "parser.y" /* yacc.c:1646  */
     {
           showNodeInfo("args -> args COMMA expression)");
           (yyval) = (yyvsp[-2]);
           ((ListTreeNode*)(yyval))->insert((yyvsp[0]));
       }
-#line 2843 "parser.cpp" /* yacc.c:1663  */
+#line 2843 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 953 "parser.y" /* yacc.c:1663  */
+#line 954 "parser.y" /* yacc.c:1646  */
     { 
           showNodeInfo("args -> expression");
           std::vector<TreeNode*> expressionList;
@@ -2852,11 +2852,11 @@ yyreduce:
           createdNodes.insert((yyval));
           updateLineNoForTreeNode((yyval));
       }
-#line 2856 "parser.cpp" /* yacc.c:1663  */
+#line 2856 "parser.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 2860 "parser.cpp" /* yacc.c:1663  */
+#line 2860 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3084,7 +3084,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 962 "parser.y" /* yacc.c:1907  */
+#line 963 "parser.y" /* yacc.c:1906  */
 
 
 static int yylex(void)

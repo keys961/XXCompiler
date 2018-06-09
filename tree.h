@@ -11,9 +11,6 @@
 #define LOAD "load"
 #define STORE "store"
 
-extern std::map<std::string, std::string> constCharMap;
-extern std::map<std::string, std::string> constRealMap;
-
 class TreeNode;
 
 class CommonTypeTreeNode;
@@ -62,7 +59,7 @@ public:
     }
 
     virtual void updateEnvironment(SymbolTable *environment) {
-        if (false)std::cout << "default update environment" << std::endl;
+
     }
 
     virtual SymbolBucket *generateCode(SymbolTable *environment) { return nullptr; }
@@ -280,7 +277,7 @@ public:
     }
 
     virtual SymbolBucket *genSymBucket(const std::string typeName, SymbolTable *symtab) {
-        std::cout << "default gen symbol bucket" << std::endl;
+
     }
 };
 

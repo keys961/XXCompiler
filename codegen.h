@@ -15,148 +15,92 @@
 #define A0 4
 #define F12 44
 #define V1 3
+
 extern std::ofstream code;
 
 class RegManager;
-
 class LabelManager;
 
 extern RegManager *regManager;
 extern LabelManager *labelManager;
-const std::string regTable[] = {
-        "$zero",
-        "$at",
-        "$v0",
-        "$v1",
-        "$a0",
-        "$a1",
-        "$a2",
-        "$a3",
-        "$t0",
-        "$t1",
-        "$t2",
-        "$t3",
-        "$t4",
-        "$t5",
-        "$t6",
-        "$t7",
-        "$s0",
-        "$s1",
-        "$s2",
-        "$s3",
-        "$s4",
-        "$s5",
-        "$s6",
-        "$s7",
-        "$t8",
-        "$t9",
-        "",
-        "",
-        "$gp",
-        "$sp",
-        "$fp",
-        "$ra",
 
-        "$f0",
-        "$f1",
-        "$f2",
-        "$f3",
-        "$f4",
-        "$f5",
-        "$f6",
-        "$f7",
-        "$f8",
-        "$f9",
-        "$f10",
-        "$f11",
-        "$f12",
-        "$f13",
-        "$f14",
-        "$f15",
-        "$f16",
-        "$f17",
-        "$f18",
-        "$f19",
-        "$f20",
-        "$f21",
-        "$f22",
-        "$f23",
-        "$f24",
-        "$f25",
-        "$f26",
-        "$f27",
-        "$f28",
-        "$f29",
-        "$f30",
-        "$f31",
+const std::string regTable[] = {
+        "$zero", "$at", "$v0", "$v1", "$a0", "$a1", "$a2", "$a3",
+        "$t0", "$t1", "$t2", "$t3", "$t4", "$t5","$t6", "$t7",
+        "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7",
+        "$t8", "$t9", "", "", "$gp", "$sp", "$fp", "$ra",
+        "$f0", "$f1", "$f2", "$f3", "$f4", "$f5", "$f6", "$f7",
+        "$f8", "$f9", "$f10", "$f11", "$f12", "$f13", "$f14", "$f15",
+        "$f16", "$f17", "$f18", "$f19", "$f20", "$f21", "$f22", "$f23",
+        "$f24", "$f25", "$f26", "$f27", "$f28", "$f29", "$f30", "$f31",
 };
 
-
 class RegManager {
-    static const int BEGIN_TMP = 8;
-    static const int END_TMP = 23;
-    static const int BEGIN_FLOAT = 32;
-    static const int END_FLOAT = 63;
+private:
     int reg[32];
 public:
     int getTmpReg(int isReal = 0) {
         if (isReal) {
             return getFloatReg();
         }
-        for (int i = BEGIN_TMP; i <= END_TMP; i++) {
+        for (int i = 8; i <= 23; i++) {
             if (reg[i] == 0) {
                 reg[i] = 1;
                 return i;
             }
         }
-        std::cout << "reg is run out" << std::endl;
         return -1;
     }
 
     int getFloatReg() {
-        for (int i = BEGIN_FLOAT; i <= END_FLOAT; i++) {
+        for (int i = 32; i <= 63; i++) {
             if (reg[i] == 0) {
                 reg[i] = 1;
                 return i;
             }
         }
-        std::cout << "reg is run out" << std::endl;
         return -1;
-    }
-
-    void useReg(int i) {
-        if (i < 0 || i > 31) return;
-        reg[i] = 1;
     }
 
     void freeReg(int i) {
 
-        if (i < 0 || i > 63) return;
-        std::cout << "free " << regTable[i] << std::endl;
+        if (i < 0 || i > 63)
+            return;
         char c = regTable[i][1];
         reg[i] = 0;
     }
 
-
-    void freeAll() {
-        for (int i = BEGIN_TMP; i < END_TMP; i++) {
-            reg[i] = 0;
+    void autoFreeReg(int beFree, const int *contrain) {
+        if (this->isTmpReg(beFree)) {
+            if (contrain != nullptr && *contrain != beFree) {
+                regManager->freeReg(beFree);
+            }
         }
+    }
+
+    bool isTmpReg(int r) {
+        return r >= 8 && r <= 15;
     }
 
 };
 
 class LabelManager {
+private:
     int loopNumber;
     int switchNumber;
     int caseNumber;
     int ifNumber;
     int doNumber;
     int realLabelNumber;
+    std::map<std::string, std::string> constCharMap;
+    std::map<std::string, std::string> constRealMap;
 public:
 
     LabelManager() : loopNumber(0), switchNumber(0), caseNumber(0), ifNumber(0), doNumber(0), realLabelNumber(0)
-    { }
+    {
+        constCharMap = std::map<std::string, std::string>();
+        constRealMap = std::map<std::string, std::string>();
+    }
 
     int getLoopLabel() { return loopNumber; }
 
@@ -184,7 +128,21 @@ public:
         return std::string(ch);
     }
 
+    const std::map<std::string, std::string> &getConstCharMap() const {
+        return constCharMap;
+    }
 
+    const std::map<std::string, std::string> &getConstRealMap() const {
+        return constRealMap;
+    }
+
+    void insertIntoCharMap(const std::string &key, std::string value) {
+        constCharMap[key] = value;
+    }
+
+    void insertIntoRealMap(const std::string &key, std::string value) {
+        constRealMap[key] = value;
+    }
 };
 
 class CodeGenerator {
@@ -262,9 +220,5 @@ public:
     void genSysCall(const std::string &type);
 
 };
-
-void autoFreeReg(int beFree, int *contrain);
-
-bool isTmpReg(int r);
 
 #endif //COMPILER_CODEGEN_H

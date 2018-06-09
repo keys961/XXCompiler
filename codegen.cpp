@@ -1,19 +1,4 @@
-//
-// Created by yejt on 18-4-30.
-//
 #include "codegen.h"
-
-void autoFreeReg(int beFree, int *contrain) {
-    if (isTmpReg(beFree)) {
-        if (contrain != NULL && *contrain != beFree) {
-            regManager->freeReg(beFree);
-        }
-    }
-}
-
-bool isTmpReg(int r) {
-    return r >= 8 && r <= 15;
-}
 
 void CodeGenerator::genRType(const std::string &op, int dst, int src_1, int src_2, int isReal) {
     std::string c;
@@ -26,31 +11,31 @@ void CodeGenerator::genRType(const std::string &op, int dst, int src_1, int src_
     switch (opEnum) {
         case PLUS1:
         case ASSIGN1:
-            if (!isReal) {
-                c = "add" + temp;
-            } else {
+            if (isReal) {
                 c = "add.s" + temp;
+            } else {
+                c = "add" + temp;
             }
             break;
         case SUB1:
-            if (!isReal) {
-                c = "sub" + temp;
-            } else {
+            if (isReal) {
                 c = "sub.s" + temp;
+            } else {
+                c = "sub" + temp;
             }
             break;
         case MUL1:
-            if (!isReal) {
-                c = "mul" + temp;
-            } else {
+            if (isReal) {
                 c = "mul.s" + temp;
+            } else {
+                c = "mul" + temp;
             }
             break;
         case DIV1:
-            if (!isReal) {
-                c = "div" + temp;
-            } else {
+            if (isReal) {
                 c = "div.s" + temp;
+            } else {
+                c = "div" + temp;
             }
             break;
         case REM1:
@@ -97,6 +82,8 @@ void CodeGenerator::genRType(const std::string &op, int dst, int src_1, int src_
             break;
         case JR1:
             c = "jr " + regTable[dst];
+        default:
+            std::cout << "[INFO] no code needs to generating for R instruction" << std::endl;
     }
     code << c << std::endl;
 }
@@ -180,6 +167,8 @@ void CodeGenerator::genIType(const std::string &op, int dst, int src, int imm, c
             c = "bne" + temp + label;
             break;
         }
+        default:
+            std::cout << "[INFO] no code needs to generating for I instruction" << std::endl;
     }
     regManager->freeReg(tmp);
     code << c << std::endl;
@@ -195,6 +184,8 @@ void CodeGenerator::genJType(const std::string &op, const std::string &label) {
         case JAL1:
             c = op + " " + label;
             break;
+        default:
+            std::cout << "[INFO] no code needs to generating for J instruction" << std::endl;
     }
     code << c << std::endl;
 }
@@ -205,14 +196,14 @@ void CodeGenerator::genLoadOrStore(const std::string &op, int offset, int reg1, 
     std::string option;
     const std::string &localOP = op;
     if (op == "load") {
-        if (!isReal)
-            option = "lw";
-        else option = "l.s";
+        if (isReal)
+            option = "l.s";
+        else option = "lw";
     } else {
-        if (!isReal)
-            option = "sw";
-        else
+        if (isReal)
             option = "s.s";
+        else
+            option = "sw";
     }
     sprintf(ch, "%d", offset);
     c = option + " " + regTable[reg2] + ", " + ch + "(" + regTable[reg1] + ")";
@@ -220,14 +211,17 @@ void CodeGenerator::genLoadOrStore(const std::string &op, int offset, int reg1, 
 }
 
 void CodeGenerator::genSysCall(const std::string &type) {
-    if (type == "printString") {
-        code << "addi $v0, $zero, 4" << std::endl;
-    } else if (type == "printInteger") {
-        code << "addi $v0, $zero, 1" << std::endl;
-    } else if (type == "printReal") {
-        code << "addi $v0, $zero, 2" << std::endl;
-    } else if (type == "printChar") {
+    if(type == "printChar") {
         code << "li $v0, 4" << std::endl;
+    } else{
+        code << "addi $v0, $zero, ";
+        if (type == "printString") {
+            code << " 4" << std::endl;
+        } else if (type == "printInteger") {
+            code << " 1" << std::endl;
+        } else if (type == "printReal") {
+            code << " 2" << std::endl;
+        }
     }
     code << "syscall" << std::endl;
 }

@@ -43,5 +43,6 @@ script:
   - ./Compiler ./test_case/test10.p test10
   - ./Compiler ./test_case/test12.p test12
   - ./Compiler ./test_case/test13.p test13
+  - ./Compiler ./test_case/mixtest1.p mixtest1
   - ./Compiler ./test_case/mixtest2.p mixtest2
   - ./Compiler ./test_case/mixtest3.p mixtest3

@@ -15,13 +15,13 @@ class GlobalInfo;
 extern char* yytext; // yytext
 extern GlobalInfo globalInfo; // global info
 extern std::ofstream grammarOut;
-extern std::map<std::string, std::string> constCharMap;
-extern std::map<std::string, std::string> constRealMap;
 extern LabelManager *labelManager;
+
 std::set<TreeNode*> createdNodes;
 std::queue<int> intQueue; //store int values
 std::queue<double> doubleQueue; //store double values
 std::queue<std::string> stringQueue; //store string values
+
 static int yylex(void);
 static int hashCodeForString(const std::string& str);
 static void showNodeInfo(const std::string& info);
@@ -29,6 +29,7 @@ static void updateLineNoForTreeNode(TreeNode* node);
 int yyerror(const char *);
 
 extern TreeNode* root;
+
 %}
 %token AND ARRAY BEGIN_ CASE CONST DO DOWNTO OR ELSE END
 %token FOR FUNCTION GOTO IF NOT OF PROGRAM PROCEDURE READ RECORD
@@ -155,7 +156,7 @@ constant_value: INTEGER
           $$ = new LiteralTreeNode(yytext, "real");
           updateLineNoForTreeNode($$);
           createdNodes.insert($$);
-          constRealMap[yytext] = labelManager->getRealLabel();
+          labelManager->insertIntoRealMap(std::string(yytext), labelManager->getRealLabel());
       }
     | CHAR
       {
@@ -163,7 +164,7 @@ constant_value: INTEGER
           $$ = new LiteralTreeNode(yytext, "char");
           updateLineNoForTreeNode($$);
           createdNodes.insert($$);
-          constCharMap[yytext] = labelManager->getRealLabel();
+          labelManager->insertIntoCharMap(std::string(yytext), labelManager->getRealLabel());
       }
     | STRING
       {
