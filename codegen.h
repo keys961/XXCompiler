@@ -19,6 +19,7 @@
 extern std::ofstream code;
 
 class RegManager;
+
 class LabelManager;
 
 extern RegManager *regManager;
@@ -26,7 +27,7 @@ extern LabelManager *labelManager;
 
 const std::string regTable[] = {
         "$zero", "$at", "$v0", "$v1", "$a0", "$a1", "$a2", "$a3",
-        "$t0", "$t1", "$t2", "$t3", "$t4", "$t5","$t6", "$t7",
+        "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
         "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7",
         "$t8", "$t9", "", "", "$gp", "$sp", "$fp", "$ra",
         "$f0", "$f1", "$f2", "$f3", "$f4", "$f5", "$f6", "$f7",
@@ -96,8 +97,7 @@ private:
     std::map<std::string, std::string> constRealMap;
 public:
 
-    LabelManager() : loopNumber(0), switchNumber(0), caseNumber(0), ifNumber(0), doNumber(0), realLabelNumber(0)
-    {
+    LabelManager() : loopNumber(0), switchNumber(0), caseNumber(0), ifNumber(0), doNumber(0), realLabelNumber(0) {
         constCharMap = std::map<std::string, std::string>();
         constRealMap = std::map<std::string, std::string>();
     }
@@ -123,7 +123,7 @@ public:
     void addSwitchLabel() { switchNumber++; };
 
     std::string getRealLabel() {
-        char ch[64] = {0, };
+        char ch[64] = {0,};
         sprintf(ch, "real%d", realLabelNumber++);
         return std::string(ch);
     }
@@ -150,7 +150,8 @@ private:
     int equal;
 
 public:
-    CodeGenerator() : equal(0) { }
+    CodeGenerator() : equal(0) {}
+
     /**
      * R型指令
      *
@@ -194,8 +195,8 @@ public:
      *
      * @param op 操作符
      * @param offset 偏移量
-     * @param regAddr 源寄存器
-     * @param reg 目的寄存器
+     * @param reg1 源寄存器
+     * @param reg2 目的寄存器
      * @param isReal 是否是浮点数
      */
     void genLoadOrStore(const std::string &op, int offset, int reg1, int reg2, int isReal = 0);
@@ -209,14 +210,28 @@ public:
         code << label << ": .asciiz " << "\"" << str.substr(1, str.length() - 2) << "\"" << std::endl;
     }
 
+    /**
+     * 生成浮点数字面量
+     * @param real
+     * @param label
+     */
     void genReal(const std::string &real, const std::string &label) {
         code << label << ": .float " << " " << real << std::endl;
     }
 
+    /**
+     * la指令，取出标签地址
+     * @param dst
+     * @param label
+     */
     void genLa(int dst, const std::string &label) {
         code << "la " << regTable[dst] << " " << label << std::endl;
     }
 
+    /**
+     * 生成系统调用
+     * @param type
+     */
     void genSysCall(const std::string &type);
 
 };
