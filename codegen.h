@@ -37,11 +37,11 @@ const std::string regTable[] = {
 
 class RegManager {
 private:
-    int reg[32];
+    int reg[64];
 public:
     int getTmpReg(int isReal = 0) {
         if (isReal) {
-            return getFloatReg();
+            return getRealReg();
         }
         for (int i = 8; i <= 23; i++) {
             if (reg[i] == 0) {
@@ -52,7 +52,7 @@ public:
         return -1;
     }
 
-    int getFloatReg() {
+    int getRealReg() {
         for (int i = 32; i <= 63; i++) {
             if (reg[i] == 0) {
                 reg[i] = 1;
@@ -209,7 +209,7 @@ public:
         code << label << ": .asciiz " << "\"" << str.substr(1, str.length() - 2) << "\"" << std::endl;
     }
 
-    void genFloat(const std::string &real, const std::string &label) {
+    void genReal(const std::string &real, const std::string &label) {
         code << label << ": .float " << " " << real << std::endl;
     }
 

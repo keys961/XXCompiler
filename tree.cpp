@@ -260,7 +260,7 @@ SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
         for (auto &iter : realMap) {
             std::string constStr = iter.first;
             std::string label = iter.second;
-            codeGenerator->genFloat(constStr, label);
+            codeGenerator->genReal(constStr, label);
         }
         code << ".text" << std::endl;
         code << "main:" << std::endl;
@@ -333,7 +333,6 @@ void CallExprTreeNode::genSysFunc(SymbolTable *symbolTable, std::string name) {
     int argReg;
     SymbolBucket *argBucket = (*args)[0]->genCode(symbolTable, &argReg);
     std::string type = argBucket->getSymbol()->getTypeName();
-    std::string loadOP, storeOP;
     int location;
     location = argBucket->getSymbol()->getLocation();
     if (type == "integer") {
@@ -553,7 +552,6 @@ SymbolBucket *BinaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
 SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *leftBucket;
     int regL, regR;
-    std::string loadOPL, storeOPL;
     int loopNum = labelManager->getLoopLabel();
     labelManager->addLoopLabel();
     //设置循环开始标签为loop + 循环号，循环结束标签为break + 循环号
@@ -566,7 +564,6 @@ SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     //从这开始生成汇编代码
     codeGenerator->genLabel(loopLabel);
     leftBucket = condition->genCode(symbolTable, &regL);
-//    selectOP(leftBucket, regL, loadOPL, storeOPL, locationL, symbolTable->getLevel());
     codeGenerator->genIType("beq", regL, 0, 0, breakLabel);
     body->genCode(symbolTable, &regR);
     codeGenerator->genJType("j", loopLabel);
@@ -671,7 +668,6 @@ SymbolBucket *CaseExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     SymbolBucket *caseBucket;
     int idReg, regE;
     int caseLocation;
-    std::string loadOPID, storeOPID;
     int caseNum = labelManager->getCaseLabel();
     std::stringstream ss;
     ss << "case" << caseNum;
