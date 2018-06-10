@@ -54,7 +54,6 @@ void VariableTreeNode::updateEnvironment(SymbolTable *symtab) {
 
 void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
     environment = symtab;
-    // new a bucket for function
     SymbolBucket *bucket = new SymbolBucket(name, getLineNum(), isFunc ? "func" : "proc", symtab);
     bucket->getSymbol()->setSize(0);
     SymbolTable *subSymtab = new SymbolTable(name + "-subSymtab", bucket);
@@ -72,7 +71,6 @@ void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
         tmpBucket->setNextBucket(newBucket);
         tmpBucket = newBucket;
     }
-    // set subsymtab for this node
     body->updateEnvironment(subSymtab);
     tab = subSymtab;
     if (isFunc) {
@@ -81,14 +79,11 @@ void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
         bucket->getLastBucket()->setNextBucket(bucket);
         tmpBucket->setNextBucket(returnTypeBucket);
         symtab->insert(bucket);
-        // insert return node
         auto *returnNameBucket = new SymbolBucket(returnTypeBucket);
         returnNameBucket->setCurrentTable(subSymtab);
         returnNameBucket->getSymbol()->setName(name);
         returnNameBucket->getSymbol()->setLocation(
                 subSymtab->getAndUpdateLocation(returnNameBucket->getSymbol()->getSize()));
-        // set return reg num
-        //returnNameBucket->setRegNum(V1);
         subSymtab->insert(returnNameBucket);
     } else {
         bucket->setLastBucket(tmpBucket);
@@ -100,7 +95,6 @@ void FuncOrProcTreeNode::updateEnvironment(SymbolTable *symtab) {
 void CustomTypeTreeNode::updateEnvironment(SymbolTable *symtab) {
     environment = symtab;
     SymbolBucket *b = type->genSymBucket(name, symtab);
-    //b->setIsType(1);
     symtab->insert(b);
 }
 
@@ -137,8 +131,8 @@ void BinaryExprTreeNode::updateEnvironment(SymbolTable *symtab) {
 
 SymbolBucket *ArrayTypeTreeNode::genSymBucket(const std::string typeName, SymbolTable *symtab) {
     SymbolBucket *array = new SymbolBucket(typeName, getLineNum(), "array", symtab);
-    SymbolBucket *indexBucket = index->genSymBucket("index", symtab);//range
-    SymbolBucket *elemBucket = elem->genSymBucket("arrayelem", symtab);//commontype todo
+    SymbolBucket *indexBucket = index->genSymBucket("index", symtab);
+    SymbolBucket *elemBucket = elem->genSymBucket("arrayelem", symtab);
     int upper, lower, size;
     lower = atoi(indexBucket->getNextBucket()->getSymbol()->getTypeName().c_str());//index的下界
     upper = atoi(indexBucket->getLastBucket()->getSymbol()->getTypeName().c_str());//index的上界
@@ -178,7 +172,7 @@ SymbolBucket *RangeTypeTreeNode::genSymBucket(const string typeName, SymbolTable
 SymbolBucket *RecordTypeTreeNode::genSymBucket(const string typeName, SymbolTable *symtab) {
     SymbolBucket *recordBucket = new SymbolBucket(typeName, getLineNum(), "record", symtab);
     recordBucket->getSymbol()->setSize(0);
-    recordBucket->getSymbol()->setLocation(-1);//symtab->getAndUpdateLocation(0)
+    recordBucket->getSymbol()->setLocation(-1);
     // record每个元素都是variableTreeNode
     for (auto &elem : elems) {
         auto *v = (VariableTreeNode *) elem;
@@ -224,7 +218,7 @@ SymbolBucket *CommonTypeTreeNode::genSymBucket(const string typeName, SymbolTabl
 //---------------------------------------------
 
 ////////////////////////////////////////////////////////////
-// type check functions for each node					  //
+// type check 函数				  //
 ////////////////////////////////////////////////////////////
 
 string ListTreeNode::typeCheck(SymbolTable *symtab) {
@@ -239,7 +233,6 @@ string ListTreeNode::typeCheck(SymbolTable *symtab) {
 }
 
 //===============代码生成===============
-//todo 初始化
 SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     if (!isMain) {
         //刚进来时，SP位于RA所在的4字节内存的底部，要取到RA所在的地址头需要+4
@@ -267,7 +260,6 @@ SymbolBucket *ProgramBodyTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     }
 
     std::vector<SymbolBucket *> bucketList;
-    //todo 获取bucketlist
     symbolTable->getSymBucketList(bucketList);
     //所需的栈大小
     int totalStackSize = 0;
@@ -385,7 +377,7 @@ SymbolBucket *CallExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     codeGenerator->genLoadOrStore(STORE, -4, SP, V1);
     //此处预留4字节，用于在被调用者开头处压入返回地址
     codeGenerator->genIType("-", SP, SP, 12);
-    // pass arguments
+    //压入参数
     int tmpDst, tmp;
     for (int i = 0; i < args->size(); i++) {
         tmpDst = regManager->getTmpReg();
@@ -470,8 +462,6 @@ SymbolBucket *BinaryExprTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
         }
         regManager->freeReg(tmpSrc_1);
         regManager->freeReg(tmpSrc_2);
-//    regManager->freeReg(tmpDst);
-        //todo 释放寄存器
         regManager->autoFreeReg(tmpDst, reg);
     } else if (regL == -2 || regR == -2) {
         int tmpDst, tmpSrc;
@@ -570,7 +560,6 @@ SymbolBucket *WhileStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     //将循环结束标签紧接在循环体后面，结束循环时只要跳到此处即可
     codeGenerator->genLabel(breakLabel);
     delete leftBucket;
-    //todo free寄存器
     regManager->freeReg(regL);
     regManager->freeReg(regR);
     return nullptr;
@@ -701,7 +690,6 @@ SymbolBucket *IfStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     int ifNum = labelManager->getIfLabel();
     std::string loadOPC, storeOPC;
     bucketC = condition->genCode(symbolTable, &regC);
-//    selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
     bucketC->getSymbol()->getLocation();
 
     std::stringstream ss;
@@ -740,7 +728,6 @@ SymbolBucket *RepeatStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     codeGenerator->genLabel(doLabel);
     body->genCode(symbolTable, &regB);
     bucketC = condition->genCode(symbolTable, &regC);
-//    selectOP(bucketC, regC, loadOPC, storeOPC, locationC, symbolTable->getLevel());
     bucketC->getSymbol()->getLocation();
     codeGenerator->genIType("beq", regC, 0, 0, doLabel);
 
@@ -768,11 +755,9 @@ SymbolBucket *ArrayElemTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
         indexLocation = firstLocation + indexBucket->getSymbol()->getImmediateValue() * elemSize;
     }
     if (reg != nullptr) *reg = -1;
-    //returnBucket->setOffsetReg(tmpDst);
     returnBucket->getSymbol()->setLocation(indexLocation);
 
     returnBucket->getSymbol()->setSize(elemSize);
-//    autoFreeReg(exprReg, reg);
     return returnBucket;
 }
 
@@ -1017,7 +1002,7 @@ string CallExprTreeNode::typeCheck(SymbolTable *symtab) {
             }
             i++;
             member = member->getLastBucket()->getNextBucket();
-        } while (i < (*args).size() && member != func);//member != func->getLastBucket() &&
+        } while (i < (*args).size() && member != func);
         if (i < (*args).size()) {
             checkOut << getLineNum() << " : number of arguments is not match!" << endl;
             return "failure";
@@ -1054,7 +1039,6 @@ SymbolBucket *CompoundStmtTreeNode::genCode(SymbolTable *symbolTable, int *reg) 
 
 SymbolBucket *FuncOrProcTreeNode::genCode(SymbolTable *symbolTable, int *reg) {
     string label = name;
-    //labelManager->addFuncLabel(label);
     codeGenerator->genLabel(label);
     body->genCode(tab);
     return nullptr;
