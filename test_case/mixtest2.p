@@ -4,6 +4,8 @@ type
 var
 	out : int;
 	result : int;
+	jj : int;
+	kk : int;
 function min(num1: integer; num2:integer):integer;
 begin
 	out := 10;
@@ -13,4 +15,10 @@ begin
 	min(1,2);
 	write(out);
 	write(result);
+	kk := 10;
+	for jj := 0 to 100 do
+    begin
+    	kk := jj + kk;
+    end;
+    write(kk);
 end.
