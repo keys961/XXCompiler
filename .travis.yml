@@ -39,7 +39,7 @@ script:
   - ./Compiler ./test_case/test6.p test6
   - ./Compiler ./test_case/test7.p test7
   - ./Compiler ./test_case/test8.p test8
-  - ./Compiler ./test_case/test9.p test9
+#   - ./Compiler ./test_case/test9.p test9
   - ./Compiler ./test_case/test10.p test10
   - ./Compiler ./test_case/test12.p test12
   - ./Compiler ./test_case/test13.p test13
